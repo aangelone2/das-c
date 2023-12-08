@@ -1,0 +1,24 @@
+BasedOnStyle: LLVM
+BreakBeforeBraces: Allman
+IndentWidth: 2
+ColumnLimit: 79
+
+Language: Cpp
+NamespaceIndentation: All
+DerivePointerAlignment: false
+PointerAlignment: Right
+ReferenceAlignment: Left
+BreakBeforeBinaryOperators: All
+AlignAfterOpenBracket: BlockIndent
+
+# If false, a function call’s arguments will either be
+# all on the same line or will have one line each.
+BinPackArguments: false
+# If false, a function declaration’s or function
+# definition’s parameters will either all be on the same
+# line or will have one line each.
+BinPackParameters: false
+# If true, a space will be inserted before a C++11 braced
+# list used to initialize an object (after the preceding
+# identifier or type).
+SpaceBeforeCpp11BracedList: true
