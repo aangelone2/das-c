@@ -9,7 +9,6 @@ DerivePointerAlignment: false
 PointerAlignment: Right
 ReferenceAlignment: Left
 BreakBeforeBinaryOperators: All
-AlignAfterOpenBracket: BlockIndent
 
 # If false, a function call’s arguments will either be
 # all on the same line or will have one line each.
@@ -22,3 +21,6 @@ BinPackParameters: false
 # list used to initialize an object (after the preceding
 # identifier or type).
 SpaceBeforeCpp11BracedList: true
+# Always break after an open bracket, if the parameters don’t fit on a single
+# line. Closing brackets will be placed on a new line.
+AlignAfterOpenBracket: BlockIndent

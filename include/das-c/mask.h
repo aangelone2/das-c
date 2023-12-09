@@ -20,53 +20,41 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_TABLE_H
-#define DASC_TABLE_H
+#ifndef DASC_MASK_H
+#define DASC_MASK_H
 
+#include <stdbool.h>
 #include <stdlib.h>
 
-//! Struct for resizable 2-dimensional float arrays.
-typedef struct table
+//! Struct for size-aware `bool` array.
+typedef struct mask
 {
-  //! Outer data array size.
-  size_t l1;
-  //! Inner data array size.
-  size_t l2;
-  //! Data array.
-  double **data;
-} table;
+  //! Number of fields in the mask.
+  size_t l;
+  //! Number of `true` fields in the mask.
+  size_t n;
+  //! Mask array, true (false) to parse (ignore) field of each index.
+  bool *bits;
+} mask;
 
-//! Allocates a `table` with the specified sizes.
+//! Builds a bool mask for parsed/ignored fields.
 /*!
- * Returns `NULL` if allocation of outer/inner data array fails.
+ * Returns `NULL` if `fields` contains an item not within `mask_size`.
  *
- * Inner arrays are allocated to `NULL` if `l2` is set to `0`, useful for
- * `change_l2()` later.
+ * @param fields Contains the fields which should be set as active.
+ * @param nfields The number of fields to set as active.
+ * @param size The overall size of the mask to build.
  *
- * @param l1 Outer array size.
- * @param l2 Inner array size.
- *
- * @return The allocated `table`, `NULL` on failure.
+ * @return A bool array, true (false) for field indices to be parsed (ignored),
+ * NULL on failure.
  */
-table *alloc_table(const size_t l1, const size_t l2);
+mask *
+build_mask(const size_t *fields, const size_t nfields, const size_t size);
 
-//! Change inner size of `table` data array.
+//! Frees all memory associated to a `mask` object.
 /*!
- * Calls `realloc()` on inner data array of passed `table` and updates `l2`.
- *
- * Returns `NULL` if any reallocations fail.
- *
- * @param tab The `table` object to modify.
- * @param l2 The new inner size.
- *
- * @return The reallocated `table`, `NULL` on failure.
+ * @param msk The `mask` object to free.
  */
-table *change_l2(table *tab, const size_t l2);
-
-//! Frees all memory associated to a `table` object.
-/*!
- * @param tab The `table` to free.
- */
-void free_table(table *tab);
+void free_mask(mask *msk);
 
 #endif

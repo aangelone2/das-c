@@ -21,61 +21,16 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/common.h"
-#include "das-c/file_info.h"
-#include "das-c/table.h"
-#include <stdio.h>
+#include <string.h>
 
-int parse_line(table *tab, const char *line, const mask *msk)
+size_t count_fields(const char *row, const char sep)
 {
-  size_t valid_field = 0;
-  for (size_t field = 0; field < msk->l; ++field)
-  {
-    if (msk->bits[field])
-    {
-      if (sscanf(line, "%lf", &(tab->data[valid_field][tab->l2 - 1])) != 1)
-        return 1;
-      ++valid_field;
-    }
-    else
-    {
-      if (sscanf(line, "%*f") != 1)
-        return 1;
-    }
-  }
+  size_t res = 0;
 
-  if (sscanf(line, "%*f") != EOF)
-    return 1;
+  // Null-termination assumed
+  for (size_t i = 0; i < strlen(row); ++i)
+    if (row[i] == sep)
+      ++res;
 
-  return 0;
-}
-
-table *parse(const file_info *finfo)
-{
-  size_t total_row = 0, row = 0;
-  char line[DASC_MAX_LINE_LENGTH];
-
-  table *tab = alloc_table(finfo->msk->n, 0);
-  if (tab == NULL)
-    return NULL;
-
-  do
-  {
-    // Parse line, interrupt if EOF
-    if (fgets(line, DASC_MAX_LINE_LENGTH, finfo->file) == NULL)
-      break;
-
-    ++total_row;
-
-    if (is_comment(line))
-      continue;
-
-    tab = change_l2(tab, tab->l2 + 1);
-
-    if (parse_line(tab, line, finfo->msk) != 0)
-      return NULL;
-
-    ++row;
-  } while (true);
-
-  return tab;
+  return res;
 }

@@ -20,62 +20,36 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/common.h"
-#include "das-c/file_info.h"
-#include "das-c/table.h"
-#include <stdio.h>
+#include "das-c/mask.h"
 
-int parse_line(table *tab, const char *line, const mask *msk)
+mask *build_mask(const size_t *fields, const size_t nfields, const size_t size)
 {
-  size_t valid_field = 0;
-  for (size_t field = 0; field < msk->l; ++field)
-  {
-    if (msk->bits[field])
-    {
-      if (sscanf(line, "%lf", &(tab->data[valid_field][tab->l2 - 1])) != 1)
-        return 1;
-      ++valid_field;
-    }
-    else
-    {
-      if (sscanf(line, "%*f") != 1)
-        return 1;
-    }
-  }
-
-  if (sscanf(line, "%*f") != EOF)
-    return 1;
-
-  return 0;
-}
-
-table *parse(const file_info *finfo)
-{
-  size_t total_row = 0, row = 0;
-  char line[DASC_MAX_LINE_LENGTH];
-
-  table *tab = alloc_table(finfo->msk->n, 0);
-  if (tab == NULL)
+  mask *msk = (mask *)malloc(sizeof(mask));
+  if (msk == NULL)
     return NULL;
 
-  do
+  msk->l = size;
+  msk->n = nfields;
+
+  msk->bits = (bool *)malloc(size * sizeof(bool));
+  if (msk->bits == NULL)
+    return NULL;
+
+  for (size_t f = 0; f < size; ++f)
+    msk->bits[f] = false;
+
+  for (size_t f = 0; f < nfields; ++f)
   {
-    // Parse line, interrupt if EOF
-    if (fgets(line, DASC_MAX_LINE_LENGTH, finfo->file) == NULL)
-      break;
-
-    ++total_row;
-
-    if (is_comment(line))
-      continue;
-
-    tab = change_l2(tab, tab->l2 + 1);
-
-    if (parse_line(tab, line, finfo->msk) != 0)
+    if (fields[f] > size)
       return NULL;
+    msk->bits[fields[f] - 1] = true;
+  }
 
-    ++row;
-  } while (true);
+  return msk;
+}
 
-  return tab;
+void free_mask(mask *msk)
+{
+  free(msk->bits);
+  free(msk);
 }

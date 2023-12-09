@@ -20,62 +20,45 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/common.h"
 #include "das-c/file_info.h"
-#include "das-c/table.h"
-#include <stdio.h>
+#include "das-c/common.h"
+#include <stdlib.h>
 
-int parse_line(table *tab, const char *line, const mask *msk)
+file_info *build_file_info(
+    const char *filename, const size_t *fields, const size_t nfields
+)
 {
-  size_t valid_field = 0;
-  for (size_t field = 0; field < msk->l; ++field)
-  {
-    if (msk->bits[field])
-    {
-      if (sscanf(line, "%lf", &(tab->data[valid_field][tab->l2 - 1])) != 1)
-        return 1;
-      ++valid_field;
-    }
-    else
-    {
-      if (sscanf(line, "%*f") != 1)
-        return 1;
-    }
-  }
-
-  if (sscanf(line, "%*f") != EOF)
-    return 1;
-
-  return 0;
-}
-
-table *parse(const file_info *finfo)
-{
-  size_t total_row = 0, row = 0;
-  char line[DASC_MAX_LINE_LENGTH];
-
-  table *tab = alloc_table(finfo->msk->n, 0);
-  if (tab == NULL)
+  file_info *finfo = (file_info *)malloc(sizeof(file_info));
+  if (finfo == NULL)
     return NULL;
 
+  // Opening file
+  finfo->file = fopen(filename, "r");
+  if (finfo->file == NULL)
+    return NULL;
+
+  // Extracting first non-commented line and getting number of fields
+  char line[DASC_MAX_LINE_LENGTH];
   do
   {
-    // Parse line, interrupt if EOF
     if (fgets(line, DASC_MAX_LINE_LENGTH, finfo->file) == NULL)
-      break;
-
-    ++total_row;
-
-    if (is_comment(line))
-      continue;
-
-    tab = change_l2(tab, tab->l2 + 1);
-
-    if (parse_line(tab, line, finfo->msk) != 0)
       return NULL;
+  } while (!is_comment(line));
 
-    ++row;
-  } while (true);
+  const size_t cols = count_fields(line, DASC_SEPARATOR);
+  if (cols == 0)
+    return NULL;
 
-  return tab;
+  finfo->msk = build_mask(fields, nfields, cols);
+  if (finfo->msk == NULL)
+    return NULL;
+
+  return finfo;
+}
+
+void free_file_info(file_info *finfo)
+{
+  free_mask(finfo->msk);
+  fclose(finfo->file);
+  free(finfo);
 }

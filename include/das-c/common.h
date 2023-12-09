@@ -20,53 +20,32 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_TABLE_H
-#define DASC_TABLE_H
+#ifndef DASC_COMMON_H
+#define DASC_COMMON_H
 
+#include <stdbool.h>
 #include <stdlib.h>
 
-//! Struct for resizable 2-dimensional float arrays.
-typedef struct table
-{
-  //! Outer data array size.
-  size_t l1;
-  //! Inner data array size.
-  size_t l2;
-  //! Data array.
-  double **data;
-} table;
+#define DASC_SEPARATOR ' '
+#define DASC_MAX_LINE_LENGTH 65536
 
-//! Allocates a `table` with the specified sizes.
+//! Checks if a string is commented.
 /*!
- * Returns `NULL` if allocation of outer/inner data array fails.
+ * @param row The string to check.
  *
- * Inner arrays are allocated to `NULL` if `l2` is set to `0`, useful for
- * `change_l2()` later.
- *
- * @param l1 Outer array size.
- * @param l2 Inner array size.
- *
- * @return The allocated `table`, `NULL` on failure.
+ * @return Whether or not the string is commented.
  */
-table *alloc_table(const size_t l1, const size_t l2);
+inline bool is_comment(const char *row) { return row[0] == '#'; }
 
-//! Change inner size of `table` data array.
+//! Counts the number of fields in the passed string.
 /*!
- * Calls `realloc()` on inner data array of passed `table` and updates `l2`.
+ * The string is assumed to be null-terminated (`strlen()` is used).
  *
- * Returns `NULL` if any reallocations fail.
+ * @param row The string to count the fields of.
+ * @param sep The character to use as separator.
  *
- * @param tab The `table` object to modify.
- * @param l2 The new inner size.
- *
- * @return The reallocated `table`, `NULL` on failure.
+ * @return The number of fields found in the string.
  */
-table *change_l2(table *tab, const size_t l2);
-
-//! Frees all memory associated to a `table` object.
-/*!
- * @param tab The `table` to free.
- */
-void free_table(table *tab);
+size_t count_fields(const char *row, const char sep);
 
 #endif

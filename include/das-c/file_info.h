@@ -20,62 +20,44 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/common.h"
-#include "das-c/file_info.h"
-#include "das-c/table.h"
+#ifndef DASC_FILE_INFO_H
+#define DASC_FILE_INFO_H
+
+#include "das-c/mask.h"
+#include <stdbool.h>
 #include <stdio.h>
 
-int parse_line(table *tab, const char *line, const mask *msk)
+//! Struct containing information about datafile.
+typedef struct file_info
 {
-  size_t valid_field = 0;
-  for (size_t field = 0; field < msk->l; ++field)
-  {
-    if (msk->bits[field])
-    {
-      if (sscanf(line, "%lf", &(tab->data[valid_field][tab->l2 - 1])) != 1)
-        return 1;
-      ++valid_field;
-    }
-    else
-    {
-      if (sscanf(line, "%*f") != 1)
-        return 1;
-    }
-  }
+  //! File stream to read from.
+  FILE *file;
+  //! Mask for field parsing.
+  mask *msk;
+} file_info;
 
-  if (sscanf(line, "%*f") != EOF)
-    return 1;
+//! Allocates a `file_info` from the specified filename.
+/*!
+ * Returns `NULL` if:
+ * - Any allocations fail;
+ * - File not found;
+ * - No fields found in file;
+ * - Error encountered in mask creation.
+ *
+ * @param filename The file to characterize.
+ * @param fields The fields to parse.
+ * @param nfields The number of fields to parse.
+ *
+ * @return The allocated `file_info`, `NULL` on failure.
+ */
+file_info *build_file_info(
+    const char *filename, const size_t *fields, const size_t nfields
+);
 
-  return 0;
-}
+//! Frees all memory associated to a `file_info` object.
+/*!
+ * @param tab The `file_info` object to free.
+ */
+void free_file_info(file_info *finfo);
 
-table *parse(const file_info *finfo)
-{
-  size_t total_row = 0, row = 0;
-  char line[DASC_MAX_LINE_LENGTH];
-
-  table *tab = alloc_table(finfo->msk->n, 0);
-  if (tab == NULL)
-    return NULL;
-
-  do
-  {
-    // Parse line, interrupt if EOF
-    if (fgets(line, DASC_MAX_LINE_LENGTH, finfo->file) == NULL)
-      break;
-
-    ++total_row;
-
-    if (is_comment(line))
-      continue;
-
-    tab = change_l2(tab, tab->l2 + 1);
-
-    if (parse_line(tab, line, finfo->msk) != 0)
-      return NULL;
-
-    ++row;
-  } while (true);
-
-  return tab;
-}
+#endif
