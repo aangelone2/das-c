@@ -49,9 +49,8 @@ int parse_line(table *tab, const char *line, const mask *msk)
   return 0;
 }
 
-table *parse(const file_info *finfo)
+table *parse(file_info *finfo)
 {
-  size_t total_row = 0, row = 0;
   char line[DASC_MAX_LINE_LENGTH];
 
   table *tab = alloc_table(finfo->msk->n, 0);
@@ -64,7 +63,7 @@ table *parse(const file_info *finfo)
     if (fgets(line, DASC_MAX_LINE_LENGTH, finfo->file) == NULL)
       break;
 
-    ++total_row;
+    ++finfo->rows;
 
     if (is_comment(line))
       continue;
@@ -74,7 +73,7 @@ table *parse(const file_info *finfo)
     if (parse_line(tab, line, finfo->msk) != 0)
       return NULL;
 
-    ++row;
+    ++finfo->data_rows;
   } while (true);
 
   return tab;

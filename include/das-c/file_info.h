@@ -34,6 +34,10 @@ typedef struct file_info
   FILE *file;
   //! Mask for field parsing.
   mask *msk;
+  //! Number of rows, set to `0` on construction.
+  size_t rows;
+  //! Number of valid data rows, set to `0` on construction.
+  size_t data_rows;
 } file_info;
 
 //! Allocates a `file_info` from the specified filename.

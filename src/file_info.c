@@ -53,6 +53,9 @@ file_info *build_file_info(
   if (finfo->msk == NULL)
     return NULL;
 
+  finfo->rows = 0;
+  finfo->data_rows = 0;
+
   return finfo;
 }
 
