@@ -20,61 +20,31 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/common.h"
-#include "das-c/file_info.h"
-#include "das-c/table.h"
-#include <stdio.h>
+#ifndef DASC_STATISTICS_H
+#define DASC_STATISTICS_H
 
-int parse_line(table *tab, const char *line, const mask *msk)
-{
-  size_t valid_field = 0;
-  for (size_t field = 0; field < msk->l; ++field)
-  {
-    if (msk->bits[field])
-    {
-      if (sscanf(line, "%lf", &(tab->data[valid_field][tab->l2 - 1])) != 1)
-        return 1;
-      ++valid_field;
-    }
-    else
-    {
-      if (sscanf(line, "%*f") != 1)
-        return 1;
-    }
-  }
+#include <stdlib.h>
 
-  if (sscanf(line, "%*f") != EOF)
-    return 1;
+//! Computes the average of the passed array.
+/*!
+ * @param data Data array.
+ * @param size The array size.
+ *
+ * @return The computed average.
+ */
+double average(const double *data, const size_t size);
 
-  return 0;
-}
+//! Computes the SEM of the passed array.
+/*!
+ * Pre-calculation of the average allows to use a two-pass algorithm, which
+ * ensures high accuracy (the second pass can be amortized by parallelizing).
+ *
+ * @param data Data array.
+ * @param size The array size.
+ * @param average The pre-computed average of the array.
+ *
+ * @return The computed SEM.
+ */
+double sem(const double *data, const size_t size, const double average);
 
-table *parse(file_info *finfo)
-{
-  char line[DASC_MAX_LINE_LENGTH];
-
-  table *tab = alloc_table(finfo->msk->n, 0);
-  if (tab == NULL)
-    return NULL;
-
-  do
-  {
-    // Parse line, interrupt if EOF
-    if (fgets(line, DASC_MAX_LINE_LENGTH, finfo->file) == NULL)
-      break;
-
-    ++finfo->rows;
-
-    if (is_comment(line))
-      continue;
-
-    tab = resize_back(tab, tab->l2 + 1);
-
-    if (parse_line(tab, line, finfo->msk) != 0)
-      return NULL;
-
-    ++finfo->data_rows;
-  } while (true);
-
-  return tab;
-}
+#endif

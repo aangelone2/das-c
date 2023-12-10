@@ -41,7 +41,7 @@ typedef struct table
  * Returns `NULL` if allocation of outer/inner data array fails.
  *
  * Inner arrays are allocated to `NULL` if `l2` is set to `0`, useful for
- * `change_l2()` later.
+ * `resize_back()` later.
  *
  * @param l1 Outer array size.
  * @param l2 Inner array size.

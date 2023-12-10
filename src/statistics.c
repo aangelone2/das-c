@@ -20,61 +20,26 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/common.h"
-#include "das-c/file_info.h"
-#include "das-c/table.h"
-#include <stdio.h>
+#include "das-c/statistics.h"
+#include <math.h>
 
-int parse_line(table *tab, const char *line, const mask *msk)
+double average(const double *data, const size_t size)
 {
-  size_t valid_field = 0;
-  for (size_t field = 0; field < msk->l; ++field)
-  {
-    if (msk->bits[field])
-    {
-      if (sscanf(line, "%lf", &(tab->data[valid_field][tab->l2 - 1])) != 1)
-        return 1;
-      ++valid_field;
-    }
-    else
-    {
-      if (sscanf(line, "%*f") != 1)
-        return 1;
-    }
-  }
+  double buffer = 0.0;
+  for (size_t i = 0; i < size; ++i)
+    buffer += data[i];
 
-  if (sscanf(line, "%*f") != EOF)
-    return 1;
-
-  return 0;
+  return buffer / (double)(size);
 }
 
-table *parse(file_info *finfo)
+double sem(const double *data, const size_t size, const double average)
 {
-  char line[DASC_MAX_LINE_LENGTH];
-
-  table *tab = alloc_table(finfo->msk->n, 0);
-  if (tab == NULL)
-    return NULL;
-
-  do
+  double buffer = 0.0;
+  for (size_t i = 0; i < size; ++i)
   {
-    // Parse line, interrupt if EOF
-    if (fgets(line, DASC_MAX_LINE_LENGTH, finfo->file) == NULL)
-      break;
+    const double deviation = average - data[i];
+    buffer += deviation * deviation;
+  }
 
-    ++finfo->rows;
-
-    if (is_comment(line))
-      continue;
-
-    tab = resize_back(tab, tab->l2 + 1);
-
-    if (parse_line(tab, line, finfo->msk) != 0)
-      return NULL;
-
-    ++finfo->data_rows;
-  } while (true);
-
-  return tab;
+  return sqrt(buffer / ((double)(size) * (double)(size - 1)));
 }
