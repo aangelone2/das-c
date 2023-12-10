@@ -52,7 +52,8 @@ table *alloc_table(const size_t l1, const size_t l2);
 
 //! Change inner size of `table` data array.
 /*!
- * Calls `realloc()` on inner data array of passed `table` and updates `l2`.
+ * Calls `realloc()` on inner data array of passed `table` and updates `l2`,
+ * removing/adding components at the end.
  *
  * Returns `NULL` if any reallocations fail.
  *
@@ -61,7 +62,34 @@ table *alloc_table(const size_t l1, const size_t l2);
  *
  * @return The reallocated `table`, `NULL` on failure.
  */
-table *change_l2(table *tab, const size_t l2);
+table *resize_back(table *tab, const size_t l2);
+
+//! Discards a specified number of inner-array elements from the front.
+/*!
+ * Reallocates the inner arrays to the remaining size and updates `tab->l2`.
+ *
+ * Returns `NULL` if any reallocations fail.
+ *
+ * @param tab The table to modify.
+ * @param skip The number of lines to skip.
+ *
+ * @return The modified table, `NULL` on failure.
+ */
+table *discard_front(table *tab, const size_t skip);
+
+//! Replace array components along the inner direction with rebinned ones.
+/*!
+ * The final component `ib` along the inner axis will contain the bin number
+ * `ib`. `l2` is updated to `nbins`.
+ *
+ * Returns `NULL` if any reallocations fail, or if `nbins > tab->l2`.
+ *
+ * @param tab The table to rebin.
+ * @param nbins The desired number of bins.
+ *
+ * @return The rebinned table, `NULL` on failure.
+ */
+table *rebin(table *tab, const size_t nbins);
 
 //! Frees all memory associated to a `table` object.
 /*!

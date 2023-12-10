@@ -21,6 +21,7 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/table.h"
+#include <string.h>
 
 table *alloc_table(const size_t l1, const size_t l2)
 {
@@ -52,16 +53,57 @@ table *alloc_table(const size_t l1, const size_t l2)
   return tab;
 }
 
-table *change_l2(table *tab, const size_t l2)
+table *resize_back(table *tab, const size_t l2)
 {
   tab->l2 = l2;
   for (size_t i1 = 0; i1 < tab->l1; ++i1)
   {
-    tab->data[i1] = (double *)realloc(tab->data[i1], l2);
+    tab->data[i1] = (double *)realloc(tab->data[i1], l2 * sizeof(double));
     if (tab->data[i1] == NULL)
       return NULL;
   }
 
+  return tab;
+}
+
+table *discard_front(table *tab, const size_t skip)
+{
+  const size_t remaining = tab->l2 - skip;
+
+  for (size_t i1 = 0; i1 < tab->l1; ++i1)
+  {
+    memmove(tab->data[i1] + skip, tab->data[i1], remaining * sizeof(double));
+
+    tab->data[i1] = realloc(tab->data[i1], remaining * sizeof(double));
+    if (tab->data[i1] == NULL)
+      return NULL;
+  }
+
+  tab->l2 = remaining;
+  return tab;
+}
+
+table *rebin(table *tab, const size_t nbins)
+{
+  const size_t bsize = tab->l2 / nbins;
+  const size_t keep = bsize * nbins;
+  tab = discard_front(tab, tab->l2 - keep);
+
+  for (size_t i1 = 0; i1 < tab->l1; ++i1)
+  {
+    for (size_t ib = 0; ib < nbins; ++ib)
+    {
+      double buffer = 0.0;
+      for (size_t i2 = ib * bsize; i2 < (ib + 1) * bsize; ++i2)
+        buffer += tab->data[i1][i2];
+
+      // Bin number `ib` will never contain components with inner index `i2`
+      // less than `ib` (not possible if binsize is at least 1).
+      tab->data[i1][ib] = buffer;
+    }
+  }
+
+  tab = resize_back(tab, nbins);
   return tab;
 }
 
