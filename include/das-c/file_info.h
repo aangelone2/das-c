@@ -33,35 +33,33 @@ typedef struct file_info
   //! File stream to read from.
   FILE *file;
   //! Mask for field parsing.
-  mask *msk;
+  mask msk;
   //! Number of rows, set to `0` on construction.
   size_t rows;
   //! Number of valid data rows, set to `0` on construction.
   size_t data_rows;
 } file_info;
 
-//! Allocates a `file_info` from the specified filename.
+//! Initializes a `file_info` with the specified values.
 /*!
- * Returns `NULL` if:
- * - Any allocations fail;
- * - File not found;
- * - No fields found in file;
- * - Error encountered in mask creation.
- *
+ * @param info Pointer to the empty memory region to init. Failure on `NULL`.
  * @param filename The file to characterize.
  * @param fields The fields to parse.
  * @param nfields The number of fields to parse.
  *
- * @return The allocated `file_info`, `NULL` on failure.
+ * @return 0 on success, 1 on `NULL` input, 2 on member allocation failure.
  */
-file_info *build_file_info(
-    const char *filename, const size_t *fields, const size_t nfields
+int init_file_info(
+    file_info *info,
+    const char *filename,
+    const size_t *fields,
+    const size_t nfields
 );
 
-//! Frees all memory associated to a `file_info` object.
+//! Frees dynamic memory associated to a `file_info` object.
 /*!
- * @param tab The `file_info` object to free.
+ * @param tab The `file_info` to cleanup.
  */
-void free_file_info(file_info *finfo);
+void deinit_file_info(file_info *info);
 
 #endif

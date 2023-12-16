@@ -32,8 +32,13 @@ int parse_line(table *tab, const char *line, const mask *msk)
   {
     if (msk->bits[field])
     {
-      if (sscanf(line, "%lf", &(tab->data[valid_field][tab->l2 - 1])) != 1)
+      double buffer;
+      if (sscanf(line, "%lf", &buffer) != 1)
         return 1;
+
+      if (push_back(&tab->columns[valid_field], buffer))
+        return 2;
+
       ++valid_field;
     }
     else
@@ -44,37 +49,34 @@ int parse_line(table *tab, const char *line, const mask *msk)
   }
 
   if (sscanf(line, "%*f") != EOF)
-    return 1;
+    return 3;
 
   return 0;
 }
 
-table *parse(file_info *finfo)
+int init_table_parse(table *tab, file_info *info)
 {
   char line[DASC_MAX_LINE_LENGTH];
 
-  table *tab = alloc_table(finfo->msk->n, 0);
-  if (tab == NULL)
-    return NULL;
+  if (init_table_empty(tab, info->msk.n))
+    return 1;
 
   do
   {
     // Parse line, interrupt if EOF
-    if (fgets(line, DASC_MAX_LINE_LENGTH, finfo->file) == NULL)
+    if (fgets(line, DASC_MAX_LINE_LENGTH, info->file) == NULL)
       break;
 
-    ++finfo->rows;
+    ++info->rows;
 
     if (is_comment(line))
       continue;
 
-    tab = resize_back(tab, tab->l2 + 1);
+    if (parse_line(tab, line, &info->msk))
+      return 2;
 
-    if (parse_line(tab, line, finfo->msk) != 0)
-      return NULL;
-
-    ++finfo->data_rows;
+    ++info->data_rows;
   } while (true);
 
-  return tab;
+  return 0;
 }

@@ -23,23 +23,59 @@
 #include "das-c/statistics.h"
 #include <math.h>
 
-double average(const double *data, const size_t size)
+double average(const vector *vec, const size_t skip)
 {
   double buffer = 0.0;
-  for (size_t i = 0; i < size; ++i)
-    buffer += data[i];
+  for (size_t i = skip; i < vec->size; ++i)
+    buffer += vec->data[i];
 
-  return buffer / (double)(size);
+  const double size = (double)(vec->size - skip);
+  return buffer / size;
 }
 
-double sem(const double *data, const size_t size, const double average)
+double sem(const vector *vec, const size_t skip, const double average)
 {
   double buffer = 0.0;
-  for (size_t i = 0; i < size; ++i)
+  for (size_t i = skip; i < vec->size; ++i)
   {
-    const double deviation = average - data[i];
+    const double deviation = average - vec->data[i];
     buffer += deviation * deviation;
   }
 
-  return sqrt(buffer / ((double)(size) * (double)(size - 1)));
+  const double size = (double)(vec->size - skip);
+  return sqrt(buffer / (size * (size - 1.0)));
+}
+
+int rebin(vector *vec, const size_t skip, const size_t nbins)
+{
+  if (skip > vec->size)
+    return 1;
+
+  const size_t keep = vec->size - skip;
+  if (nbins > keep)
+    return 1;
+
+  const size_t bsize = keep / nbins;
+  const size_t skip2 = skip + (keep % bsize);
+
+  for (size_t ib = 0; ib < nbins; ++ib)
+  {
+    double buffer = 0.0;
+
+    // Beginning and end of current bin, considering skipped rows
+    const size_t begin = skip2 + (ib * bsize);
+    const size_t end = skip2 + ((ib + 1) * bsize);
+
+    for (size_t i = begin; i < end; ++i)
+      buffer += vec->data[i];
+
+    // Bin number `ib` will never contain components with index `i` < `ib`
+    // (not possible if binsize is at least 1).
+    vec->data[ib] = buffer;
+  }
+
+  if (resize(vec, nbins))
+    return 1;
+
+  return 0;
 }

@@ -20,37 +20,58 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_TABLE_H
-#define DASC_TABLE_H
+#ifndef DASC_VECTOR_H
+#define DASC_VECTOR_H
 
-#include "das-c/vector.h"
 #include <stdlib.h>
 
-//! Struct for a set of data vectors.
-typedef struct table
+//! Resizable 1D float array.
+typedef struct vector
 {
-  //! Number of contained `vector`s.
+  //! Number of allocated components.
   size_t size;
 
-  //! `vector` array.
-  vector *columns;
-} table;
+  //! Data array.
+  double *data;
+} vector;
 
-//! Initializes empty `table`.
+//! Initializes empty `vector`.
 /*!
- * Internal `vector`s are left at size 0.
+ * The internal data vector will be set to `NULL` (ready for application of
+ * `push_back()` or `resize()`).
  *
- * @param tab Pointer to the memory region to init. Failure on `NULL`.
- * @param size Desired number of columns.
+ * @param vec Pointer to the memory region to init. Failure on `NULL`.
  *
- * @return 0 on success, 1 on `NULL` input, 2 on member allocation failure.
+ * @return 0 on success, 1 on failure.
  */
-int init_table_empty(table *tab, const size_t size);
+int init_vector(vector *vec);
 
-//! Frees dynamic memory associated to a `table` object.
+//! Adds new component at the back of `vector`.
 /*!
- * @param tab The `table` to cleanup.
+ * Leaves arguments unchanged on reallocation failure.
+ *
+ * @param vec The `vector` to expand.
+ * @param val The value to add.
+ *
+ * @return 0 on success, 1 on failure.
  */
-void deinit_table(table *tab);
+int push_back(vector *vec, const double val);
+
+//! Resize internal data array in `vector`.
+/*!
+ * Leaves arguments unchanged on reallocation failure.
+ *
+ * @param vec The `vector` to resize.
+ * @param size The new size.
+ *
+ * @return 0 on success, 1 on failure.
+ */
+int resize(vector *vec, const size_t size);
+
+//! Frees dynamic memory associated to a `vector` object.
+/*!
+ * @param vec The `vector` to cleanup.
+ */
+void deinit_vector(vector *vec);
 
 #endif

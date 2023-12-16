@@ -23,28 +23,44 @@
 #ifndef DASC_STATISTICS_H
 #define DASC_STATISTICS_H
 
+#include "das-c/vector.h"
 #include <stdlib.h>
 
-//! Computes the average of the passed array.
+//! Computes the average of the passed `vector`.
 /*!
- * @param data Data array.
- * @param size The array size.
+ * @param vec Data `vector`.
+ * @param skip Number of rows to skip from the beginning.
  *
  * @return The computed average.
  */
-double average(const double *data, const size_t size);
+double average(const vector *vec, const size_t skip);
 
-//! Computes the SEM of the passed array.
+//! Computes the SEM of the passed `vector`.
 /*!
  * Pre-calculation of the average allows to use a two-pass algorithm, which
- * ensures high accuracy (the second pass can be amortized by parallelizing).
+ * ensures high accuracy.
  *
- * @param data Data array.
- * @param size The array size.
+ * @param vec Data `vector`.
+ * @param skip Number of rows to skip from the beginning.
  * @param average The pre-computed average of the array.
  *
  * @return The computed SEM.
  */
-double sem(const double *data, const size_t size, const double average);
+double sem(const vector *vec, const size_t skip, const double average);
+
+//! Rebins the passed array.
+/*!
+ * Bin averages are written at the beginning of the `vector` without overlap
+ * with previous content. The `vector` is then resized to only contain bin
+ * averages.
+ *
+ * @param vec Data `vector`.
+ * @param skip Number of rows to skip from the beginning.
+ * @param nbins The number of desired bins.
+ *
+ * @return 0 on success, 1 on failure (invalid arguments, reallocation
+ * failure).
+ */
+int rebin(vector *vec, const size_t skip, const size_t nbins);
 
 #endif

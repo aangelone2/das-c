@@ -24,44 +24,44 @@
 #include "das-c/common.h"
 #include <stdlib.h>
 
-file_info *build_file_info(
-    const char *filename, const size_t *fields, const size_t nfields
+int init_file_info(
+    file_info *info,
+    const char *filename,
+    const size_t *fields,
+    const size_t nfields
 )
 {
-  file_info *finfo = (file_info *)malloc(sizeof(file_info));
-  if (finfo == NULL)
-    return NULL;
+  if (info == NULL)
+    return 1;
 
   // Opening file
-  finfo->file = fopen(filename, "r");
-  if (finfo->file == NULL)
-    return NULL;
+  info->file = fopen(filename, "r");
+  if (info->file == NULL)
+    return 2;
 
   // Extracting first non-commented line and getting number of fields
   char line[DASC_MAX_LINE_LENGTH];
   do
   {
-    if (fgets(line, DASC_MAX_LINE_LENGTH, finfo->file) == NULL)
-      return NULL;
+    if (fgets(line, DASC_MAX_LINE_LENGTH, info->file) == NULL)
+      return 2;
   } while (!is_comment(line));
 
   const size_t cols = count_fields(line, DASC_SEPARATOR);
   if (cols == 0)
-    return NULL;
+    return 2;
 
-  finfo->msk = build_mask(fields, nfields, cols);
-  if (finfo->msk == NULL)
-    return NULL;
+  if (init_mask(&info->msk, fields, nfields, cols))
+    return 2;
 
-  finfo->rows = 0;
-  finfo->data_rows = 0;
+  info->rows = 0;
+  info->data_rows = 0;
 
-  return finfo;
+  return 0;
 }
 
-void free_file_info(file_info *finfo)
+void deinit_file_info(file_info *info)
 {
-  free_mask(finfo->msk);
-  fclose(finfo->file);
-  free(finfo);
+  deinit_mask(&info->msk);
+  fclose(info->file);
 }

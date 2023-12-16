@@ -37,24 +37,23 @@ typedef struct mask
   bool *bits;
 } mask;
 
-//! Builds a bool mask for parsed/ignored fields.
+//! Initializes mask with specified values.
 /*!
- * Returns `NULL` if `fields` contains an item not within `mask_size`.
- *
+ * @param msk Pointer to the empty memory region to init. Failure on `NULL`.
  * @param fields Contains the fields which should be set as active.
  * @param nfields The number of fields to set as active.
  * @param size The overall size of the mask to build.
  *
- * @return A bool array, true (false) for field indices to be parsed (ignored),
- * NULL on failure.
+ * @return 0 on success, 1 on `NULL` input, 2 on member allocation failure.
  */
-mask *
-build_mask(const size_t *fields, const size_t nfields, const size_t size);
+int init_mask(
+    mask *msk, const size_t *fields, const size_t nfields, const size_t size
+);
 
-//! Frees all memory associated to a `mask` object.
+//! Frees dynamic memory associated to a `mask` object.
 /*!
- * @param msk The `mask` object to free.
+ * @param msk The `mask` to cleanup.
  */
-void free_mask(mask *msk);
+void deinit_mask(mask *msk);
 
 #endif

@@ -20,28 +20,42 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/table.h"
+#include "das-c/vector.h"
 
-int init_table_empty(table *tab, const size_t size)
+int init_vector(vector *vec)
 {
-  if (tab == NULL)
+  if (vec == NULL)
     return 1;
 
-  tab->size = size;
-  tab->columns = malloc(size * sizeof(vector));
-  if (tab->columns == NULL)
-    return 2;
+  vec->size = 0;
+  vec->data = NULL;
+  return 0;
+}
 
-  for (size_t ic = 0; ic < size; ++ic)
-    if (init_vector(&tab->columns[ic]))
-      return 2;
+int push_back(vector *vec, const double val)
+{
+  double *data = realloc(vec->data, (vec->size + 1) * sizeof(double));
+  if (data == NULL)
+    return 1;
+
+  vec->data = data;
+  vec->data[vec->size] = val;
+
+  ++vec->size;
 
   return 0;
 }
 
-void deinit_table(table *tab)
+int resize(vector *vec, const size_t size)
 {
-  for (size_t ic = 0; ic < tab->size; ++ic)
-    deinit_vector(&tab->columns[ic]);
-  free(tab->columns);
+  double *data = realloc(vec->data, size * sizeof(double));
+  if (data == NULL)
+    return 1;
+
+  vec->data = data;
+  vec->size = size;
+
+  return 0;
 }
+
+void deinit_vector(vector *vec) { free(vec->data); }
