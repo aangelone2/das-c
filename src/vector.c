@@ -24,7 +24,7 @@
 
 int init_vector(vector *vec)
 {
-  if (vec == NULL)
+  if (!vec)
     return 1;
 
   vec->size = 0;

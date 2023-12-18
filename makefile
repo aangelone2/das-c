@@ -40,6 +40,13 @@ INC := -I$(idir)
 LIB := -L$(bdir) -ldas-c
 
 
+test: $(tobjects)
+	@echo ''
+	@echo 'Beginning testing'
+	@echo ''
+	cd $(bdir); ./01.test-count_fields
+
+	@echo 'All tests completed successfully'
 
 
 # Rule to build test object files

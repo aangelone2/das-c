@@ -20,7 +20,6 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/common.h"
 #include "das-c/file_info.h"
 #include "das-c/table.h"
 #include <stdio.h>
@@ -64,7 +63,7 @@ int init_table_parse(table *tab, file_info *info)
   do
   {
     // Parse line, interrupt if EOF
-    if (fgets(line, DASC_MAX_LINE_LENGTH, info->file) == NULL)
+    if (!fgets(line, DASC_MAX_LINE_LENGTH, info->file))
       break;
 
     ++info->rows;

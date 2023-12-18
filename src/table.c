@@ -24,12 +24,12 @@
 
 int init_table_empty(table *tab, const size_t size)
 {
-  if (tab == NULL)
+  if (!tab)
     return 1;
 
   tab->size = size;
   tab->columns = malloc(size * sizeof(vector));
-  if (tab->columns == NULL)
+  if (!tab->columns)
     return 2;
 
   for (size_t ic = 0; ic < size; ++ic)

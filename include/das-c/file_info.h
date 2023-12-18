@@ -27,6 +27,25 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#define DASC_MAX_LINE_LENGTH 65536
+#define DASC_SEPARATOR " "
+
+//! Checks if a string is commented.
+/*!
+ * @param row The string to check.
+ *
+ * @return Whether or not the string is commented.
+ */
+inline bool is_comment(const char *row) { return row[0] == '#'; }
+
+//! Counts the number of fields separated by DASC_SEPARATOR.
+/*!
+ * @param row The string to count the fields of.
+ *
+ * @return The number of fields.
+ */
+size_t count_fields(char *row);
+
 //! Struct containing information about datafile.
 typedef struct file_info
 {

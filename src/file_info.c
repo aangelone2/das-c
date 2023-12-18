@@ -21,8 +21,22 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/file_info.h"
-#include "das-c/common.h"
 #include <stdlib.h>
+#include <string.h>
+
+size_t count_fields(char *row)
+{
+  size_t fields = 0;
+
+  char *tok = strtok(row, DASC_SEPARATOR);
+  while (tok)
+  {
+    ++fields;
+    tok = strtok(NULL, DASC_SEPARATOR);
+  }
+
+  return fields;
+}
 
 int init_file_info(
     file_info *info,
@@ -31,23 +45,23 @@ int init_file_info(
     const size_t nfields
 )
 {
-  if (info == NULL)
+  if (!info)
     return 1;
 
   // Opening file
   info->file = fopen(filename, "r");
-  if (info->file == NULL)
+  if (!info->file)
     return 2;
 
   // Extracting first non-commented line and getting number of fields
   char line[DASC_MAX_LINE_LENGTH];
   do
   {
-    if (fgets(line, DASC_MAX_LINE_LENGTH, info->file) == NULL)
+    if (!fgets(line, DASC_MAX_LINE_LENGTH, info->file))
       return 2;
   } while (!is_comment(line));
 
-  const size_t cols = count_fields(line, DASC_SEPARATOR);
+  const size_t cols = count_fields(line);
   if (cols == 0)
     return 2;
 

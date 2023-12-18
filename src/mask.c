@@ -26,14 +26,14 @@ int init_mask(
     mask *msk, const size_t *fields, const size_t nfields, const size_t size
 )
 {
-  if (msk == NULL)
+  if (!msk)
     return 1;
 
   msk->l = size;
   msk->n = nfields;
 
   msk->bits = malloc(size * sizeof(bool));
-  if (msk->bits == NULL)
+  if (!msk->bits)
     return 2;
 
   for (size_t f = 0; f < size; ++f)
