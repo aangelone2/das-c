@@ -45,6 +45,7 @@ test: $(tobjects)
 	@echo 'Beginning testing'
 	@echo ''
 	cd $(bdir); ./01.test-count_fields
+	cd $(bdir); ./02.test-file_info
 
 	@echo 'All tests completed successfully'
 

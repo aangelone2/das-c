@@ -28,7 +28,8 @@
 #include <stdio.h>
 
 #define DASC_MAX_LINE_LENGTH 65536
-#define DASC_SEPARATOR " "
+// Placing '\n' here works like newline trimming.
+#define DASC_SEPARATOR " \n"
 
 //! Checks if a string is commented.
 /*!
@@ -77,6 +78,8 @@ int init_file_info(
 
 //! Frees dynamic memory associated to a `file_info` object.
 /*!
+ * Do not call if allocation failed.
+ *
  * @param tab The `file_info` to cleanup.
  */
 void deinit_file_info(file_info *info);

@@ -45,11 +45,13 @@ int init_file_info(
     const size_t nfields
 )
 {
+  // Null pointer
   if (!info)
     return 1;
 
   // Opening file
   info->file = fopen(filename, "r");
+  // Failed opening
   if (!info->file)
     return 2;
 
@@ -57,16 +59,30 @@ int init_file_info(
   char line[DASC_MAX_LINE_LENGTH];
   do
   {
+    // Empty file
     if (!fgets(line, DASC_MAX_LINE_LENGTH, info->file))
-      return 2;
-  } while (!is_comment(line));
+    {
+      fclose(info->file);
+      return 3;
+    }
+  } while (is_comment(line));
+
+  rewind(info->file);
 
   const size_t cols = count_fields(line);
+  // No valid fields in 1st row
   if (cols == 0)
-    return 2;
+  {
+    fclose(info->file);
+    return 4;
+  }
 
+  // Failed mask init
   if (init_mask(&info->msk, fields, nfields, cols))
-    return 2;
+  {
+    fclose(info->file);
+    return 5;
+  }
 
   info->rows = 0;
   info->data_rows = 0;

@@ -3,6 +3,8 @@
 
 int main()
 {
+  open_test();
+
   printf("  Testing regular field counting...\n");
   char test_1[] = "1.0 2.0 3.0 4.0";
   assert(count_fields(test_1) == 4);
@@ -18,6 +20,10 @@ int main()
   printf("  Testing field counting with spurious chars...\n");
   char test_4[] = "1.0,3.0 4.0  ";
   assert(count_fields(test_4) == 2);
+
+  printf("  Testing field counting with only separators...\n");
+  char test_5[] = "          ";
+  assert(count_fields(test_5) == 0);
 
   close_test();
 }
