@@ -22,31 +22,34 @@
 
 #include "das-c/mask.h"
 
-int init_mask(
-    mask *msk, const size_t *fields, const size_t nfields, const size_t size
-)
+int init_mask(mask *msk, const size_t size)
 {
   if (!msk)
     return 1;
-
-  msk->l = size;
-  msk->n = nfields;
 
   msk->bits = malloc(size * sizeof(bool));
   if (!msk->bits)
     return 2;
 
+  msk->n_fields = size;
+
   for (size_t f = 0; f < size; ++f)
     msk->bits[f] = false;
 
-  for (size_t f = 0; f < nfields; ++f)
-  {
-    if (fields[f] > size)
-      return 2;
-    msk->bits[fields[f] - 1] = true;
-  }
+  msk->n_active = 0;
 
   return 0;
+}
+
+void set_field(mask *msk, const size_t field)
+{
+  if (field >= msk->n_fields)
+    return;
+
+  if (!msk->bits[field])
+    ++msk->n_active;
+
+  msk->bits[field] = true;
 }
 
 void deinit_mask(mask *msk) { free(msk->bits); }

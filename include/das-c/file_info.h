@@ -23,7 +23,6 @@
 #ifndef DASC_FILE_INFO_H
 #define DASC_FILE_INFO_H
 
-#include "das-c/mask.h"
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -52,8 +51,8 @@ typedef struct file_info
 {
   //! File stream to read from.
   FILE *file;
-  //! Mask for field parsing.
-  mask msk;
+  //! Number of columns.
+  size_t cols;
   //! Number of rows, set to `0` on construction.
   size_t rows;
   //! Number of valid data rows, set to `0` on construction.
@@ -62,23 +61,21 @@ typedef struct file_info
 
 //! Initializes a `file_info` with the specified values.
 /*!
+ * On allocation failure, `file` will be closed and set to `NULL`.
+ *
  * @param info Pointer to the empty memory region to init. Failure on `NULL`.
  * @param filename The file to characterize.
- * @param fields The fields to parse.
- * @param nfields The number of fields to parse.
  *
- * @return 0 on success, 1 on `NULL` input, 2 on member allocation failure.
+ * @return 0 on success, 1 on `NULL` input, 2 on file opening failure, 3 on
+ * empty file, 4 on invalid first row in file.
  */
-int init_file_info(
-    file_info *info,
-    const char *filename,
-    const size_t *fields,
-    const size_t nfields
-);
+int init_file_info(file_info *info, const char *filename);
 
 //! Frees dynamic memory associated to a `file_info` object.
 /*!
- * Do not call if allocation failed.
+ * Can be called (no-op) if initialization fails.
+ *
+ * Undefined behavior if called on non-initialized `file_info`.
  *
  * @param tab The `file_info` to cleanup.
  */

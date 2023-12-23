@@ -26,29 +26,37 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-//! Struct for size-aware `bool` array.
+//! Struct for mask to select which fields to parse.
 typedef struct mask
 {
   //! Number of fields in the mask.
-  size_t l;
+  size_t n_fields;
   //! Number of `true` fields in the mask.
-  size_t n;
+  size_t n_active;
   //! Mask array, true (false) to parse (ignore) field of each index.
   bool *bits;
 } mask;
 
 //! Initializes mask with specified values.
 /*!
+ * All fields will be set as "to skip" by default.
+ *
  * @param msk Pointer to the empty memory region to init. Failure on `NULL`.
- * @param fields Contains the fields which should be set as active.
- * @param nfields The number of fields to set as active.
  * @param size The overall size of the mask to build.
  *
  * @return 0 on success, 1 on `NULL` input, 2 on member allocation failure.
  */
-int init_mask(
-    mask *msk, const size_t *fields, const size_t nfields, const size_t size
-);
+int init_mask(mask *msk, const size_t size);
+
+//! Set a field as "active" in the mask.
+/*!
+ * `n_active` is increased, unless the field is already set. Fields not within
+ * the mask size will be ignored.
+ *
+ * @param msk Pointer to the mask to modify.
+ * @param field The index of the field to set as "active".
+ */
+void set_field(mask *msk, const size_t field);
 
 //! Frees dynamic memory associated to a `mask` object.
 /*!

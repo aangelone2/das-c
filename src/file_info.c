@@ -38,12 +38,7 @@ size_t count_fields(char *row)
   return fields;
 }
 
-int init_file_info(
-    file_info *info,
-    const char *filename,
-    const size_t *fields,
-    const size_t nfields
-)
+int init_file_info(file_info *info, const char *filename)
 {
   // Null pointer
   if (!info)
@@ -53,7 +48,10 @@ int init_file_info(
   info->file = fopen(filename, "r");
   // Failed opening
   if (!info->file)
+  {
+    info->file = NULL;
     return 2;
+  }
 
   // Extracting first non-commented line and getting number of fields
   char line[DASC_MAX_LINE_LENGTH];
@@ -63,25 +61,20 @@ int init_file_info(
     if (!fgets(line, DASC_MAX_LINE_LENGTH, info->file))
     {
       fclose(info->file);
+      info->file = NULL;
       return 3;
     }
   } while (is_comment(line));
 
   rewind(info->file);
 
-  const size_t cols = count_fields(line);
+  info->cols = count_fields(line);
   // No valid fields in 1st row
-  if (cols == 0)
+  if (info->cols == 0)
   {
     fclose(info->file);
+    info->file = NULL;
     return 4;
-  }
-
-  // Failed mask init
-  if (init_mask(&info->msk, fields, nfields, cols))
-  {
-    fclose(info->file);
-    return 5;
   }
 
   info->rows = 0;
@@ -92,6 +85,6 @@ int init_file_info(
 
 void deinit_file_info(file_info *info)
 {
-  deinit_mask(&info->msk);
-  fclose(info->file);
+  if (info->file)
+    fclose(info->file);
 }
