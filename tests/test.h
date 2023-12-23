@@ -6,17 +6,20 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define DASC_TEST_THRESHOLD 1.0e-10
+#define DASC_TEST_THRESHOLD 1.0e-14
 
 const char *sep = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
 
-inline void open_test() { setvbuf(stdout, NULL, _IONBF, 0); }
+static inline void open_test() { setvbuf(stdout, NULL, _IONBF, 0); }
 
-inline void close_test() { printf("%s Test completed successfully\n\n", sep); }
-
-inline bool assert_double_eq(const double d1, const double d2)
+static inline void close_test()
 {
-  return fabs(d1 - d2) <= DASC_TEST_THRESHOLD;
+  printf("%s Test completed successfully\n\n", sep);
+}
+
+static inline void assert_double_eq(const double d1, const double d2)
+{
+  assert(fabs(d1 - d2) <= DASC_TEST_THRESHOLD);
 }
 
 #endif

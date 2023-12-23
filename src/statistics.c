@@ -25,6 +25,9 @@
 
 double average(const vector *vec, const size_t skip)
 {
+  if (skip >= vec->size)
+    return 0.0;
+
   double buffer = 0.0;
   for (size_t i = skip; i < vec->size; ++i)
     buffer += vec->data[i];
@@ -35,6 +38,9 @@ double average(const vector *vec, const size_t skip)
 
 double sem(const vector *vec, const size_t skip, const double average)
 {
+  if (skip >= vec->size)
+    return 0.0;
+
   double buffer = 0.0;
   for (size_t i = skip; i < vec->size; ++i)
   {
@@ -56,7 +62,7 @@ int rebin(vector *vec, const size_t skip, const size_t nbins)
     return 1;
 
   const size_t bsize = keep / nbins;
-  const size_t skip2 = skip + (keep % bsize);
+  const size_t skip2 = skip + (keep % nbins);
 
   for (size_t ib = 0; ib < nbins; ++ib)
   {
@@ -71,7 +77,7 @@ int rebin(vector *vec, const size_t skip, const size_t nbins)
 
     // Bin number `ib` will never contain components with index `i` < `ib`
     // (not possible if binsize is at least 1).
-    vec->data[ib] = buffer;
+    vec->data[ib] = buffer / (double)(bsize);
   }
 
   if (resize(vec, nbins))

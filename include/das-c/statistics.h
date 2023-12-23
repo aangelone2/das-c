@@ -54,6 +54,8 @@ double sem(const vector *vec, const size_t skip, const double average);
  * with previous content. The `vector` is then resized to only contain bin
  * averages.
  *
+ * Data and size are left unchanged in case of invalid arguments.
+ *
  * @param vec Data `vector`.
  * @param skip Number of rows to skip from the beginning.
  * @param nbins The number of desired bins.

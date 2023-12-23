@@ -36,7 +36,7 @@
  *
  * @return Whether or not the string is commented.
  */
-inline bool is_comment(const char *row) { return row[0] == '#'; }
+static inline bool is_comment(const char *row) { return row[0] == '#'; }
 
 //! Counts the number of fields separated by DASC_SEPARATOR.
 /*!
