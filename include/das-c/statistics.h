@@ -31,7 +31,7 @@
  * @param vec Data `vector`.
  * @param skip Number of rows to skip from the beginning.
  *
- * @return The computed average.
+ * @return The computed average, 0.0 if `skip >= vec.size`.
  */
 double average(const vector *vec, const size_t skip);
 
@@ -44,7 +44,7 @@ double average(const vector *vec, const size_t skip);
  * @param skip Number of rows to skip from the beginning.
  * @param average The pre-computed average of the array.
  *
- * @return The computed SEM.
+ * @return The computed SEM, 0.0 if `skip >= vec.size`.
  */
 double sem(const vector *vec, const size_t skip, const double average);
 

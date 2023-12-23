@@ -70,6 +70,8 @@ int resize(vector *vec, const size_t size);
 
 //! Frees dynamic memory associated to a `vector` object.
 /*!
+ * Undefined behavior if the `vector` has not been initialized.
+ *
  * @param vec The `vector` to cleanup.
  */
 void deinit_vector(vector *vec);
