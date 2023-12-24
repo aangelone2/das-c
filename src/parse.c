@@ -31,10 +31,8 @@
 // Returns:
 // - 0 if successful
 // - 3 if too many fields (compared to `mask`)
-// - 4 if too many active fields (compared to `tab`)
-// - 5 if field cannot be converted to double
-// - 6 if too few fields (compared to `mask`)
-// - 7 if too few active fields (compared to `tab`)
+// - 4 if invalid fields found
+// - 5 if too few fields (compared to `mask`)
 int parse_line(table *tab, char *line, const mask *msk)
 {
   size_t field = 0, active_field = 0;
@@ -49,13 +47,11 @@ int parse_line(table *tab, char *line, const mask *msk)
     if (msk->bits[field])
     {
       ++active_field;
-      if (active_field > tab->size)
-        return 4;
 
       char *end;
       const double buffer = strtod(tok, &end);
       if (end == tok)
-        return 5;
+        return 4;
 
       push_back(&tab->columns[active_field], buffer);
     }
@@ -64,10 +60,7 @@ int parse_line(table *tab, char *line, const mask *msk)
   }
 
   if (field != msk->n_fields)
-    return 6;
-
-  if (active_field != tab->size)
-    return 7;
+    return 5;
 
   return 0;
 }

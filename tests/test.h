@@ -19,6 +19,7 @@ static inline void close_test()
 
 static inline void assert_double_eq(const double d1, const double d2)
 {
+  //  printf("%lf\n", fabs(d1 - d2));
   assert(fabs(d1 - d2) <= DASC_TEST_THRESHOLD);
 }
 

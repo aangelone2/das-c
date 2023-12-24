@@ -44,7 +44,10 @@ typedef struct table
  * @param tab Pointer to the memory region to init. Failure on `NULL`.
  * @param size Desired number of columns.
  *
- * @return 0 on success, 1 on `NULL` input, 2 on member allocation failure.
+ * @return Status code:
+ *   - 0 on success
+ *   - 1 on `NULL` input
+ *   - 2 on member allocation failure
  */
 int init_table_empty(table *tab, const size_t size);
 
@@ -61,10 +64,8 @@ int init_table_empty(table *tab, const size_t size);
  *   - 1 on `NULL` input
  *   - 2 on allocation failure
  *   - 3 on line with too many fields
- *   - 4 on line with too many active fields
- *   - 5 on line with invalid field
- *   - 6 on line with too few fields
- *   - 7 on line with too few active fields
+ *   - 4 on line with invalid field
+ *   - 5 on line with too few fields
  */
 int init_table_parse(table *tab, file_info *info, const mask *msk);
 
