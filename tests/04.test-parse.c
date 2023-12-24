@@ -86,6 +86,38 @@ void test_valid_full()
   deinit_mask(&msk);
 }
 
+void test_filtering()
+{
+  // Setting 2-4 field mask
+  mask msk;
+  init_mask(&msk, 4);
+  set_field(&msk, 1);
+  set_field(&msk, 2);
+
+  file_info info;
+  init_file_info(&info, "../resources/08.valid.dat");
+
+  table tab;
+  assert(!init_table_parse(&tab, &info, &msk));
+
+  assert(tab.size == 2);
+  for (size_t ic = 0; ic < tab.size; ++ic)
+  {
+    assert(tab.columns[ic].size == 64);
+
+    // Checking each component
+    for (size_t ir = 0; ir < 64; ++ir)
+      assert_double_eq(
+          tab.columns[ic].data[ir], (double)(ic) + 1.0 + example_data[ir]
+      );
+  }
+
+  deinit_table(&tab);
+
+  deinit_file_info(&info);
+  deinit_mask(&msk);
+}
+
 int main()
 {
   open_test();
@@ -101,6 +133,9 @@ int main()
 
   printf("  Testing valid file, all fields...\n");
   test_valid_full();
+
+  printf("  Testing valid file, filtering...\n");
+  test_filtering();
 
   close_test();
 }

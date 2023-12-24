@@ -49,7 +49,7 @@ int init_file_info(file_info *info, const char *filename)
   // Failed opening
   if (!info->file)
   {
-    info->file = NULL;
+    deinit_file_info(info);
     return 2;
   }
 
@@ -60,8 +60,7 @@ int init_file_info(file_info *info, const char *filename)
     // Empty file
     if (!fgets(line, DASC_MAX_LINE_LENGTH, info->file))
     {
-      fclose(info->file);
-      info->file = NULL;
+      deinit_file_info(info);
       return 3;
     }
   } while (is_comment(line));
@@ -72,8 +71,7 @@ int init_file_info(file_info *info, const char *filename)
   // No valid fields in 1st row
   if (info->cols == 0)
   {
-    fclose(info->file);
-    info->file = NULL;
+    deinit_file_info(info);
     return 4;
   }
 
@@ -87,4 +85,5 @@ void deinit_file_info(file_info *info)
 {
   if (info->file)
     fclose(info->file);
+  info->file = NULL;
 }

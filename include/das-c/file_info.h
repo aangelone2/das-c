@@ -79,6 +79,8 @@ int init_file_info(file_info *info, const char *filename);
 /*!
  * Can be called (no-op) if initialization fails.
  *
+ * Closes the file pointer and sets it to `NULL`.
+ *
  * Undefined behavior if called on non-initialized `file_info`.
  *
  * @param tab The `file_info` to cleanup.
