@@ -60,8 +60,9 @@ double sem(const vector *vec, const size_t skip, const double average);
  * @param skip Number of rows to skip from the beginning.
  * @param nbins The number of desired bins.
  *
- * @return 0 on success, 1 on failure (invalid arguments, reallocation
- * failure).
+ * @return Status code:
+ *   - 0 on success
+ *   - 1 on failure (invalid arguments, reallocation failure).
  */
 int rebin(vector *vec, const size_t skip, const size_t nbins);
 

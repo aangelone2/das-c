@@ -21,44 +21,66 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/file_info.h"
+#include "das-c/mask.h"
 #include "das-c/table.h"
 #include <stdio.h>
+#include <string.h>
 
-int parse_line(table *tab, const char *line, const mask *msk)
+// Adds the contents of the fields of `line`, filtered by `msk`,
+// to a new line in the columns of `tab`.
+// Returns:
+// - 0 if successful
+// - 3 if too many fields (compared to `mask`)
+// - 4 if too many active fields (compared to `tab`)
+// - 5 if field cannot be converted to double
+// - 6 if too few fields (compared to `mask`)
+// - 7 if too few active fields (compared to `tab`)
+int parse_line(table *tab, char *line, const mask *msk)
 {
-  size_t valid_field = 0;
-  for (size_t field = 0; field < msk->l; ++field)
+  size_t field = 0, active_field = 0;
+
+  char *tok = strtok(line, DASC_SEPARATORS);
+  while (tok)
   {
+    ++field;
+    if (field > msk->n_fields)
+      return 3;
+
     if (msk->bits[field])
     {
-      double buffer;
-      if (sscanf(line, "%lf", &buffer) != 1)
-        return 1;
+      ++active_field;
+      if (active_field > tab->size)
+        return 4;
 
-      if (push_back(&tab->columns[valid_field], buffer))
-        return 2;
+      char *end;
+      const double buffer = strtod(tok, &end);
+      if (end == tok)
+        return 5;
 
-      ++valid_field;
+      push_back(&tab->columns[active_field], buffer);
     }
-    else
-    {
-      if (sscanf(line, "%*f") != 1)
-        return 1;
-    }
+
+    tok = strtok(NULL, DASC_SEPARATORS);
   }
 
-  if (sscanf(line, "%*f") != EOF)
-    return 3;
+  if (field != msk->n_fields)
+    return 6;
+
+  if (active_field != tab->size)
+    return 7;
 
   return 0;
 }
 
-int init_table_parse(table *tab, file_info *info)
+int init_table_parse(table *tab, file_info *info, const mask *msk)
 {
+  if (!tab)
+    return 1;
+
   char line[DASC_MAX_LINE_LENGTH];
 
-  if (init_table_empty(tab, info->msk.n))
-    return 1;
+  if (init_table_empty(tab, msk->n_active))
+    return 2;
 
   do
   {
@@ -71,8 +93,9 @@ int init_table_parse(table *tab, file_info *info)
     if (is_comment(line))
       continue;
 
-    if (parse_line(tab, line, &info->msk))
-      return 2;
+    const int res = parse_line(tab, line, msk);
+    if (res)
+      return res;
 
     ++info->data_rows;
   } while (true);

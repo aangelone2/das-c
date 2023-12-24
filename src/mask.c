@@ -20,71 +20,36 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/file_info.h"
-#include <stdlib.h>
-#include <string.h>
+#include "das-c/mask.h"
 
-size_t count_fields(char *row)
+int init_mask(mask *msk, const size_t size)
 {
-  size_t fields = 0;
-
-  char *tok = strtok(row, DASC_SEPARATORS);
-  while (tok)
-  {
-    ++fields;
-    tok = strtok(NULL, DASC_SEPARATORS);
-  }
-
-  return fields;
-}
-
-int init_file_info(file_info *info, const char *filename)
-{
-  // Null pointer
-  if (!info)
+  if (!msk)
     return 1;
 
-  // Opening file
-  info->file = fopen(filename, "r");
-  // Failed opening
-  if (!info->file)
-  {
-    info->file = NULL;
+  msk->bits = malloc(size * sizeof(bool));
+  if (!msk->bits)
     return 2;
-  }
 
-  // Extracting first non-commented line and getting number of fields
-  char line[DASC_MAX_LINE_LENGTH];
-  do
-  {
-    // Empty file
-    if (!fgets(line, DASC_MAX_LINE_LENGTH, info->file))
-    {
-      fclose(info->file);
-      info->file = NULL;
-      return 3;
-    }
-  } while (is_comment(line));
+  msk->n_fields = size;
 
-  rewind(info->file);
+  for (size_t f = 0; f < size; ++f)
+    msk->bits[f] = false;
 
-  info->cols = count_fields(line);
-  // No valid fields in 1st row
-  if (info->cols == 0)
-  {
-    fclose(info->file);
-    info->file = NULL;
-    return 4;
-  }
-
-  info->rows = 0;
-  info->data_rows = 0;
+  msk->n_active = 0;
 
   return 0;
 }
 
-void deinit_file_info(file_info *info)
+void set_field(mask *msk, const size_t field)
 {
-  if (info->file)
-    fclose(info->file);
+  if (field >= msk->n_fields)
+    return;
+
+  if (!msk->bits[field])
+    ++msk->n_active;
+
+  msk->bits[field] = true;
 }
+
+void deinit_mask(mask *msk) { free(msk->bits); }

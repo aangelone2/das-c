@@ -28,7 +28,7 @@
 
 #define DASC_MAX_LINE_LENGTH 65536
 // Placing '\n' here works like newline trimming.
-#define DASC_SEPARATOR " \n"
+#define DASC_SEPARATORS " \n"
 
 //! Checks if a string is commented.
 /*!
@@ -66,8 +66,12 @@ typedef struct file_info
  * @param info Pointer to the empty memory region to init. Failure on `NULL`.
  * @param filename The file to characterize.
  *
- * @return 0 on success, 1 on `NULL` input, 2 on file opening failure, 3 on
- * empty file, 4 on invalid first row in file.
+ * @return Status code:
+ *   - 0 on success
+ *   - 1 on `NULL` input
+ *   - 2 on file opening failure
+ *   - 3 on empty file
+ *   - 4 on invalid first row in file
  */
 int init_file_info(file_info *info, const char *filename);
 

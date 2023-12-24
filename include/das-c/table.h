@@ -23,8 +23,9 @@
 #ifndef DASC_TABLE_H
 #define DASC_TABLE_H
 
+#include "das-c/file_info.h"
+#include "das-c/mask.h"
 #include "das-c/vector.h"
-#include <stdlib.h>
 
 //! Struct for a set of data vectors.
 typedef struct table
@@ -36,7 +37,7 @@ typedef struct table
   vector *columns;
 } table;
 
-//! Initializes empty `table`.
+//! Initializes an empty `table`.
 /*!
  * Internal `vector`s are left at size 0.
  *
@@ -46,6 +47,26 @@ typedef struct table
  * @return 0 on success, 1 on `NULL` input, 2 on member allocation failure.
  */
 int init_table_empty(table *tab, const size_t size);
+
+//! Initializes a `table` with the content of a passed file.
+/*!
+ * `info` will be updated with the number of total and data rows.
+ *
+ * @param tab Pointer to the memory region to init. Failure on `NULL`.
+ * @param info `file_info` object containing information about the file.
+ * @param msk `mask` object, filtering fields to access.
+ *
+ * @return Status code:
+ *   - 0 on success
+ *   - 1 on `NULL` input
+ *   - 2 on allocation failure
+ *   - 3 on line with too many fields
+ *   - 4 on line with too many active fields
+ *   - 5 on line with invalid field
+ *   - 6 on line with too few fields
+ *   - 7 on line with too few active fields
+ */
+int init_table_parse(table *tab, file_info *info, const mask *msk);
 
 //! Frees dynamic memory associated to a `table` object.
 /*!
