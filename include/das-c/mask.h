@@ -51,7 +51,7 @@ typedef struct mask
  */
 int init_mask(mask *msk, const size_t size);
 
-//! Set a field as "active" in the mask.
+//! Set a field as "active" in a mask.
 /*!
  * `n_active` is increased, unless the field is already set. Fields not within
  * the mask size will be ignored.
@@ -60,6 +60,12 @@ int init_mask(mask *msk, const size_t size);
  * @param field The index of the field to set as "active".
  */
 void set_field(mask *msk, const size_t field);
+
+//! Set all fields as "active" in a mask.
+/*!
+ * @param msk Mask to modify.
+ */
+void set_all(mask *msk);
 
 //! Frees dynamic memory associated to a `mask` object.
 /*!

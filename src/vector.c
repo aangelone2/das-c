@@ -21,6 +21,7 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/vector.h"
+#include <stdio.h>
 
 int init_vector(vector *vec)
 {

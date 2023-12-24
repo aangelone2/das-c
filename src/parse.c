@@ -40,25 +40,26 @@ int parse_line(table *tab, char *line, const mask *msk)
   char *tok = strtok(line, DASC_SEPARATORS);
   while (tok)
   {
-    ++field;
-    if (field > msk->n_fields)
+    if (field >= msk->n_fields)
       return 3;
 
     if (msk->bits[field])
     {
-      ++active_field;
-
       char *end;
       const double buffer = strtod(tok, &end);
       if (end == tok)
         return 4;
 
       push_back(&tab->columns[active_field], buffer);
+
+      ++active_field;
     }
 
     tok = strtok(NULL, DASC_SEPARATORS);
+    ++field;
   }
 
+  // Should have this value at the end of final loop
   if (field != msk->n_fields)
     return 5;
 

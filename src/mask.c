@@ -52,4 +52,12 @@ void set_field(mask *msk, const size_t field)
   msk->bits[field] = true;
 }
 
+void set_all(mask *msk)
+{
+  for (size_t i = 0; i < msk->n_fields; ++i)
+    msk->bits[i] = true;
+
+  msk->n_active = msk->n_fields;
+}
+
 void deinit_mask(mask *msk) { free(msk->bits); }
