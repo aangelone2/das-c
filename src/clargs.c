@@ -32,7 +32,7 @@ int init_clargs(clargs *args, int argc, char *argv[])
     return 1;
 
   // Default values
-  args->nfields = 0;
+  args->n_fields = 0;
   args->fields = NULL;
   args->skip = 0;
   args->verbose = false;
@@ -50,7 +50,8 @@ int init_clargs(clargs *args, int argc, char *argv[])
       strcpy(fields, optarg);
 
       // 0 on success, 1 on reallocation failure, 2 on invalid field value
-      const int res = parse_sizet_array(fields, &args->fields, &args->nfields);
+      const int res
+          = parse_sizet_array(fields, &args->fields, &args->n_fields);
       if (res)
         return (res + 1);
 

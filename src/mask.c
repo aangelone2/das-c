@@ -31,7 +31,7 @@ int init_mask(mask *msk, const size_t size)
   if (!msk->bits)
     return 2;
 
-  msk->n_fields = size;
+  msk->size = size;
 
   for (size_t f = 0; f < size; ++f)
     msk->bits[f] = false;
@@ -43,7 +43,7 @@ int init_mask(mask *msk, const size_t size)
 
 void set_field(mask *msk, const size_t field)
 {
-  if (field >= msk->n_fields)
+  if (field >= msk->size)
     return;
 
   if (!msk->bits[field])
@@ -54,10 +54,10 @@ void set_field(mask *msk, const size_t field)
 
 void set_all(mask *msk)
 {
-  for (size_t i = 0; i < msk->n_fields; ++i)
+  for (size_t i = 0; i < msk->size; ++i)
     msk->bits[i] = true;
 
-  msk->n_active = msk->n_fields;
+  msk->n_active = msk->size;
 }
 
 void deinit_mask(mask *msk) { free(msk->bits); }

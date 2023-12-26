@@ -26,9 +26,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define DASC_MAX_LINE_LENGTH 65536
 // Placing '\n' here works like newline trimming.
 #define DASC_SEPARATORS " \n"
+#define DASC_COMMENT '#'
 
 //! Checks if a string is commented.
 /*!
@@ -36,7 +36,10 @@
  *
  * @return Whether or not the string is commented.
  */
-static inline bool is_comment(const char *row) { return row[0] == '#'; }
+static inline bool is_comment(const char *row)
+{
+  return row[0] == DASC_COMMENT;
+}
 
 //! Counts the number of fields separated by DASC_SEPARATOR.
 /*!

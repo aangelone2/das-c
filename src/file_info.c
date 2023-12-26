@@ -25,20 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-size_t count_fields(char *row)
-{
-  size_t fields = 0;
-
-  char *tok = strtok(row, DASC_SEPARATORS);
-  while (tok)
-  {
-    ++fields;
-    tok = strtok(NULL, DASC_SEPARATORS);
-  }
-
-  return fields;
-}
-
 int init_file_info(file_info *info, const char *filename)
 {
   // Null pointer

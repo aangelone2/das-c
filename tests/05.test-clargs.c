@@ -10,7 +10,7 @@ void test_no_options()
   char *argv[3] = {"test", "file"};
 
   assert(!init_clargs(&args, argc, argv));
-  assert(!args.nfields);
+  assert(!args.n_fields);
   assert(!args.fields);
   assert(!args.skip);
   assert(!args.verbose);
@@ -27,7 +27,7 @@ void test_verbose()
   char *argv[3] = {"test", "-v", "file"};
 
   assert(!init_clargs(&args, argc, argv));
-  assert(!args.nfields);
+  assert(!args.n_fields);
   assert(!args.fields);
   assert(!args.skip);
   assert(args.verbose);
@@ -44,7 +44,7 @@ void test_skip_verbose()
   char *argv[] = {"test", "-s", "20", "-v", "file"};
 
   assert(!init_clargs(&args, argc, argv));
-  assert(!args.nfields);
+  assert(!args.n_fields);
   assert(!args.fields);
   assert(args.skip == 20);
   assert(args.verbose);
@@ -61,7 +61,7 @@ void test_fields()
   char *argv[] = {"test", "-f", "1,2,3", "-v", "file2"};
 
   assert(!init_clargs(&args, argc, argv));
-  assert(args.nfields == 3);
+  assert(args.n_fields == 3);
   assert(args.fields[0] == 1);
   assert(args.fields[1] == 2);
   assert(args.fields[2] == 3);
@@ -116,7 +116,7 @@ void test_invalid_fields()
 
   char *argv1[] = {"test", "-f", "1,,3", "-v", "file2"};
   assert(!init_clargs(&args, argc, argv1));
-  assert(args.nfields == 2);
+  assert(args.n_fields == 2);
   assert(args.fields[0] == 1);
   assert(args.fields[1] == 3);
   assert(!args.skip);

@@ -16,7 +16,7 @@ MAKEFLAGS += --no-builtin-rules
 
 # Targets which are not supposed to generate
 # a file with the same name
-.PHONY: docs
+.PHONY: docs builds
 
 idir := include
 sdir := src
@@ -33,9 +33,9 @@ tsources := $(wildcard $(tdir)/*.c)
 tobjects := $(patsubst $(tdir)/%.c, $(bdir)/%, $(tsources))
 
 CC := gcc
-CXXFLAGS := -std=c17 -O3 -Wfatal-errors\
-						-Wall -Werror -Wextra -Wshadow -Wparentheses\
-						-Wconversion -Wpedantic -pedantic
+CFLAGS := -std=c17 -O3 -Wfatal-errors\
+					-Wall -Werror -Wextra -Wshadow -Wparentheses\
+					-Wconversion -Wpedantic -pedantic
 INC := -I$(idir)
 LIB := -L$(bdir) -ldas-c -lm
 
@@ -55,7 +55,7 @@ test: $(tobjects)
 
 # Rule to build test object files
 $(tobjects): $(bdir)/%: $(tdir)/%.c $(theaders) lib
-	$(CC) $(CXXFLAGS) $(INC) $< -o $@ $(LIB)
+	$(CC) $(CFLAGS) $(INC) $< -o $@ $(LIB)
 
 
 # Target, which executes the rule to build the library
@@ -72,7 +72,7 @@ lib: $(objects)
 # Rule to build library object files
 $(objects): $(odir)/%.o: $(sdir)/%.c $(headers)
 	@mkdir -p $(odir)
-	$(CC) $(CXXFLAGS) $(INC) -c $< -o $@
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@
 
 
 docs:

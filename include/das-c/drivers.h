@@ -20,57 +20,36 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_MASK_H
-#define DASC_MASK_H
+#ifndef DASC_DRIVERS_H
+#define DASC_DRIVERS_H
 
-#include <stdbool.h>
 #include <stdlib.h>
 
-//! Struct for mask to select which fields to parse.
-typedef struct mask
+//! Struct holding the result of `avs` on a single column.
+typedef struct avs_results
 {
-  //! Number of fields in the mask.
+  //! Number of analyzed columns.
   size_t size;
-  //! Number of `true` fields in the mask.
-  size_t n_active;
-  //! Mask array, true (false) to parse (ignore) field of each index.
-  bool *bits;
-} mask;
 
-//! Initializes mask with specified values.
+  //! The index of the analyzed field in the file.
+  size_t *fields;
+  //! The average of the column.
+  double *ave;
+  //! The SEM of the column.
+  double *sem;
+} avs_results;
+
+//! Performs simple averaging on a file based on the passed CL arguments.
 /*!
- * All fields will be set as `false` by default.
- *
- * @param msk Pointer to the empty memory region to init. Failure on `NULL`.
- * @param size The overall size of the mask to build.
+ * @param res The `avs_results` object to initialize.
+ * @param argc The number of CL arguments passed to `main()`.
+ * @param argv The CL arguments passed to `main()`.
  *
  * @return Status code:
  *   - 0 on success
  *   - 1 on `NULL` input
- *   - 2 on member allocation failure
+ *   - 2 for other failures
  */
-int init_mask(mask *msk, const size_t size);
-
-//! Set a field as "active" in a mask.
-/*!
- * `n_active` is increased, unless the field is already set. Fields not within
- * the mask size will be ignored.
- *
- * @param msk Pointer to the mask to modify.
- * @param field The index of the field to set as "active".
- */
-void set_field(mask *msk, const size_t field);
-
-//! Set all fields as "active" in a mask.
-/*!
- * @param msk Mask to modify.
- */
-void set_all(mask *msk);
-
-//! Frees dynamic memory associated to a `mask` object.
-/*!
- * @param msk The `mask` to cleanup.
- */
-void deinit_mask(mask *msk);
+int avs(avs_results *res, int argc, char *argv[]);
 
 #endif

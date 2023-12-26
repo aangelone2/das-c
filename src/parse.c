@@ -41,7 +41,7 @@ int parse_line(table *tab, char *line, const mask *msk)
   char *tok = strtok(line, DASC_SEPARATORS);
   while (tok)
   {
-    if (field >= msk->n_fields)
+    if (field >= msk->size)
       return 3;
 
     if (msk->bits[field])
@@ -61,7 +61,7 @@ int parse_line(table *tab, char *line, const mask *msk)
   }
 
   // Should have this value at the end of final loop
-  if (field != msk->n_fields)
+  if (field != msk->size)
     return 5;
 
   return 0;

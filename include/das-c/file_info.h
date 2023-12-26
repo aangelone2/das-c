@@ -27,8 +27,6 @@
 #include <stdio.h>
 
 #define DASC_MAX_LINE_LENGTH 65536
-// Placing '\n' here works like newline trimming.
-#define DASC_SEPARATORS " \n"
 
 //! Struct containing information about datafile.
 typedef struct file_info
