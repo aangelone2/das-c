@@ -1,4 +1,4 @@
-#include "das-c/file_info.h"
+#include "das-c/common.h"
 #include "test.h"
 
 void test_regular_field_counting()

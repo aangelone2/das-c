@@ -20,55 +20,50 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_FILE_INFO_H
-#define DASC_FILE_INFO_H
+#ifndef DASC_CLARGS_H
+#define DASC_CLARGS_H
 
 #include <stdbool.h>
-#include <stdio.h>
+#include <stdlib.h>
 
-#define DASC_MAX_LINE_LENGTH 65536
-// Placing '\n' here works like newline trimming.
-#define DASC_SEPARATORS " \n"
-
-//! Struct containing information about datafile.
-typedef struct file_info
+//! Struct storing command line arguments.
+typedef struct clargs
 {
-  //! File stream to read from.
-  FILE *file;
-  //! Number of columns.
-  size_t cols;
-  //! Number of rows, set to `0` on construction.
-  size_t rows;
-  //! Number of valid data rows, set to `0` on construction.
-  size_t data_rows;
-} file_info;
+  //! Number of fields to be parsed (default: 0 -> all).
+  size_t nfields;
+  //! Array of fields to parse (default: NULL -> all).
+  size_t *fields;
+  //! Percentage (1-100) of rows to skip (default: 0).
+  size_t skip;
+  //! Prints additional information (default: false).
+  bool verbose;
+  //! Datafile to access.
+  char *filename;
+} clargs;
 
-//! Initializes a `file_info` with the specified values.
+//! Initializes a `clargs` object from command-line arguments.
 /*!
- * On allocation failure, `file` will be closed and set to `NULL`.
- *
- * @param info Pointer to the empty memory region to init. Failure on `NULL`.
- * @param filename The file to characterize.
+ * @param args Pointer to the empty memory region to init. Failure on `NULL`.
+ * @param argc Number of command-line arguments (from main).
+ * @param argv Command-line argument string list (from main).
  *
  * @return Status code:
  *   - 0 on success
  *   - 1 on `NULL` input
- *   - 2 on file opening failure
- *   - 3 on empty file
- *   - 4 on invalid first row in file
+ *   - 2 on reallocation failure for field array
+ *   - 3 on invalid option or value
+ *   - 4 on missing or multiple filename
  */
-int init_file_info(file_info *info, const char *filename);
+int init_clargs(clargs *args, int argc, char *argv[]);
 
 //! Frees dynamic memory associated to a `file_info` object.
 /*!
  * Can be called (no-op) if initialization fails.
  *
- * Closes the file pointer and sets it to `NULL`.
+ * Undefined behavior if called on non-initialized `clargs`.
  *
- * Undefined behavior if called on non-initialized `file_info`.
- *
- * @param tab The `file_info` to cleanup.
+ * @param args The `clargs` to cleanup.
  */
-void deinit_file_info(file_info *info);
+void deinit_clargs(clargs *args);
 
 #endif

@@ -20,8 +20,8 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_FILE_INFO_H
-#define DASC_FILE_INFO_H
+#ifndef DASC_COMMON_H
+#define DASC_COMMON_H
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -30,45 +30,35 @@
 // Placing '\n' here works like newline trimming.
 #define DASC_SEPARATORS " \n"
 
-//! Struct containing information about datafile.
-typedef struct file_info
-{
-  //! File stream to read from.
-  FILE *file;
-  //! Number of columns.
-  size_t cols;
-  //! Number of rows, set to `0` on construction.
-  size_t rows;
-  //! Number of valid data rows, set to `0` on construction.
-  size_t data_rows;
-} file_info;
-
-//! Initializes a `file_info` with the specified values.
+//! Checks if a string is commented.
 /*!
- * On allocation failure, `file` will be closed and set to `NULL`.
+ * @param row The string to check.
  *
- * @param info Pointer to the empty memory region to init. Failure on `NULL`.
- * @param filename The file to characterize.
+ * @return Whether or not the string is commented.
+ */
+static inline bool is_comment(const char *row) { return row[0] == '#'; }
+
+//! Counts the number of fields separated by DASC_SEPARATOR.
+/*!
+ * @param row The string to count the fields of.
+ *
+ * @return The number of fields.
+ */
+size_t count_fields(char *row);
+
+//! Parses a comma-separated list of size_t in an array.
+/*!
+ * Missing values will be silently skipped ("1,,3" -> {1,3}).
+ *
+ * @param buffer The string to parse.
+ * @param array Inout parameter, the array to fill.
+ * @param size Inout parameter, the size of the parsed array.
  *
  * @return Status code:
  *   - 0 on success
- *   - 1 on `NULL` input
- *   - 2 on file opening failure
- *   - 3 on empty file
- *   - 4 on invalid first row in file
+ *   - 1 on reallocation failure
+ *   - 2 for invalid value
  */
-int init_file_info(file_info *info, const char *filename);
-
-//! Frees dynamic memory associated to a `file_info` object.
-/*!
- * Can be called (no-op) if initialization fails.
- *
- * Closes the file pointer and sets it to `NULL`.
- *
- * Undefined behavior if called on non-initialized `file_info`.
- *
- * @param tab The `file_info` to cleanup.
- */
-void deinit_file_info(file_info *info);
+int parse_sizet_array(char *buffer, size_t **array, size_t *size);
 
 #endif

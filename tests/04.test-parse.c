@@ -1,12 +1,10 @@
 #include "das-c/table.h"
 #include "test.h"
 
-const size_t fields = 3;
-
 mask init_common_mask()
 {
   mask msk;
-  init_mask(&msk, fields);
+  init_mask(&msk, 3);
   // Parsing all fields
   set_all(&msk);
 

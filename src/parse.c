@@ -20,6 +20,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+#include "das-c/common.h"
 #include "das-c/file_info.h"
 #include "das-c/mask.h"
 #include "das-c/table.h"

@@ -20,7 +20,6 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/file_info.h"
 #include "das-c/common.h"
 #include <stdlib.h>
 #include <string.h>
@@ -39,52 +38,30 @@ size_t count_fields(char *row)
   return fields;
 }
 
-int init_file_info(file_info *info, const char *filename)
+int parse_sizet_array(char *buffer, size_t **array, size_t *size)
 {
-  // Null pointer
-  if (!info)
-    return 1;
+  size_t *tmp = NULL;
+  *size = 0;
 
-  // Opening file
-  info->file = fopen(filename, "r");
-  // Failed opening
-  if (!info->file)
+  char *tok = strtok(buffer, ",");
+  while (tok)
   {
-    deinit_file_info(info);
-    return 2;
+    char *end;
+    const size_t val = strtoul(tok, &end, 10);
+    if (end == tok)
+      return 2;
+
+    size_t *tmp2 = realloc(tmp, (*size + 1) * sizeof(size_t));
+    if (!tmp2)
+      return 1;
+
+    tmp = tmp2;
+    tmp[*size] = val;
+
+    ++(*size);
+    tok = strtok(NULL, ",");
   }
 
-  // Extracting first non-commented line and getting number of fields
-  char line[DASC_MAX_LINE_LENGTH];
-  do
-  {
-    // Empty file
-    if (!fgets(line, DASC_MAX_LINE_LENGTH, info->file))
-    {
-      deinit_file_info(info);
-      return 3;
-    }
-  } while (is_comment(line));
-
-  rewind(info->file);
-
-  info->cols = count_fields(line);
-  // No valid fields in 1st row
-  if (info->cols == 0)
-  {
-    deinit_file_info(info);
-    return 4;
-  }
-
-  info->rows = 0;
-  info->data_rows = 0;
-
+  *array = tmp;
   return 0;
-}
-
-void deinit_file_info(file_info *info)
-{
-  if (info->file)
-    fclose(info->file);
-  info->file = NULL;
 }
