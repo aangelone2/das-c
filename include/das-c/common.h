@@ -24,7 +24,7 @@
 #define DASC_COMMON_H
 
 #include <stdbool.h>
-#include <stdio.h>
+#include <stddef.h>
 
 // Placing '\n' here works like newline trimming.
 #define DASC_SEPARATORS " \n"

@@ -23,7 +23,7 @@
 #ifndef DASC_DRIVERS_H
 #define DASC_DRIVERS_H
 
-#include <stdlib.h>
+#include <stddef.h>
 
 //! Struct holding the result of `avs` on a single column.
 typedef struct avs_results

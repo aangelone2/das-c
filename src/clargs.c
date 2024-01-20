@@ -24,6 +24,7 @@
 #include "das-c/common.h"
 #include <getopt.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int init_clargs(clargs *args, int argc, char *argv[])

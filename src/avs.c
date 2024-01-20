@@ -26,6 +26,7 @@
 #include "das-c/mask.h"
 #include "das-c/statistics.h"
 #include "das-c/table.h"
+#include <stdlib.h>
 
 int avs(avs_results *res, int argc, char *argv[])
 {

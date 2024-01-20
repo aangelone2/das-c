@@ -23,7 +23,7 @@
 #ifndef DASC_VECTOR_H
 #define DASC_VECTOR_H
 
-#include <stdlib.h>
+#include <stddef.h>
 
 //! Resizable 1D float array.
 typedef struct vector

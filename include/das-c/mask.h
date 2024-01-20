@@ -24,7 +24,7 @@
 #define DASC_MASK_H
 
 #include <stdbool.h>
-#include <stdlib.h>
+#include <stddef.h>
 
 //! Struct for mask to select which fields to parse.
 typedef struct mask

@@ -22,6 +22,7 @@
 
 #include "das-c/vector.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int init_vector(vector *vec)
 {

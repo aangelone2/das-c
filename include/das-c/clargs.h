@@ -24,7 +24,7 @@
 #define DASC_CLARGS_H
 
 #include <stdbool.h>
-#include <stdlib.h>
+#include <stddef.h>
 
 //! Struct storing command line arguments.
 typedef struct clargs

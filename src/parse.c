@@ -25,6 +25,7 @@
 #include "das-c/mask.h"
 #include "das-c/table.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // Adds the contents of the fields of `line`, filtered by `msk`,

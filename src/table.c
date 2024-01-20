@@ -21,6 +21,7 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/table.h"
+#include <stdlib.h>
 
 int init_table_empty(table *tab, const size_t size)
 {

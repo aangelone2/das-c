@@ -21,6 +21,7 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/mask.h"
+#include <stdlib.h>
 
 int init_mask(mask *msk, const size_t size)
 {

@@ -24,7 +24,6 @@
 #define DASC_STATISTICS_H
 
 #include "das-c/vector.h"
-#include <stdlib.h>
 
 //! Computes the average of the passed `vector`.
 /*!
