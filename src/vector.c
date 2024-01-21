@@ -37,7 +37,7 @@ int init_vector(vector *vec)
 int push_back(vector *vec, const double val)
 {
   double *data = realloc(vec->data, (vec->size + 1) * sizeof(double));
-  if (data == NULL)
+  if (!data)
     return 1;
 
   vec->data = data;
@@ -51,7 +51,7 @@ int push_back(vector *vec, const double val)
 int resize(vector *vec, const size_t size)
 {
   double *data = realloc(vec->data, size * sizeof(double));
-  if (data == NULL)
+  if (!data)
     return 1;
 
   vec->data = data;

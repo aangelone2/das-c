@@ -40,7 +40,7 @@ size_t count_fields(char *row)
 
 int parse_sizet_array(char *buffer, size_t **array, size_t *size)
 {
-  size_t *tmp = NULL;
+  size_t *arr = NULL;
   *size = 0;
 
   char *tok = strtok(buffer, ",");
@@ -51,17 +51,17 @@ int parse_sizet_array(char *buffer, size_t **array, size_t *size)
     if (end == tok)
       return 2;
 
-    size_t *tmp2 = realloc(tmp, (*size + 1) * sizeof(size_t));
-    if (!tmp2)
+    size_t *arr2 = realloc(arr, (*size + 1) * sizeof(size_t));
+    if (!arr2)
       return 1;
 
-    tmp = tmp2;
-    tmp[*size] = val;
+    arr = arr2;
+    arr[*size] = val;
 
     ++(*size);
     tok = strtok(NULL, ",");
   }
 
-  *array = tmp;
+  *array = arr;
   return 0;
 }

@@ -42,6 +42,7 @@ int parse_line(table *tab, char *line, const mask *msk)
   char *tok = strtok(line, DASC_SEPARATORS);
   while (tok)
   {
+    // Too many fields
     if (field >= msk->size)
       return 3;
 
@@ -49,6 +50,8 @@ int parse_line(table *tab, char *line, const mask *msk)
     {
       char *end;
       const double buffer = strtod(tok, &end);
+
+      // Invalid field found
       if (end == tok)
         return 4;
 
@@ -61,7 +64,7 @@ int parse_line(table *tab, char *line, const mask *msk)
     ++field;
   }
 
-  // Should have this value at the end of final loop
+  // Too few fields
   if (field != msk->size)
     return 5;
 
@@ -70,11 +73,13 @@ int parse_line(table *tab, char *line, const mask *msk)
 
 int init_table_parse(table *tab, file_info *info, const mask *msk)
 {
+  // NULL input
   if (!tab)
     return 1;
 
   char line[DASC_MAX_LINE_LENGTH];
 
+  // Allocation failure
   if (init_table_empty(tab, msk->n_active))
     return 2;
 
@@ -89,6 +94,7 @@ int init_table_parse(table *tab, file_info *info, const mask *msk)
     if (is_comment(line))
       continue;
 
+    // Failure in parse_line()
     const int res = parse_line(tab, line, msk);
     if (res)
       return res;

@@ -31,13 +31,15 @@ typedef struct mask
 {
   //! Number of fields in the mask.
   size_t size;
+
   //! Number of `true` fields in the mask.
   size_t n_active;
+
   //! Mask array, true (false) to parse (ignore) field of each index.
   bool *bits;
 } mask;
 
-//! Initializes mask with specified values.
+//! Initializes mask of specified size.
 /*!
  * All fields will be set as `false` by default.
  *

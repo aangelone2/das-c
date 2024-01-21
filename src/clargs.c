@@ -29,6 +29,7 @@
 
 int init_clargs(clargs *args, int argc, char *argv[])
 {
+  // NULL input
   if (!args)
     return 1;
 
@@ -63,6 +64,7 @@ int init_clargs(clargs *args, int argc, char *argv[])
       char *end;
       args->skip = strtoul(optarg, &end, 10);
 
+      // Invalid option or value
       if (end == optarg)
       {
         fprintf(
@@ -76,6 +78,7 @@ int init_clargs(clargs *args, int argc, char *argv[])
       args->verbose = true;
     else
     {
+      // Invalid option or value
       if (optopt == 'f' || optopt == 's')
       {
         fprintf(
@@ -84,6 +87,7 @@ int init_clargs(clargs *args, int argc, char *argv[])
         deinit_clargs(args);
         return 3;
       }
+      // Invalid option or value
       else
       {
         fprintf(stderr, "--- error :: unknown option '%c'\n", optopt);
@@ -93,7 +97,7 @@ int init_clargs(clargs *args, int argc, char *argv[])
     }
   }
 
-  // One and only one filename required
+  // Missing or multiple filename
   if (optind != argc - 1)
     return 4;
 

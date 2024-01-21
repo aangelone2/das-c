@@ -27,13 +27,12 @@
 
 int init_file_info(file_info *info, const char *filename)
 {
-  // Null pointer
+  // NULL input
   if (!info)
     return 1;
 
-  // Opening file
   info->file = fopen(filename, "r");
-  // Failed opening
+  // Error in file opening
   if (!info->file)
   {
     deinit_file_info(info);

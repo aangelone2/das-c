@@ -31,11 +31,13 @@ typedef struct avs_results
   //! Number of analyzed columns.
   size_t size;
 
-  //! The index of the analyzed field in the file.
+  //! Column indices (in the file).
   size_t *fields;
-  //! The average of the column.
+
+  //! Column averages.
   double *ave;
-  //! The SEM of the column.
+
+  //! Column SEMs.
   double *sem;
 } avs_results;
 
@@ -48,7 +50,7 @@ typedef struct avs_results
  * @return Status code:
  *   - 0 on success
  *   - 1 on `NULL` input
- *   - 2 for other failures
+ *   - 2 on internal allocation failures
  */
 int avs(avs_results *res, int argc, char *argv[]);
 

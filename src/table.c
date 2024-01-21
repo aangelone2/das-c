@@ -25,17 +25,26 @@
 
 int init_table_empty(table *tab, const size_t size)
 {
+  // NULL input
   if (!tab)
     return 1;
 
   tab->size = size;
   tab->columns = malloc(size * sizeof(vector));
+
+  // Allocation failure
   if (!tab->columns)
     return 2;
 
   for (size_t ic = 0; ic < size; ++ic)
+  {
+    // Allocation failure
     if (init_vector(&tab->columns[ic]))
+    {
+      free(tab->columns);
       return 2;
+    }
+  }
 
   return 0;
 }

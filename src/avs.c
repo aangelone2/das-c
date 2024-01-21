@@ -30,6 +30,7 @@
 
 int avs(avs_results *res, int argc, char *argv[])
 {
+  // NULL input
   if (!res)
     return 1;
 
@@ -52,11 +53,25 @@ int avs(avs_results *res, int argc, char *argv[])
     return 2;
 
   res->size = tab.size;
+
   res->fields = malloc(res->size * sizeof(size_t));
-  res->ave = malloc(res->size * sizeof(double));
-  res->sem = malloc(res->size * sizeof(double));
-  if (!res->fields || !res->ave || !res->sem)
+  if (!res->fields)
     return 2;
+
+  res->ave = malloc(res->size * sizeof(double));
+  if (!res->ave)
+  {
+    free(res->fields);
+    return 2;
+  }
+
+  res->sem = malloc(res->size * sizeof(double));
+  if (!res->sem)
+  {
+    free(res->fields);
+    free(res->ave);
+    return 2;
+  }
 
   // Computing average and SEM of every column
   for (size_t ic = 0; ic < tab.size; ++ic)

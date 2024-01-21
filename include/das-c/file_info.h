@@ -33,10 +33,13 @@ typedef struct file_info
 {
   //! File stream to read from.
   FILE *file;
+
   //! Number of columns.
   size_t cols;
+
   //! Number of rows, set to `0` on construction.
   size_t rows;
+
   //! Number of valid data rows, set to `0` on construction.
   size_t data_rows;
 } file_info;

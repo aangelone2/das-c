@@ -55,8 +55,8 @@ void set_field(mask *msk, const size_t field)
 
 void set_all(mask *msk)
 {
-  for (size_t i = 0; i < msk->size; ++i)
-    msk->bits[i] = true;
+  for (size_t f = 0; f < msk->size; ++f)
+    msk->bits[f] = true;
 
   msk->n_active = msk->size;
 }
