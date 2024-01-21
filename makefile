@@ -49,6 +49,7 @@ test: $(tobjects)
 	cd $(bdir); ./03.test-statistics
 	cd $(bdir); ./04.test-parse
 	cd $(bdir); ./05.test-clargs
+	cd $(bdir); ./06.test-avs
 
 	@echo 'All tests completed successfully'
 

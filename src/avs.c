@@ -20,52 +20,55 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/clargs.h"
-#include "das-c/drivers.h"
+#include "das-c/avs.h"
 #include "das-c/file_info.h"
 #include "das-c/mask.h"
 #include "das-c/statistics.h"
 #include "das-c/table.h"
 #include <stdlib.h>
 
-int avs(avs_results *res, int argc, char *argv[])
+int avs(avs_results *res, const clargs *args)
 {
   // NULL input
   if (!res)
     return 1;
 
-  clargs args;
-  if (init_clargs(&args, argc, argv))
-    return 2;
-
   file_info info;
-  if (init_file_info(&info, args.filename))
+  if (init_file_info(&info, args->filename))
     return 2;
 
   mask msk;
   if (init_mask(&msk, info.cols))
     return 2;
-  for (size_t f_idx = 0; f_idx < args.n_fields; ++f_idx)
-    set_field(&msk, args.fields[f_idx]);
+
+  // Selected fields
+  if (args->fields)
+  {
+    for (size_t f_idx = 0; f_idx < args->n_fields; ++f_idx)
+      set_field(&msk, args->fields[f_idx]);
+  }
+  // All fields
+  else
+    set_all(&msk);
 
   table tab;
   if (init_table_parse(&tab, &info, &msk))
     return 2;
 
-  res->size = tab.size;
+  res->cols = tab.size;
 
-  res->fields = malloc(res->size * sizeof(size_t));
+  res->fields = malloc(res->cols * sizeof(size_t));
   if (!res->fields)
     return 2;
 
-  res->ave = malloc(res->size * sizeof(double));
+  res->ave = malloc(res->cols * sizeof(double));
   if (!res->ave)
   {
     free(res->fields);
     return 2;
   }
 
-  res->sem = malloc(res->size * sizeof(double));
+  res->sem = malloc(res->cols * sizeof(double));
   if (!res->sem)
   {
     free(res->fields);
@@ -73,14 +76,18 @@ int avs(avs_results *res, int argc, char *argv[])
     return 2;
   }
 
+  // All columns will be the same size
+  res->rows = tab.columns[0].size;
+
+  const double perc = (double)(args->skip) / 100.0;
+  const size_t skip = (size_t)(perc * (double)(res->rows));
+  res->kept = res->rows - skip;
+
   // Computing average and SEM of every column
   for (size_t ic = 0; ic < tab.size; ++ic)
   {
-    const size_t rows = tab.columns[ic].size;
-    const double perc = (double)(args.skip) / 100.0;
-    const size_t skip = (size_t)(perc * (double)(rows));
-
-    res->fields[ic] = args.fields[ic];
+    // Selected VS all fields
+    res->fields[ic] = (args->fields ? args->fields[ic] : ic);
     res->ave[ic] = average(&tab.columns[ic], skip);
     res->sem[ic] = sem(&tab.columns[ic], skip, res->ave[ic]);
   }
@@ -88,7 +95,13 @@ int avs(avs_results *res, int argc, char *argv[])
   deinit_table(&tab);
   deinit_mask(&msk);
   deinit_file_info(&info);
-  deinit_clargs(&args);
 
   return 0;
+}
+
+void deinit_avs_results(avs_results *res)
+{
+  free(res->fields);
+  free(res->ave);
+  free(res->sem);
 }

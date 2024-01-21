@@ -23,13 +23,20 @@
 #ifndef DASC_DRIVERS_H
 #define DASC_DRIVERS_H
 
+#include "das-c/clargs.h"
 #include <stddef.h>
 
 //! Struct holding the result of `avs` on a single column.
 typedef struct avs_results
 {
+  //! Total number of rows.
+  size_t rows;
+
+  //! Number of rows kept for analysis.
+  size_t kept;
+
   //! Number of analyzed columns.
-  size_t size;
+  size_t cols;
 
   //! Column indices (in the file).
   size_t *fields;
@@ -43,15 +50,24 @@ typedef struct avs_results
 
 //! Performs simple averaging on a file based on the passed CL arguments.
 /*!
+ * Fields will be passed and parsed as 0-based.
+ *
  * @param res The `avs_results` object to initialize.
- * @param argc The number of CL arguments passed to `main()`.
- * @param argv The CL arguments passed to `main()`.
+ * @param args The CL arguments specifying the protocol.
  *
  * @return Status code:
  *   - 0 on success
  *   - 1 on `NULL` input
  *   - 2 on internal allocation failures
  */
-int avs(avs_results *res, int argc, char *argv[]);
+int avs(avs_results *res, const clargs *args);
+
+//! Frees dynamic memory associated to an `avs_results` object.
+/*!
+ * Undefined behavior if the `avs_results` has not been init-ed via `avs()`.
+ *
+ * @param res The `avs_results` to cleanup.
+ */
+void deinit_avs_results(avs_results *res);
 
 #endif

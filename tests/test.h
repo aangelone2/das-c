@@ -6,7 +6,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define DASC_TEST_THRESHOLD 1.0e-14
+#define DASC_TEST_ABS_THRESHOLD 1.0e-14
+#define DASC_TEST_REL_THRESHOLD 2.0e-13
 
 const char *sep = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
 
@@ -19,8 +20,15 @@ static inline void close_test()
 
 static inline void assert_double_eq(const double d1, const double d2)
 {
-  //  printf("%lf\n", fabs(d1 - d2));
-  assert(fabs(d1 - d2) <= DASC_TEST_THRESHOLD);
+  // printf("%le\n", fabs(d1 - d2));
+  assert(fabs(d1 - d2) <= DASC_TEST_ABS_THRESHOLD);
+
+  // Any nonzero value is fine
+  if (fabs(d2) > 0.0)
+  {
+    // printf("%le\n", fabs((d1 - d2)/d2));
+    assert(fabs((d1 - d2) / d2) <= DASC_TEST_REL_THRESHOLD);
+  }
 }
 
 const double example_data[64] = {
