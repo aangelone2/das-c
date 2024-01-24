@@ -40,33 +40,27 @@ typedef struct vector
  * The internal data vector will be set to `NULL` (ready for application of
  * `push_back()` or `resize()`).
  *
- * @param vec Pointer to the memory region to init. Failure on `NULL`.
- *
- * @return 0 on success, 1 on failure.
+ * @param vec Pointer to the memory region to init.
  */
-int init_vector(vector *vec);
+void init_vector(vector *vec);
 
 //! Adds new component at the back of `vector`.
 /*!
- * Leaves arguments unchanged on reallocation failure.
+ * Aborts on reallocation failure.
  *
  * @param vec The `vector` to expand.
  * @param val The value to add.
- *
- * @return 0 on success, 1 on failure.
  */
-int push_back(vector *vec, const double val);
+void push_back(vector *vec, const double val);
 
 //! Resize internal data array in `vector`.
 /*!
- * Leaves arguments unchanged on reallocation failure.
+ * Aborts on reallocation failure.
  *
  * @param vec The `vector` to resize.
  * @param size The new size.
- *
- * @return 0 on success, 1 on failure.
  */
-int resize(vector *vec, const size_t size);
+void resize(vector *vec, const size_t size);
 
 //! Frees dynamic memory associated to a `vector` object.
 /*!

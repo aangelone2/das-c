@@ -41,15 +41,12 @@ typedef struct table
 /*!
  * Internal `vector`s are left at size 0.
  *
- * @param tab Pointer to the memory region to init. Failure on `NULL`.
- * @param size Desired number of columns.
+ * Aborts on allocation failure.
  *
- * @return Status code:
- *   - 0 on success
- *   - 1 on `NULL` input
- *   - 2 on member allocation failure
+ * @param tab Pointer to the memory region to init.
+ * @param size Desired number of columns.
  */
-int init_table_empty(table *tab, const size_t size);
+void init_table_empty(table *tab, const size_t size);
 
 //! Initializes a `table` with the content of a passed file.
 /*!

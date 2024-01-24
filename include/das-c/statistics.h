@@ -27,10 +27,12 @@
 
 //! Computes the average of the passed `vector`.
 /*!
+ * Aborts if `skip` is too large.
+ *
  * @param vec Data `vector`.
  * @param skip Number of rows to skip from the beginning.
  *
- * @return The computed average, 0.0 if `skip >= vec.size`.
+ * @return The computed average.
  */
 double average(const vector *vec, const size_t skip);
 
@@ -39,11 +41,13 @@ double average(const vector *vec, const size_t skip);
  * Pre-calculation of the average allows to use a two-pass algorithm, which
  * ensures high accuracy.
  *
+ * Aborts if `skip` is too large.
+ *
  * @param vec Data `vector`.
  * @param skip Number of rows to skip from the beginning.
  * @param average The pre-computed average of the array.
  *
- * @return The computed SEM, 0.0 if `skip >= vec.size`.
+ * @return The computed SEM.
  */
 double sem(const vector *vec, const size_t skip, const double average);
 
@@ -53,16 +57,14 @@ double sem(const vector *vec, const size_t skip, const double average);
  * with previous content. The `vector` is then resized to only contain bin
  * averages.
  *
- * Data and size are left unchanged in case of invalid arguments.
+ * Aborts if `skip` or `nbins` is too large.
+ *
+ * No-op if `nbins` is equal to the current size.
  *
  * @param vec Data `vector`.
  * @param skip Number of rows to skip from the beginning.
  * @param nbins The number of desired bins.
- *
- * @return Status code:
- *   - 0 on success
- *   - 1 on failure (invalid arguments, reallocation failure).
  */
-int rebin(vector *vec, const size_t skip, const size_t nbins);
+void rebin(vector *vec, const size_t skip, const size_t nbins);
 
 #endif

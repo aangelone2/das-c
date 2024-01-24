@@ -21,12 +21,12 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/statistics.h"
+#include <assert.h>
 #include <math.h>
 
 double average(const vector *vec, const size_t skip)
 {
-  if (skip >= vec->size)
-    return 0.0;
+  assert(skip < vec->size && "skip too large in average()");
 
   double buffer = 0.0;
   for (size_t i = skip; i < vec->size; ++i)
@@ -38,8 +38,7 @@ double average(const vector *vec, const size_t skip)
 
 double sem(const vector *vec, const size_t skip, const double average)
 {
-  if (skip >= vec->size)
-    return 0.0;
+  assert(skip < vec->size && "skip too large in sem()");
 
   double buffer = 0.0;
   for (size_t i = skip; i < vec->size; ++i)
@@ -52,14 +51,15 @@ double sem(const vector *vec, const size_t skip, const double average)
   return sqrt(buffer / (size * (size - 1.0)));
 }
 
-int rebin(vector *vec, const size_t skip, const size_t nbins)
+void rebin(vector *vec, const size_t skip, const size_t nbins)
 {
-  if (skip > vec->size)
-    return 1;
+  assert(skip < vec->size && "skip too large in rebin()");
 
   const size_t keep = vec->size - skip;
-  if (nbins > keep)
-    return 1;
+  assert(nbins <= keep && "nbins too large in rebin()");
+
+  if (nbins == keep)
+    return;
 
   const size_t bsize = keep / nbins;
   const size_t skip2 = skip + (keep % nbins);
@@ -80,8 +80,5 @@ int rebin(vector *vec, const size_t skip, const size_t nbins)
     vec->data[ib] = buffer / (double)(bsize);
   }
 
-  if (resize(vec, nbins))
-    return 1;
-
-  return 0;
+  resize(vec, nbins);
 }
