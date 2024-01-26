@@ -21,14 +21,14 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/table.h"
-#include <assert.h>
+#include "das-c/common.h"
 #include <stdlib.h>
 
 void init_table_empty(table *tab, const size_t size)
 {
   tab->size = size;
   tab->columns = malloc(size * sizeof(vector));
-  assert(tab->columns && "failed allocation in init_table_empty()");
+  check(tab->columns, "failed allocation in init_table_empty()");
 
   for (size_t ic = 0; ic < size; ++ic)
     init_vector(&tab->columns[ic]);

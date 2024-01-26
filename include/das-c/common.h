@@ -25,7 +25,9 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 
+#define DASC_MAX_LINE_LENGTH 65536
 // Placing '\n' here works like newline trimming.
 #define DASC_SEPARATORS " \n"
 #define DASC_COMMENT '#'
@@ -41,6 +43,20 @@ static inline bool is_comment(const char *row)
   return row[0] == DASC_COMMENT;
 }
 
+//! `assert`-like macro, prints a message and aborts if the condition fails.
+/*!
+ * @param condition The condition to check.
+ * @param msg String to print before terminating.
+ */
+#define check(condition, msg)                                                 \
+  {                                                                           \
+    if (!(condition))                                                         \
+    {                                                                         \
+      fprintf(stderr, "error :: %s\n", msg);                                  \
+      exit(1);                                                                \
+    }                                                                         \
+  }
+
 //! Counts the number of fields separated by DASC_SEPARATOR.
 /*!
  * @param row The string to count the fields of.
@@ -48,6 +64,14 @@ static inline bool is_comment(const char *row)
  * @return The number of fields.
  */
 size_t count_fields(char *row);
+
+//! Counts the fields in the first non-comment line in the passed file.
+/*!
+ * @param file Handle to the file to analyze.
+ *
+ * @return The number of fields, 0 on error.
+ */
+size_t count_fields_file(FILE *file);
 
 //! Parses a comma-separated list of size_t in an array.
 /*!
@@ -59,8 +83,7 @@ size_t count_fields(char *row);
  *
  * @return Status code:
  *   - 0 on success
- *   - 1 on reallocation failure
- *   - 2 for invalid value
+ *   - 1 for invalid value
  */
 int parse_sizet_array(char *buffer, size_t **array, size_t *size);
 

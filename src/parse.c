@@ -21,10 +21,8 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/common.h"
-#include "das-c/file_info.h"
 #include "das-c/mask.h"
 #include "das-c/table.h"
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -32,9 +30,9 @@
 // to a new line in the columns of `tab`.
 // Returns:
 // - 0 if successful
-// - 3 if too many fields (compared to `mask`)
-// - 4 if invalid fields found
-// - 5 if too few fields (compared to `mask`)
+// - 1 if too many fields (compared to `msk`)
+// - 2 if invalid fields found
+// - 3 if too few fields (compared to `msk`)
 int parse_line(table *tab, char *line, const mask *msk)
 {
   size_t field = 0, active_field = 0;
@@ -44,7 +42,7 @@ int parse_line(table *tab, char *line, const mask *msk)
   {
     // Too many fields
     if (field >= msk->size)
-      return 3;
+      return 1;
 
     if (msk->bits[field])
     {
@@ -53,7 +51,7 @@ int parse_line(table *tab, char *line, const mask *msk)
 
       // Invalid field found
       if (end == tok)
-        return 4;
+        return 2;
 
       push_back(&tab->columns[active_field], buffer);
 
@@ -66,30 +64,21 @@ int parse_line(table *tab, char *line, const mask *msk)
 
   // Too few fields
   if (field != msk->size)
-    return 5;
+    return 3;
 
   return 0;
 }
 
-int init_table_parse(table *tab, file_info *info, const mask *msk)
+int parse(table *tab, FILE *file, const mask *msk)
 {
-  // NULL input
-  if (!tab)
-    return 1;
+  check(tab->size == msk->n_active, "invalid table size in parse()");
 
   char line[DASC_MAX_LINE_LENGTH];
-
-  // Allocation failure
-  if (init_table_empty(tab, msk->n_active))
-    return 2;
-
   do
   {
     // Parse line, interrupt if EOF
-    if (!fgets(line, DASC_MAX_LINE_LENGTH, info->file))
+    if (!fgets(line, DASC_MAX_LINE_LENGTH, file))
       break;
-
-    ++info->rows;
 
     if (is_comment(line))
       continue;
@@ -98,8 +87,6 @@ int init_table_parse(table *tab, file_info *info, const mask *msk)
     const int res = parse_line(tab, line, msk);
     if (res)
       return res;
-
-    ++info->data_rows;
   } while (true);
 
   return 0;

@@ -27,7 +27,7 @@
 
 //! Computes the average of the passed `vector`.
 /*!
- * Aborts if `skip` is too large.
+ * Exits if `skip` is too large.
  *
  * @param vec Data `vector`.
  * @param skip Number of rows to skip from the beginning.
@@ -41,7 +41,7 @@ double average(const vector *vec, const size_t skip);
  * Pre-calculation of the average allows to use a two-pass algorithm, which
  * ensures high accuracy.
  *
- * Aborts if `skip` is too large.
+ * Exits if `skip` is too large.
  *
  * @param vec Data `vector`.
  * @param skip Number of rows to skip from the beginning.
@@ -57,7 +57,7 @@ double sem(const vector *vec, const size_t skip, const double average);
  * with previous content. The `vector` is then resized to only contain bin
  * averages.
  *
- * Aborts if `skip` or `nbins` is too large.
+ * Exits if `skip` or `nbins` is too large.
  *
  * No-op if `nbins` is equal to the current size.
  *

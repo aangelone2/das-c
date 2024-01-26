@@ -38,6 +38,24 @@ size_t count_fields(char *row)
   return fields;
 }
 
+size_t count_fields_file(FILE *file)
+{
+  char line[DASC_MAX_LINE_LENGTH];
+  do
+  {
+    if (!fgets(line, DASC_MAX_LINE_LENGTH, file))
+    {
+      rewind(file);
+      return 0;
+    }
+  } while (is_comment(line));
+
+  size_t cols = count_fields(line);
+
+  rewind(file);
+  return cols;
+}
+
 int parse_sizet_array(char *buffer, size_t **array, size_t *size)
 {
   size_t *arr = NULL;
@@ -49,11 +67,10 @@ int parse_sizet_array(char *buffer, size_t **array, size_t *size)
     char *end;
     const size_t val = strtoul(tok, &end, 10);
     if (end == tok)
-      return 2;
+      return 1;
 
     size_t *arr2 = realloc(arr, (*size + 1) * sizeof(size_t));
-    if (!arr2)
-      return 1;
+    check(arr2, "reallocation failure in parse_sizet_array()");
 
     arr = arr2;
     arr[*size] = val;

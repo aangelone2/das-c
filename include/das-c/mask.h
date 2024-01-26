@@ -43,7 +43,7 @@ typedef struct mask
 /*!
  * All fields will be set as `false` by default.
  *
- * Aborts on allocation failure.
+ * Exits on allocation failure.
  *
  * @param msk Pointer to the empty memory region to init.
  * @param size The overall size of the mask to build.
@@ -54,7 +54,7 @@ void init_mask(mask *msk, const size_t size);
 /*!
  * `n_active` is increased, unless the field is already set.
  *
- * Aborts if field outside of size mask.
+ * Exits if field outside of size mask.
  *
  * @param msk Pointer to the mask to modify.
  * @param field The index of the field to set as "active".

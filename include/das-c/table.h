@@ -23,9 +23,9 @@
 #ifndef DASC_TABLE_H
 #define DASC_TABLE_H
 
-#include "das-c/file_info.h"
 #include "das-c/mask.h"
 #include "das-c/vector.h"
+#include <stdio.h>
 
 //! Struct for a set of data vectors.
 typedef struct table
@@ -41,30 +41,28 @@ typedef struct table
 /*!
  * Internal `vector`s are left at size 0.
  *
- * Aborts on allocation failure.
+ * Exits on allocation failure.
  *
  * @param tab Pointer to the memory region to init.
  * @param size Desired number of columns.
  */
 void init_table_empty(table *tab, const size_t size);
 
-//! Initializes a `table` with the content of a passed file.
+//! Fills an initialized empty `table` with the content of a file.
 /*!
- * `info` will be updated with the number of total and data rows.
+ * Exits if table size is incompatible with passed mask.
  *
- * @param tab Pointer to the memory region to init. Failure on `NULL`.
- * @param info `file_info` object containing information about the file.
+ * @param tab Pointer to the `table` to fill.
+ * @param file File handle pointing to the file to parse.
  * @param msk `mask` object, filtering fields to access.
  *
  * @return Status code:
  *   - 0 on success
- *   - 1 on `NULL` input
- *   - 2 on allocation failure
- *   - 3 on line with too many fields
- *   - 4 on line with invalid field
- *   - 5 on line with too few fields
+ * - 1 if too many fields found in line (compared to `msk`)
+ * - 2 if invalid fields found in line
+ * - 3 if too few fields found in line (compared to `msk`)
  */
-int init_table_parse(table *tab, file_info *info, const mask *msk);
+int parse(table *tab, FILE *file, const mask *msk);
 
 //! Frees dynamic memory associated to a `table` object.
 /*!

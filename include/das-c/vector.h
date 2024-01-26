@@ -46,7 +46,7 @@ void init_vector(vector *vec);
 
 //! Adds new component at the back of `vector`.
 /*!
- * Aborts on reallocation failure.
+ * Exits on reallocation failure.
  *
  * @param vec The `vector` to expand.
  * @param val The value to add.
@@ -55,7 +55,7 @@ void push_back(vector *vec, const double val);
 
 //! Resize internal data array in `vector`.
 /*!
- * Aborts on reallocation failure.
+ * Exits on reallocation failure.
  *
  * @param vec The `vector` to resize.
  * @param size The new size.

@@ -21,12 +21,12 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/statistics.h"
-#include <assert.h>
+#include "das-c/common.h"
 #include <math.h>
 
 double average(const vector *vec, const size_t skip)
 {
-  assert(skip < vec->size && "skip too large in average()");
+  check(skip < vec->size, "skip too large in average()");
 
   double buffer = 0.0;
   for (size_t i = skip; i < vec->size; ++i)
@@ -38,7 +38,7 @@ double average(const vector *vec, const size_t skip)
 
 double sem(const vector *vec, const size_t skip, const double average)
 {
-  assert(skip < vec->size && "skip too large in sem()");
+  check(skip < vec->size, "skip too large in sem()");
 
   double buffer = 0.0;
   for (size_t i = skip; i < vec->size; ++i)
@@ -53,10 +53,10 @@ double sem(const vector *vec, const size_t skip, const double average)
 
 void rebin(vector *vec, const size_t skip, const size_t nbins)
 {
-  assert(skip < vec->size && "skip too large in rebin()");
+  check(skip < vec->size, "skip too large in rebin()");
 
   const size_t keep = vec->size - skip;
-  assert(nbins <= keep && "nbins too large in rebin()");
+  check(nbins <= keep, "nbins too large in rebin()");
 
   if (nbins == keep)
     return;

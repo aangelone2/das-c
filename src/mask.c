@@ -21,13 +21,13 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/mask.h"
-#include <assert.h>
+#include "das-c/common.h"
 #include <stdlib.h>
 
 void init_mask(mask *msk, const size_t size)
 {
   msk->bits = malloc(size * sizeof(bool));
-  assert(msk->bits && "failed allocation in init_mask()");
+  check(msk->bits, "failed allocation in init_mask()");
 
   msk->size = size;
 
@@ -39,7 +39,7 @@ void init_mask(mask *msk, const size_t size)
 
 void set_field(mask *msk, const size_t field)
 {
-  assert(field < msk->size && "out-of-bounds field in set_field()");
+  check(field < msk->size, "out-of-bounds field in set_field()");
 
   if (!msk->bits[field])
     ++msk->n_active;

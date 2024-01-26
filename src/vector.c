@@ -21,7 +21,7 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/vector.h"
-#include <assert.h>
+#include "das-c/common.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -34,7 +34,7 @@ void init_vector(vector *vec)
 void push_back(vector *vec, const double val)
 {
   double *data = realloc(vec->data, (vec->size + 1) * sizeof(double));
-  assert(data && "failed reallocation in push_back()");
+  check(data, "failed reallocation in push_back()");
 
   vec->data = data;
   vec->data[vec->size] = val;
@@ -45,7 +45,7 @@ void push_back(vector *vec, const double val)
 void resize(vector *vec, const size_t size)
 {
   double *data = realloc(vec->data, size * sizeof(double));
-  assert(data && "failed reallocation in resize()");
+  check(data, "failed reallocation in resize()");
 
   vec->data = data;
   vec->size = size;
