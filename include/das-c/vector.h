@@ -35,14 +35,16 @@ typedef struct vector
   double *data;
 } vector;
 
-//! Initializes empty `vector`.
+//! Allocates empty `vector`.
 /*!
  * The internal data vector will be set to `NULL` (ready for application of
  * `push_back()` or `resize()`).
  *
- * @param vec Pointer to the memory region to init.
+ * Exits on allocation failure.
+ *
+ * @return Pointer to the allocated `vector`.
  */
-void init_vector(vector *vec);
+vector *init_vector();
 
 //! Adds new component at the back of `vector`.
 /*!
@@ -62,12 +64,10 @@ void push_back(vector *vec, const double val);
  */
 void resize(vector *vec, const size_t size);
 
-//! Frees dynamic memory associated to a `vector` object.
+//! Frees memory associated to a `vector` object.
 /*!
- * Undefined behavior if the `vector` has not been initialized.
- *
- * @param vec The `vector` to cleanup.
+ * @param vec The `vector` to clear.
  */
-void deinit_vector(vector *vec);
+void clear_vector(vector *vec);
 
 #endif

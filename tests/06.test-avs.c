@@ -13,27 +13,26 @@ void test_simple()
 
   args.fields = NULL;
 
-  avs_results res;
-  avs(&res, &args);
+  avs_results *res = avs(&args);
 
-  assert(res.rows == 3257);
-  assert(res.kept == 2606);
+  assert(res->rows == 3257);
+  assert(res->kept == 2606);
 
-  assert(res.cols == 3);
+  assert(res->cols == 3);
 
-  assert(res.fields[0] == 0);
-  assert(res.fields[1] == 1);
-  assert(res.fields[2] == 2);
+  assert(res->fields[0] == 0);
+  assert(res->fields[1] == 1);
+  assert(res->fields[2] == 2);
 
-  assert_double_eq(res.ave[0], 0.5151493365490240);
-  assert_double_eq(res.ave[1], 0.4957831770435258);
-  assert_double_eq(res.ave[2], 0.4985958686429482);
+  assert_double_eq(res->ave[0], 0.5151493365490240);
+  assert_double_eq(res->ave[1], 0.4957831770435258);
+  assert_double_eq(res->ave[2], 0.4985958686429482);
 
-  assert_double_eq(res.sem[0], 0.005629016022953843);
-  assert_double_eq(res.sem[1], 0.005625131381536439);
-  assert_double_eq(res.sem[2], 0.005691438181690310);
+  assert_double_eq(res->sem[0], 0.005629016022953843);
+  assert_double_eq(res->sem[1], 0.005625131381536439);
+  assert_double_eq(res->sem[2], 0.005691438181690310);
 
-  deinit_avs_results(&res);
+  clear_avs_results(res);
   deinit_clargs(&args);
 }
 
@@ -50,24 +49,23 @@ void test_multiple_fields()
   args.fields[0] = 1;
   args.fields[1] = 2;
 
-  avs_results res;
-  avs(&res, &args);
+  avs_results *res = avs(&args);
 
-  assert(res.rows == 3257);
-  assert(res.kept == 2606);
+  assert(res->rows == 3257);
+  assert(res->kept == 2606);
 
-  assert(res.cols == 2);
+  assert(res->cols == 2);
 
-  assert(res.fields[0] == 1);
-  assert(res.fields[1] == 2);
+  assert(res->fields[0] == 1);
+  assert(res->fields[1] == 2);
 
-  assert_double_eq(res.ave[0], 0.4957831770435258);
-  assert_double_eq(res.ave[1], 0.4985958686429482);
+  assert_double_eq(res->ave[0], 0.4957831770435258);
+  assert_double_eq(res->ave[1], 0.4985958686429482);
 
-  assert_double_eq(res.sem[0], 0.005625131381536439);
-  assert_double_eq(res.sem[1], 0.005691438181690310);
+  assert_double_eq(res->sem[0], 0.005625131381536439);
+  assert_double_eq(res->sem[1], 0.005691438181690310);
 
-  deinit_avs_results(&res);
+  clear_avs_results(res);
   deinit_clargs(&args);
 }
 
@@ -84,24 +82,23 @@ void test_field_skip()
   args.fields[0] = 0;
   args.fields[1] = 2;
 
-  avs_results res;
-  avs(&res, &args);
+  avs_results *res = avs(&args);
 
-  assert(res.rows == 3257);
-  assert(res.kept == 2606);
+  assert(res->rows == 3257);
+  assert(res->kept == 2606);
 
-  assert(res.cols == 2);
+  assert(res->cols == 2);
 
-  assert(res.fields[0] == 0);
-  assert(res.fields[1] == 2);
+  assert(res->fields[0] == 0);
+  assert(res->fields[1] == 2);
 
-  assert_double_eq(res.ave[0], 0.5151493365490240);
-  assert_double_eq(res.ave[1], 0.4985958686429482);
+  assert_double_eq(res->ave[0], 0.5151493365490240);
+  assert_double_eq(res->ave[1], 0.4985958686429482);
 
-  assert_double_eq(res.sem[0], 0.005629016022953843);
-  assert_double_eq(res.sem[1], 0.005691438181690310);
+  assert_double_eq(res->sem[0], 0.005629016022953843);
+  assert_double_eq(res->sem[1], 0.005691438181690310);
 
-  deinit_avs_results(&res);
+  clear_avs_results(res);
   deinit_clargs(&args);
 }
 
@@ -117,21 +114,20 @@ void test_single_field()
   args.fields = malloc(1 * sizeof(size_t));
   args.fields[0] = 1;
 
-  avs_results res;
-  avs(&res, &args);
+  avs_results *res = avs(&args);
 
-  assert(res.rows == 3257);
-  assert(res.kept == 2606);
+  assert(res->rows == 3257);
+  assert(res->kept == 2606);
 
-  assert(res.cols == 1);
+  assert(res->cols == 1);
 
-  assert(res.fields[0] == 1);
+  assert(res->fields[0] == 1);
 
-  assert_double_eq(res.ave[0], 0.4957831770435258);
+  assert_double_eq(res->ave[0], 0.4957831770435258);
 
-  assert_double_eq(res.sem[0], 0.005625131381536439);
+  assert_double_eq(res->sem[0], 0.005625131381536439);
 
-  deinit_avs_results(&res);
+  clear_avs_results(res);
   deinit_clargs(&args);
 }
 

@@ -33,8 +33,8 @@ typedef struct table
   //! Number of contained `vector`s.
   size_t size;
 
-  //! `vector` array.
-  vector *columns;
+  //! `vector *` array.
+  vector **columns;
 } table;
 
 //! Initializes an empty `table`.
@@ -43,10 +43,11 @@ typedef struct table
  *
  * Exits on allocation failure.
  *
- * @param tab Pointer to the memory region to init.
  * @param size Desired number of columns.
+ *
+ * @return Pointer to the allocated `table`.
  */
-void init_table(table *tab, const size_t size);
+table *init_table(const size_t size);
 
 //! Fills an initialized empty `table` with the content of a file.
 /*!
@@ -64,10 +65,10 @@ void init_table(table *tab, const size_t size);
  */
 int parse(table *tab, FILE *file, const mask *msk);
 
-//! Frees dynamic memory associated to a `table` object.
+//! Frees memory associated to a `table` object.
 /*!
- * @param tab The `table` to cleanup.
+ * @param tab The `table` to clear.
  */
-void deinit_table(table *tab);
+void clear_table(table *tab);
 
 #endif

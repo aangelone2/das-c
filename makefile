@@ -35,7 +35,7 @@ tobjects := $(patsubst $(tdir)/%.c, $(bdir)/%, $(tsources))
 CC := gcc
 CFLAGS := -std=c17 -O3 -Wfatal-errors\
 					-Wall -Werror -Wextra -Wshadow -Wparentheses\
-					-Wconversion -Wpedantic -pedantic
+					-Wconversion -Wpedantic -pedantic -Wunused-result
 INC := -I$(idir)
 LIB := -L$(bdir) -ldas-c -lm
 

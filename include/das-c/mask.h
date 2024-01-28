@@ -45,10 +45,11 @@ typedef struct mask
  *
  * Exits on allocation failure.
  *
- * @param msk Pointer to the empty memory region to init.
  * @param size The overall size of the mask to build.
+ *
+ * @return Pointer to the allocated `mask`.
  */
-void init_mask(mask *msk, const size_t size);
+mask *init_mask(const size_t size);
 
 //! Set a field as "active" in a mask.
 /*!
@@ -67,10 +68,10 @@ void set_field(mask *msk, const size_t field);
  */
 void set_all(mask *msk);
 
-//! Frees dynamic memory associated to a `mask` object.
+//! Frees memory associated to a `mask` object.
 /*!
- * @param msk The `mask` to cleanup.
+ * @param msk The `mask` to clear.
  */
-void deinit_mask(mask *msk);
+void clear_mask(mask *msk);
 
 #endif

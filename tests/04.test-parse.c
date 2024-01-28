@@ -1,119 +1,111 @@
 #include "das-c/table.h"
 #include "test.h"
 
-mask init_common_mask()
+mask *common_mask()
 {
-  mask msk;
-  init_mask(&msk, 3);
+  mask *msk = init_mask(3);
   // Parsing all fields
-  set_all(&msk);
+  set_all(msk);
 
   return msk;
 }
 
 void test_too_many_fields()
 {
-  mask msk = init_common_mask();
+  mask *msk = common_mask();
   FILE *file = fopen("../resources/05.too_many_fields.dat", "r");
 
-  table tab;
-  init_table(&tab, msk.n_active);
-  assert(parse(&tab, file, &msk) == 1);
-  deinit_table(&tab);
+  table *tab = init_table(msk->n_active);
+  assert(parse(tab, file, msk) == 1);
+  clear_table(tab);
 
   fclose(file);
-  deinit_mask(&msk);
+  clear_mask(msk);
 }
 
 void test_invalid_field()
 {
-  mask msk = init_common_mask();
+  mask *msk = common_mask();
   FILE *file = fopen("../resources/06.invalid_field.dat", "r");
 
-  table tab;
-  init_table(&tab, msk.n_active);
-  assert(parse(&tab, file, &msk) == 2);
-  deinit_table(&tab);
+  table *tab = init_table(msk->n_active);
+  assert(parse(tab, file, msk) == 2);
+  clear_table(tab);
 
   fclose(file);
-  deinit_mask(&msk);
+  clear_mask(msk);
 }
 
 void test_too_few_fields()
 {
-  mask msk = init_common_mask();
+  mask *msk = common_mask();
   FILE *file = fopen("../resources/07.too_few_fields.dat", "r");
 
-  table tab;
-  init_table(&tab, msk.n_active);
-  assert(parse(&tab, file, &msk) == 3);
-  deinit_table(&tab);
+  table *tab = init_table(msk->n_active);
+  assert(parse(tab, file, msk) == 3);
+  clear_table(tab);
 
   fclose(file);
-  deinit_mask(&msk);
+  clear_mask(msk);
 }
 
 void test_valid_full()
 {
   // Setting 4-4 field mask
-  mask msk;
-  init_mask(&msk, 4);
-  set_all(&msk);
+  mask *msk = init_mask(4);
+  set_all(msk);
 
   FILE *file = fopen("../resources/08.valid.dat", "r");
 
-  table tab;
-  init_table(&tab, msk.n_active);
-  assert(!parse(&tab, file, &msk));
+  table *tab = init_table(msk->n_active);
+  assert(!parse(tab, file, msk));
 
-  assert(tab.size == 4);
-  for (size_t ic = 0; ic < tab.size; ++ic)
+  assert(tab->size == 4);
+  for (size_t ic = 0; ic < tab->size; ++ic)
   {
-    assert(tab.columns[ic].size == 64);
+    assert(tab->columns[ic]->size == 64);
 
     // Checking each component
     for (size_t ir = 0; ir < 64; ++ir)
       assert_double_eq(
-          tab.columns[ic].data[ir], (double)(ic) + example_data[ir]
+          tab->columns[ic]->data[ir], (double)(ic) + example_data[ir]
       );
   }
 
-  deinit_table(&tab);
+  clear_table(tab);
 
   fclose(file);
-  deinit_mask(&msk);
+  clear_mask(msk);
 }
 
 void test_filtering()
 {
   // Setting 2-4 field mask
-  mask msk;
-  init_mask(&msk, 4);
-  set_field(&msk, 1);
-  set_field(&msk, 2);
+  mask *msk = init_mask(4);
+  set_field(msk, 1);
+  set_field(msk, 2);
 
   FILE *file = fopen("../resources/08.valid.dat", "r");
 
-  table tab;
-  init_table(&tab, msk.n_active);
-  assert(!parse(&tab, file, &msk));
+  table *tab = init_table(msk->n_active);
+  assert(!parse(tab, file, msk));
 
-  assert(tab.size == 2);
-  for (size_t ic = 0; ic < tab.size; ++ic)
+  assert(tab->size == 2);
+  for (size_t ic = 0; ic < tab->size; ++ic)
   {
-    assert(tab.columns[ic].size == 64);
+    assert(tab->columns[ic]->size == 64);
 
     // Checking each component
     for (size_t ir = 0; ir < 64; ++ir)
       assert_double_eq(
-          tab.columns[ic].data[ir], (double)(ic) + 1.0 + example_data[ir]
+          tab->columns[ic]->data[ir], (double)(ic) + 1.0 + example_data[ir]
       );
   }
 
-  deinit_table(&tab);
+  clear_table(tab);
 
   fclose(file);
-  deinit_mask(&msk);
+  clear_mask(msk);
 }
 
 int main()

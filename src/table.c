@@ -24,19 +24,29 @@
 #include "das-c/common.h"
 #include <stdlib.h>
 
-void init_table(table *tab, const size_t size)
+table *init_table(const size_t size)
 {
+  table *tab = malloc(sizeof(table));
+  check(tab, "failed allocation in init_table()");
+
   tab->size = size;
-  tab->columns = malloc(size * sizeof(vector));
+  tab->columns = malloc(size * sizeof(vector *));
   check(tab->columns, "failed allocation in init_table()");
 
+  // Default values, to prevent problems in case of partial deallocation
   for (size_t ic = 0; ic < size; ++ic)
-    init_vector(&tab->columns[ic]);
+    tab->columns[ic] = NULL;
+
+  for (size_t ic = 0; ic < size; ++ic)
+    tab->columns[ic] = init_vector();
+
+  return tab;
 }
 
-void deinit_table(table *tab)
+void clear_table(table *tab)
 {
   for (size_t ic = 0; ic < tab->size; ++ic)
-    deinit_vector(&tab->columns[ic]);
+    clear_vector(tab->columns[ic]);
   free(tab->columns);
+  free(tab);
 }

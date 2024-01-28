@@ -54,17 +54,16 @@ typedef struct avs_results
  *
  * Exits on file opening, parsing, and allocation errors.
  *
- * @param res The `avs_results` object to initialize.
  * @param args The CL arguments specifying the protocol.
- */
-void avs(avs_results *res, const clargs *args);
-
-//! Frees dynamic memory associated to an `avs_results` object.
-/*!
- * Undefined behavior if the `avs_results` has not been init-ed via `avs()`.
  *
- * @param res The `avs_results` to cleanup.
+ * @return Pointer to `avs_results` object containing the results.
  */
-void deinit_avs_results(avs_results *res);
+avs_results *avs(const clargs *args);
+
+//! Frees memory associated to an `avs_results` object.
+/*!
+ * @param res The `avs_results` to clear.
+ */
+void clear_avs_results(avs_results *res);
 
 #endif

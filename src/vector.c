@@ -25,10 +25,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void init_vector(vector *vec)
+vector *init_vector()
 {
+  vector *vec = malloc(sizeof(vector));
+  check(vec, "failed allocation in init_vector()");
+
   vec->size = 0;
   vec->data = NULL;
+
+  return vec;
 }
 
 void push_back(vector *vec, const double val)
@@ -51,4 +56,8 @@ void resize(vector *vec, const size_t size)
   vec->size = size;
 }
 
-void deinit_vector(vector *vec) { free(vec->data); }
+void clear_vector(vector *vec)
+{
+  free(vec->data);
+  free(vec);
+}

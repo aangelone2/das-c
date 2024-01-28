@@ -53,7 +53,7 @@ int parse_line(table *tab, char *line, const mask *msk)
       if (end == tok)
         return 2;
 
-      push_back(&tab->columns[active_field], buffer);
+      push_back(tab->columns[active_field], buffer);
 
       ++active_field;
     }
