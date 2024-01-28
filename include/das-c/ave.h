@@ -20,14 +20,14 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_AVS_H
-#define DASC_AVS_H
+#ifndef DASC_AVE_H
+#define DASC_AVE_H
 
 #include "das-c/clargs.h"
 #include <stddef.h>
 
-//! Struct holding the result of `avs`.
-typedef struct avs_results
+//! Struct holding the result of `ave`.
+typedef struct ave_results
 {
   //! Total number of rows.
   size_t rows;
@@ -41,14 +41,17 @@ typedef struct avs_results
   //! Column indices (in the file).
   size_t *fields;
 
-  //! Column averages.
-  double *ave;
+  //! Bin numbers, nbins[i] <-> ave[i][...]
+  size_t *nbins;
 
-  //! Column SEMs.
-  double *sem;
-} avs_results;
+  //! Column averages, 2nd index runs on columns.
+  double **ave;
 
-//! Performs simple averaging on a file based on the passed CL arguments.
+  //! Column SEMs, 2nd index runs on columns.
+  double **sem;
+} ave_results;
+
+//! Performs bin-based averaging of a file based on the passed CL arguments.
 /*!
  * Fields will be passed and parsed as 0-based.
  *
@@ -56,14 +59,14 @@ typedef struct avs_results
  *
  * @param args The CL arguments specifying the protocol.
  *
- * @return Pointer to `avs_results` object containing the results.
+ * @return Pointer to `ave_results` object containing the results.
  */
-avs_results *avs(const clargs *args);
+ave_results *ave(const clargs *args);
 
-//! Frees memory associated to an `avs_results` object.
+//! Frees memory associated to an `ave_results` object.
 /*!
- * @param res The `avs_results` to clear.
+ * @param res The `ave_results` to clear.
  */
-void clear_avs_results(avs_results *res);
+void clear_ave_results(ave_results *res);
 
 #endif

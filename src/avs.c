@@ -56,13 +56,13 @@ avs_results *avs(const clargs *args)
   res->cols = tab->size;
 
   res->fields = malloc(res->cols * sizeof(size_t));
-  check(res->fields, "allocation error in avs()");
+  check(res->fields, "allocation failure in avs()");
 
   res->ave = malloc(res->cols * sizeof(double));
-  check(res->ave, "allocation error in avs()");
+  check(res->ave, "allocation failure in avs()");
 
   res->sem = malloc(res->cols * sizeof(double));
-  check(res->sem, "allocation error in avs()");
+  check(res->sem, "allocation failure in avs()");
 
   // All columns will be the same size
   res->rows = tab->columns[0]->size;
