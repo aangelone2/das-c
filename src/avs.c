@@ -21,25 +21,22 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/avs.h"
-#include "das-c/file_info.h"
+#include "das-c/common.h"
 #include "das-c/mask.h"
 #include "das-c/statistics.h"
 #include "das-c/table.h"
 #include <stdlib.h>
 
-int avs(avs_results *res, const clargs *args)
+void avs(avs_results *res, const clargs *args)
 {
-  // NULL input
-  if (!res)
-    return 1;
+  FILE *file = fopen(args->filename, "r");
+  check(file, "unreachable file in avs()");
 
-  file_info info;
-  if (init_file_info(&info, args->filename))
-    return 2;
+  const size_t cols = count_fields_file(file);
+  check(cols, "field count error in avs()");
 
   mask msk;
-  if (init_mask(&msk, info.cols))
-    return 2;
+  init_mask(&msk, cols);
 
   // Selected fields
   if (args->fields)
@@ -52,29 +49,19 @@ int avs(avs_results *res, const clargs *args)
     set_all(&msk);
 
   table tab;
-  if (init_table_parse(&tab, &info, &msk))
-    return 2;
+  init_table_empty(&tab, msk.n_active);
+  check(parse(&tab, file, &msk), "parsing error in avs()");
 
   res->cols = tab.size;
 
   res->fields = malloc(res->cols * sizeof(size_t));
-  if (!res->fields)
-    return 2;
+  check(res->fields, "allocation error in avs()");
 
   res->ave = malloc(res->cols * sizeof(double));
-  if (!res->ave)
-  {
-    free(res->fields);
-    return 2;
-  }
+  check(res->ave, "allocation error in avs()");
 
   res->sem = malloc(res->cols * sizeof(double));
-  if (!res->sem)
-  {
-    free(res->fields);
-    free(res->ave);
-    return 2;
-  }
+  check(res->sem, "allocation error in avs()");
 
   // All columns will be the same size
   res->rows = tab.columns[0].size;
@@ -94,9 +81,7 @@ int avs(avs_results *res, const clargs *args)
 
   deinit_table(&tab);
   deinit_mask(&msk);
-  deinit_file_info(&info);
-
-  return 0;
+  fclose(file);
 }
 
 void deinit_avs_results(avs_results *res)

@@ -29,10 +29,6 @@
 
 int init_clargs(clargs *args, int argc, char *argv[])
 {
-  // NULL input
-  if (!args)
-    return 1;
-
   // Default values
   args->n_fields = 0;
   args->fields = NULL;
@@ -51,11 +47,13 @@ int init_clargs(clargs *args, int argc, char *argv[])
       char *fields = malloc((strlen(optarg) + 1) * sizeof(char));
       strcpy(fields, optarg);
 
-      // 0 on success, 1 on reallocation failure, 2 on invalid field value
-      const int res
-          = parse_sizet_array(fields, &args->fields, &args->n_fields);
-      if (res)
-        return (res + 1);
+      args->fields = parse_sizet_array(fields, &args->n_fields);
+      if (!args->fields)
+      {
+        deinit_clargs(args);
+        fprintf(stderr, "error :: invalid field value\n");
+        return 1;
+      }
 
       free(fields);
     }
@@ -64,42 +62,42 @@ int init_clargs(clargs *args, int argc, char *argv[])
       char *end;
       args->skip = strtoul(optarg, &end, 10);
 
-      // Invalid option or value
       if (end == optarg)
       {
-        fprintf(
-            stderr, "--- error :: invalid value '%s' for option '-s'\n", optarg
-        );
         deinit_clargs(args);
-        return 3;
+        fprintf(
+            stderr, "error :: invalid value '%s' for option '-s'\n", optarg
+        );
+        return 1;
       }
     }
     else if (opt == 'v')
       args->verbose = true;
     else
     {
-      // Invalid option or value
       if (optopt == 'f' || optopt == 's')
       {
-        fprintf(
-            stderr, "--- error :: option '-%c' requires an argument\n", optopt
-        );
         deinit_clargs(args);
-        return 3;
+        fprintf(
+            stderr, "error :: option '-%c' requires an argument\n", optopt
+        );
+        return 1;
       }
-      // Invalid option or value
       else
       {
-        fprintf(stderr, "--- error :: unknown option '%c'\n", optopt);
         deinit_clargs(args);
-        return 3;
+        fprintf(stderr, "error :: unknown option '%c'\n", optopt);
+        return 1;
       }
     }
   }
 
-  // Missing or multiple filename
   if (optind != argc - 1)
-    return 4;
+  {
+    deinit_clargs(args);
+    fprintf(stderr, "error :: missing or multiple filenames\n");
+    return 2;
+  }
 
   args->filename = argv[optind];
 

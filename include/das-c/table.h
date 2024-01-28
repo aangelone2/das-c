@@ -57,7 +57,7 @@ void init_table_empty(table *tab, const size_t size);
  * @param msk `mask` object, filtering fields to access.
  *
  * @return Status code:
- *   - 0 on success
+ * - 0 on success
  * - 1 if too many fields found in line (compared to `msk`)
  * - 2 if invalid fields found in line
  * - 3 if too few fields found in line (compared to `msk`)

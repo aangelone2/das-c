@@ -77,14 +77,14 @@ size_t count_fields_file(FILE *file);
 /*!
  * Missing values will be silently skipped ("1,,3" -> {1,3}).
  *
+ * Exits on allocation failure.
+ * Fails (with cleanup) on invalid value.
+ *
  * @param buffer The string to parse.
- * @param array Inout parameter, the array to fill.
  * @param size Inout parameter, the size of the parsed array.
  *
- * @return Status code:
- *   - 0 on success
- *   - 1 for invalid value
+ * @return The parsed array on success, `NULL` on failure.
  */
-int parse_sizet_array(char *buffer, size_t **array, size_t *size);
+size_t *parse_sizet_array(char *buffer, size_t *size);
 
 #endif

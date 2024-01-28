@@ -47,24 +47,22 @@ typedef struct clargs
 
 //! Initializes a `clargs` object from command-line arguments.
 /*!
- * @param args Pointer to the empty memory region to init. Failure on `NULL`.
+ * Cleanup is performed on failure.
+ *
+ * @param args Pointer to the empty memory region to init.
  * @param argc Number of command-line arguments (from main).
  * @param argv Command-line argument string list (from main).
  *
  * @return Status code:
  *   - 0 on success
- *   - 1 on `NULL` input
- *   - 2 on reallocation failure for field array
- *   - 3 on invalid option or value
- *   - 4 on missing or multiple filename
+ *   - 1 on invalid option or value
+ *   - 2 on missing or multiple filename
  */
 int init_clargs(clargs *args, int argc, char *argv[]);
 
 //! Frees dynamic memory associated to a `file_info` object.
 /*!
- * Can be called (no-op) if initialization fails.
- *
- * Undefined behavior if called on non-initialized `clargs`.
+ * Undefined behavior if called on a `clargs` with missing or failed init.
  *
  * @param args The `clargs` to cleanup.
  */

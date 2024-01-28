@@ -50,15 +50,13 @@ size_t count_fields_file(FILE *file)
     }
   } while (is_comment(line));
 
-  size_t cols = count_fields(line);
-
   rewind(file);
-  return cols;
+  return count_fields(line);
 }
 
-int parse_sizet_array(char *buffer, size_t **array, size_t *size)
+size_t *parse_sizet_array(char *buffer, size_t *size)
 {
-  size_t *arr = NULL;
+  size_t *res = NULL;
   *size = 0;
 
   char *tok = strtok(buffer, ",");
@@ -67,18 +65,20 @@ int parse_sizet_array(char *buffer, size_t **array, size_t *size)
     char *end;
     const size_t val = strtoul(tok, &end, 10);
     if (end == tok)
-      return 1;
+    {
+      free(res);
+      return NULL;
+    }
 
-    size_t *arr2 = realloc(arr, (*size + 1) * sizeof(size_t));
-    check(arr2, "reallocation failure in parse_sizet_array()");
+    size_t *res2 = realloc(res, (*size + 1) * sizeof(size_t));
+    check(res2, "reallocation failure in parse_sizet_array()");
 
-    arr = arr2;
-    arr[*size] = val;
+    res = res2;
+    res[*size] = val;
 
     ++(*size);
     tok = strtok(NULL, ",");
   }
 
-  *array = arr;
-  return 0;
+  return res;
 }

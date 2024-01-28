@@ -52,15 +52,12 @@ typedef struct avs_results
 /*!
  * Fields will be passed and parsed as 0-based.
  *
+ * Exits on file opening, parsing, and allocation errors.
+ *
  * @param res The `avs_results` object to initialize.
  * @param args The CL arguments specifying the protocol.
- *
- * @return Status code:
- *   - 0 on success
- *   - 1 on `NULL` input
- *   - 2 on internal allocation failures
  */
-int avs(avs_results *res, const clargs *args);
+void avs(avs_results *res, const clargs *args);
 
 //! Frees dynamic memory associated to an `avs_results` object.
 /*!
