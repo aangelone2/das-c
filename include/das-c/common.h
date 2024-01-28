@@ -77,6 +77,7 @@ size_t count_fields_file(FILE *file);
 //! Parses a comma-separated list of size_t in an array.
 /*!
  * Missing values will be silently skipped ("1,,3" -> {1,3}).
+ * Trailing comma is accepted.
  *
  * Exits on allocation failure.
  * Fails (with cleanup) on invalid value.
