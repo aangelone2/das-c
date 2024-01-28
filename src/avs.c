@@ -49,8 +49,8 @@ void avs(avs_results *res, const clargs *args)
     set_all(&msk);
 
   table tab;
-  init_table_empty(&tab, msk.n_active);
-  check(parse(&tab, file, &msk), "parsing error in avs()");
+  init_table(&tab, msk.n_active);
+  check(!parse(&tab, file, &msk), "parsing error in avs()");
 
   res->cols = tab.size;
 

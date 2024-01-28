@@ -1,65 +1,41 @@
-#include "das-c/file_info.h"
+#include "das-c/common.h"
 #include "test.h"
-
-void test_missing_file()
-{
-  file_info info;
-
-  char *file1 = "../resources/missing.dat";
-  assert(init_file_info(&info, file1) == 2);
-
-  deinit_file_info(&info);
-}
 
 void test_empty_file()
 {
-  file_info info;
+  FILE *file = fopen("../resources/01.no_lines.dat", "r");
+  assert(!count_fields_file(file));
 
-  char *file2 = "../resources/01.no_lines.dat";
-  assert(init_file_info(&info, file2) == 3);
-
-  deinit_file_info(&info);
+  fclose(file);
 }
 
 void test_only_comment_file()
 {
-  file_info info;
+  FILE *file = fopen("../resources/02.only_comments.dat", "r");
+  assert(!count_fields_file(file));
 
-  char *file3 = "../resources/02.only_comments.dat";
-  assert(init_file_info(&info, file3) == 3);
-
-  deinit_file_info(&info);
+  fclose(file);
 }
 
 void testing_no_field_file()
 {
-  file_info info;
+  FILE *file = fopen("../resources/03.no_fields.dat", "r");
+  assert(!count_fields_file(file));
 
-  char *file4 = "../resources/03.no_fields.dat";
-  assert(init_file_info(&info, file4) == 4);
-
-  deinit_file_info(&info);
+  fclose(file);
 }
 
 void testing_regular_file()
 {
-  file_info info;
+  FILE *file = fopen("../resources/04.3_fields.dat", "r");
+  assert(count_fields_file(file) == 3);
 
-  char *file5 = "../resources/04.3_fields.dat";
-  assert(!init_file_info(&info, file5));
-  assert(info.cols == 3);
-  assert(info.rows == 0);
-  assert(info.data_rows == 0);
-
-  deinit_file_info(&info);
+  fclose(file);
 }
 
 int main()
 {
   open_test();
-
-  printf("  Testing missing file...\n");
-  test_missing_file();
 
   printf("  Testing empty file...\n");
   test_empty_file();

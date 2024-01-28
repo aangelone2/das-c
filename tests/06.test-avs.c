@@ -14,7 +14,7 @@ void test_simple()
   args.fields = NULL;
 
   avs_results res;
-  assert(!avs(&res, &args));
+  avs(&res, &args);
 
   assert(res.rows == 3257);
   assert(res.kept == 2606);
@@ -51,7 +51,7 @@ void test_multiple_fields()
   args.fields[1] = 2;
 
   avs_results res;
-  assert(!avs(&res, &args));
+  avs(&res, &args);
 
   assert(res.rows == 3257);
   assert(res.kept == 2606);
@@ -85,7 +85,7 @@ void test_field_skip()
   args.fields[1] = 2;
 
   avs_results res;
-  assert(!avs(&res, &args));
+  avs(&res, &args);
 
   assert(res.rows == 3257);
   assert(res.kept == 2606);
@@ -118,7 +118,7 @@ void test_single_field()
   args.fields[0] = 1;
 
   avs_results res;
-  assert(!avs(&res, &args));
+  avs(&res, &args);
 
   assert(res.rows == 3257);
   assert(res.kept == 2606);

@@ -68,7 +68,7 @@ int init_clargs(clargs *args, int argc, char *argv[])
         fprintf(
             stderr, "error :: invalid value '%s' for option '-s'\n", optarg
         );
-        return 1;
+        return 2;
       }
     }
     else if (opt == 'v')
@@ -81,13 +81,13 @@ int init_clargs(clargs *args, int argc, char *argv[])
         fprintf(
             stderr, "error :: option '-%c' requires an argument\n", optopt
         );
-        return 1;
+        return 3;
       }
       else
       {
         deinit_clargs(args);
         fprintf(stderr, "error :: unknown option '%c'\n", optopt);
-        return 1;
+        return 3;
       }
     }
   }
@@ -96,7 +96,7 @@ int init_clargs(clargs *args, int argc, char *argv[])
   {
     deinit_clargs(args);
     fprintf(stderr, "error :: missing or multiple filenames\n");
-    return 2;
+    return 4;
   }
 
   args->filename = argv[optind];

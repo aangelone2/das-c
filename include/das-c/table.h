@@ -46,7 +46,7 @@ typedef struct table
  * @param tab Pointer to the memory region to init.
  * @param size Desired number of columns.
  */
-void init_table_empty(table *tab, const size_t size);
+void init_table(table *tab, const size_t size);
 
 //! Fills an initialized empty `table` with the content of a file.
 /*!

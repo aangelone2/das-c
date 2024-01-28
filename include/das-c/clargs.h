@@ -55,8 +55,10 @@ typedef struct clargs
  *
  * @return Status code:
  *   - 0 on success
- *   - 1 on invalid option or value
- *   - 2 on missing or multiple filename
+ *   - 1 on invalid field value
+ *   - 2 on invalid skip value
+ *   - 3 on invalid option or value
+ *   - 4 on missing or multiple filename
  */
 int init_clargs(clargs *args, int argc, char *argv[]);
 

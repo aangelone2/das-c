@@ -14,42 +14,42 @@ mask init_common_mask()
 void test_too_many_fields()
 {
   mask msk = init_common_mask();
-  file_info info;
-  init_file_info(&info, "../resources/05.too_many_fields.dat");
+  FILE *file = fopen("../resources/05.too_many_fields.dat", "r");
 
   table tab;
-  assert(init_table_parse(&tab, &info, &msk) == 3);
+  init_table(&tab, msk.n_active);
+  assert(parse(&tab, file, &msk) == 1);
   deinit_table(&tab);
 
-  deinit_file_info(&info);
+  fclose(file);
   deinit_mask(&msk);
 }
 
 void test_invalid_field()
 {
   mask msk = init_common_mask();
-  file_info info;
-  init_file_info(&info, "../resources/06.invalid_field.dat");
+  FILE *file = fopen("../resources/06.invalid_field.dat", "r");
 
   table tab;
-  assert(init_table_parse(&tab, &info, &msk) == 4);
+  init_table(&tab, msk.n_active);
+  assert(parse(&tab, file, &msk) == 2);
   deinit_table(&tab);
 
-  deinit_file_info(&info);
+  fclose(file);
   deinit_mask(&msk);
 }
 
 void test_too_few_fields()
 {
   mask msk = init_common_mask();
-  file_info info;
-  init_file_info(&info, "../resources/07.too_few_fields.dat");
+  FILE *file = fopen("../resources/07.too_few_fields.dat", "r");
 
   table tab;
-  assert(init_table_parse(&tab, &info, &msk) == 5);
+  init_table(&tab, msk.n_active);
+  assert(parse(&tab, file, &msk) == 3);
   deinit_table(&tab);
 
-  deinit_file_info(&info);
+  fclose(file);
   deinit_mask(&msk);
 }
 
@@ -60,11 +60,11 @@ void test_valid_full()
   init_mask(&msk, 4);
   set_all(&msk);
 
-  file_info info;
-  init_file_info(&info, "../resources/08.valid.dat");
+  FILE *file = fopen("../resources/08.valid.dat", "r");
 
   table tab;
-  assert(!init_table_parse(&tab, &info, &msk));
+  init_table(&tab, msk.n_active);
+  assert(!parse(&tab, file, &msk));
 
   assert(tab.size == 4);
   for (size_t ic = 0; ic < tab.size; ++ic)
@@ -80,7 +80,7 @@ void test_valid_full()
 
   deinit_table(&tab);
 
-  deinit_file_info(&info);
+  fclose(file);
   deinit_mask(&msk);
 }
 
@@ -92,11 +92,11 @@ void test_filtering()
   set_field(&msk, 1);
   set_field(&msk, 2);
 
-  file_info info;
-  init_file_info(&info, "../resources/08.valid.dat");
+  FILE *file = fopen("../resources/08.valid.dat", "r");
 
   table tab;
-  assert(!init_table_parse(&tab, &info, &msk));
+  init_table(&tab, msk.n_active);
+  assert(!parse(&tab, file, &msk));
 
   assert(tab.size == 2);
   for (size_t ic = 0; ic < tab.size; ++ic)
@@ -112,7 +112,7 @@ void test_filtering()
 
   deinit_table(&tab);
 
-  deinit_file_info(&info);
+  fclose(file);
   deinit_mask(&msk);
 }
 

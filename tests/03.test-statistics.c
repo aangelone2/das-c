@@ -23,8 +23,6 @@ void test_average()
 
   assert_double_eq(average(&vec, 0), 0.35);
   assert_double_eq(average(&vec, 2), 0.45);
-  assert_double_eq(average(&vec, 6), 0.00);
-  assert_double_eq(average(&vec, 8), 0.00);
 
   deinit_vector(&vec);
 }
@@ -35,8 +33,6 @@ void test_sem()
 
   assert_double_eq(sem(&vec, 0, average(&vec, 0)), 0.0763762615826);
   assert_double_eq(sem(&vec, 2, average(&vec, 2)), 0.0645497224368);
-  assert_double_eq(sem(&vec, 6, average(&vec, 6)), 0.00);
-  assert_double_eq(sem(&vec, 8, average(&vec, 8)), 0.00);
 
   deinit_vector(&vec);
 }
@@ -56,7 +52,7 @@ void test_rebin()
 {
   vector vec = init_long_vector();
 
-  assert(!rebin(&vec, 0, 8));
+  rebin(&vec, 0, 8);
   assert(vec.size == 8);
   assert_double_eq(vec.data[0], 0.53702232875);
   assert_double_eq(vec.data[1], 0.43452742125);
@@ -67,14 +63,14 @@ void test_rebin()
   assert_double_eq(vec.data[6], 0.76592960125);
   assert_double_eq(vec.data[7], 0.52890948125);
 
-  assert(!rebin(&vec, 0, 4));
+  rebin(&vec, 0, 4);
   assert(vec.size == 4);
   assert_double_eq(vec.data[0], 0.485774875000);
   assert_double_eq(vec.data[1], 0.486971023750);
   assert_double_eq(vec.data[2], 0.657943835625);
   assert_double_eq(vec.data[3], 0.647419541250);
 
-  assert(!rebin(&vec, 0, 2));
+  rebin(&vec, 0, 2);
   assert(vec.size == 2);
   assert_double_eq(vec.data[0], 0.4863729493750);
   assert_double_eq(vec.data[1], 0.6526816884375);
@@ -98,7 +94,7 @@ void test_rebin_skipping()
   vector long_skip = init_long_vector_skip_4();
 
   // Explicit and automatic skipping
-  assert(!rebin(&long_skip, 6, 10));
+  rebin(&long_skip, 6, 10);
   assert(long_skip.size == 10);
   assert_double_eq(long_skip.data[0], 0.3324987080000);
   assert_double_eq(long_skip.data[1], 0.5226791060000);
@@ -112,7 +108,7 @@ void test_rebin_skipping()
   assert_double_eq(long_skip.data[9], 0.5554548940000);
 
   // Only explicit skipping
-  assert(!rebin(&long_skip, 2, 4));
+  rebin(&long_skip, 2, 4);
   assert(long_skip.size == 4);
   assert_double_eq(long_skip.data[0], 0.5584660700000);
   assert_double_eq(long_skip.data[1], 0.5939596400000);
@@ -123,54 +119,19 @@ void test_rebin_skipping()
   push_back(&short_vec, 0.7);
 
   // Only automatic skipping
-  assert(!rebin(&short_vec, 0, 2));
+  rebin(&short_vec, 0, 2);
   assert(short_vec.size == 2);
   assert_double_eq(short_vec.data[0], 0.3);
   assert_double_eq(short_vec.data[1], 0.6);
 
   // Only automatic skipping, trivial bins
-  assert(!rebin(&long_skip, 0, 3));
+  rebin(&long_skip, 0, 3);
   assert(long_skip.size == 3);
   assert_double_eq(long_skip.data[0], 0.5939596400000);
   assert_double_eq(long_skip.data[1], 0.7917709070000);
   assert_double_eq(long_skip.data[2], 0.5672954590000);
 
   deinit_vector(&short_vec);
-  deinit_vector(&long_skip);
-}
-
-void test_rebin_invalid()
-{
-  vector long_skip = init_long_vector_skip_4();
-
-  // Rebinning for subsequent tests
-  assert(!rebin(&long_skip, 0, 3));
-  assert(long_skip.size == 3);
-  assert_double_eq(long_skip.data[0], 0.4307799210000);
-  assert_double_eq(long_skip.data[1], 0.5762128550000);
-  assert_double_eq(long_skip.data[2], 0.6795331830000);
-
-  // Invalid skipping, no change
-  assert(rebin(&long_skip, 5, 3) == 1);
-  assert(long_skip.size == 3);
-  assert_double_eq(long_skip.data[0], 0.4307799210000);
-  assert_double_eq(long_skip.data[1], 0.5762128550000);
-  assert_double_eq(long_skip.data[2], 0.6795331830000);
-
-  // Invalid bin number, no change
-  assert(rebin(&long_skip, 0, 5) == 1);
-  assert(long_skip.size == 3);
-  assert_double_eq(long_skip.data[0], 0.4307799210000);
-  assert_double_eq(long_skip.data[1], 0.5762128550000);
-  assert_double_eq(long_skip.data[2], 0.6795331830000);
-
-  // Invalid bin number given skip, no change
-  assert(rebin(&long_skip, 1, 3) == 1);
-  assert(long_skip.size == 3);
-  assert_double_eq(long_skip.data[0], 0.4307799210000);
-  assert_double_eq(long_skip.data[1], 0.5762128550000);
-  assert_double_eq(long_skip.data[2], 0.6795331830000);
-
   deinit_vector(&long_skip);
 }
 
@@ -189,9 +150,6 @@ int main()
 
   printf("  Testing rebinning with skipping...\n");
   test_rebin_skipping();
-
-  printf("  Testing invalid rebinnings...\n");
-  test_rebin_invalid();
 
   close_test();
 }

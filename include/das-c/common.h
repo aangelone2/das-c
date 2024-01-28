@@ -26,6 +26,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define DASC_MAX_LINE_LENGTH 65536
 // Placing '\n' here works like newline trimming.

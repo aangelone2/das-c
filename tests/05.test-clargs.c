@@ -79,7 +79,7 @@ void test_missing_skip()
   const int argc = 4;
   char *argv[4] = {"test", "-s", "-v", "file"};
 
-  assert(init_clargs(&args, argc, argv) == 3);
+  assert(init_clargs(&args, argc, argv) == 2);
 
   deinit_clargs(&args);
 }
@@ -124,7 +124,7 @@ void test_invalid_fields()
   assert(!strcmp(args.filename, "file2"));
 
   char *argv2[] = {"test", "-f", "1,a,3", "-v", "file2"};
-  assert(init_clargs(&args, argc, argv2) == 3);
+  assert(init_clargs(&args, argc, argv2) == 1);
 
   deinit_clargs(&args);
 }
