@@ -50,6 +50,7 @@ int init_clargs(clargs *args, int argc, char *argv[])
       args->fields = parse_sizet_array(fields, &args->n_fields);
       if (!args->fields)
       {
+        free(fields);
         deinit_clargs(args);
         fprintf(stderr, "error :: invalid field value\n");
         return 1;
