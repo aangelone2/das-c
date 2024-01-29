@@ -84,17 +84,21 @@ ave_results *ave(const clargs *args)
   check(!parse(tab, file, msk), "parsing error in ave()");
 
   res->cols = tab->size;
+  res->nsizes = SIZES;
 
   res->fields = malloc(res->cols * sizeof(size_t));
   check(res->fields, "allocation failure in ave()");
 
-  res->nbins = malloc(SIZES * sizeof(size_t));
+  res->nbins = malloc(res->nsizes * sizeof(size_t));
   check(res->nbins, "allocation failure in ave()");
 
-  res->ave = alloc_2d(SIZES, res->cols);
+  res->bsizes = malloc(res->nsizes * sizeof(size_t));
+  check(res->bsizes, "allocation failure in ave()");
+
+  res->ave = alloc_2d(res->nsizes, res->cols);
   check(res->ave, "allocation failure in ave()");
 
-  res->sem = alloc_2d(SIZES, res->cols);
+  res->sem = alloc_2d(res->nsizes, res->cols);
   check(res->sem, "allocation failure in ave()");
 
   // All columns will be the same size
@@ -105,9 +109,10 @@ ave_results *ave(const clargs *args)
 
   size_t nbins = MAX_BINS;
   // Keeps into account additional skipping in rebin()
-  res->kept = ((res->rows - skip) / nbins) * nbins;
+  size_t bsize = (res->rows - skip) / nbins;
+  res->kept = bsize * nbins;
 
-  for (size_t is = 0; is < SIZES; ++is)
+  for (size_t is = 0; is < res->nsizes; ++is)
   {
     const size_t skip_s = (is ? 0 : skip);
 
@@ -118,11 +123,13 @@ ave_results *ave(const clargs *args)
       rebin(tab->columns[ic], skip_s, nbins);
       res->fields[ic] = (args->fields ? args->fields[ic] : ic);
       res->nbins[is] = nbins;
+      res->bsizes[is] = bsize;
       res->ave[is][ic] = average(tab->columns[ic], 0);
       res->sem[is][ic] = sem(tab->columns[ic], 0, res->ave[is][ic]);
     }
 
     nbins /= 2;
+    bsize *= 2;
   }
 
   clear_table(tab);
@@ -136,6 +143,7 @@ void clear_ave_results(ave_results *res)
 {
   free(res->fields);
   free(res->nbins);
+  free(res->bsizes);
   free_2d(res->ave, SIZES);
   free_2d(res->sem, SIZES);
   free(res);

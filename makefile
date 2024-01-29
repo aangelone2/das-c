@@ -14,8 +14,7 @@ MAKEFLAGS += --no-builtin-rules
 
 
 
-# Targets which are not supposed to generate
-# a file with the same name
+# Targets which are not supposed to generate a file with the same name
 .PHONY: docs builds
 
 idir := include
@@ -25,7 +24,7 @@ bdir := build
 tdir := tests
 
 headers := $(wildcard $(idir)/*.h)
-sources := $(wildcard $(sdir)/*.c)
+sources := $(filter-out $(sdir)/main.c, $(wildcard $(sdir)/*.c))
 objects := $(patsubst $(sdir)/%.c, $(odir)/%.o, $(sources))
 
 theaders := $(wildcard $(tdir)/*.h)
@@ -40,6 +39,7 @@ INC := -I$(idir)
 LIB := -L$(bdir) -ldas-c -lm
 
 
+# Target which executes the rule to build the test executables
 test: $(tobjects)
 	@echo ''
 	@echo 'Beginning testing'
@@ -55,13 +55,14 @@ test: $(tobjects)
 	@echo 'All tests completed successfully'
 
 
-# Rule to build test object files
+# Rule to build test executables
 $(tobjects): $(bdir)/%: $(tdir)/%.c $(theaders) lib
 	$(CC) $(CFLAGS) $(INC) $< -o $@ $(LIB)
 
 
-# Target, which executes the rule to build the library
+# Target which builds library and executable
 build: lib
+	$(CC) $(CFLAGS) $(INC) $(sdir)/main.c -o $(bdir)/das $(LIB)
 
 
 # Rule to build the library

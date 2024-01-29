@@ -19,6 +19,7 @@ void test_simple()
   assert(res->kept == 8192);
 
   assert(res->cols == 4);
+  assert(res->nsizes == 5);
 
   assert(res->fields[0] == 0);
   assert(res->fields[1] == 1);
@@ -30,6 +31,12 @@ void test_simple()
   assert(res->nbins[2] == 256);
   assert(res->nbins[3] == 128);
   assert(res->nbins[4] == 64);
+
+  assert(res->bsizes[0] == 8);
+  assert(res->bsizes[1] == 16);
+  assert(res->bsizes[2] == 32);
+  assert(res->bsizes[3] == 64);
+  assert(res->bsizes[4] == 128);
 
   assert_double_eq(res->ave[0][0], -4.9939577524414064e-01);
   assert_double_eq(res->ave[1][0], -4.9939577524414064e-01);
@@ -102,6 +109,7 @@ void test_multiple_fields()
   assert(res->kept == 8192);
 
   assert(res->cols == 2);
+  assert(res->nsizes == 5);
 
   assert(res->fields[0] == 2);
   assert(res->fields[1] == 3);
@@ -111,6 +119,12 @@ void test_multiple_fields()
   assert(res->nbins[2] == 256);
   assert(res->nbins[3] == 128);
   assert(res->nbins[4] == 64);
+
+  assert(res->bsizes[0] == 8);
+  assert(res->bsizes[1] == 16);
+  assert(res->bsizes[2] == 32);
+  assert(res->bsizes[3] == 64);
+  assert(res->bsizes[4] == 128);
 
   assert_double_eq(res->ave[0][0], -7.7493609515380859e+00);
   assert_double_eq(res->ave[1][0], -7.7493609515380859e+00);
@@ -159,6 +173,7 @@ void test_field_skip()
   assert(res->kept == 8192);
 
   assert(res->cols == 2);
+  assert(res->nsizes == 5);
 
   assert(res->fields[0] == 0);
   assert(res->fields[1] == 3);
@@ -168,6 +183,12 @@ void test_field_skip()
   assert(res->nbins[2] == 256);
   assert(res->nbins[3] == 128);
   assert(res->nbins[4] == 64);
+
+  assert(res->bsizes[0] == 8);
+  assert(res->bsizes[1] == 16);
+  assert(res->bsizes[2] == 32);
+  assert(res->bsizes[3] == 64);
+  assert(res->bsizes[4] == 128);
 
   assert_double_eq(res->ave[0][0], -4.9939577524414064e-01);
   assert_double_eq(res->ave[1][0], -4.9939577524414064e-01);
@@ -215,6 +236,7 @@ void test_single_field()
   assert(res->kept == 8192);
 
   assert(res->cols == 1);
+  assert(res->nsizes == 5);
 
   assert(res->fields[0] == 1);
 
@@ -223,6 +245,12 @@ void test_single_field()
   assert(res->nbins[2] == 256);
   assert(res->nbins[3] == 128);
   assert(res->nbins[4] == 64);
+
+  assert(res->bsizes[0] == 8);
+  assert(res->bsizes[1] == 16);
+  assert(res->bsizes[2] == 32);
+  assert(res->bsizes[3] == 64);
+  assert(res->bsizes[4] == 128);
 
   assert_double_eq(res->ave[0][0], -7.2499651749267571e+00);
   assert_double_eq(res->ave[1][0], -7.2499651749267571e+00);

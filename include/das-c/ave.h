@@ -38,11 +38,17 @@ typedef struct ave_results
   //! Number of analyzed columns.
   size_t cols;
 
+  //! Number of considered bin sizes.
+  size_t nsizes;
+
   //! Column indices (in the file).
   size_t *fields;
 
   //! Bin numbers, nbins[i] <-> ave[i][...]
   size_t *nbins;
+
+  //! Bin sizes, bsize[i] <-> ave[i][...]
+  size_t *bsizes;
 
   //! Column averages, 2nd index runs on columns.
   double **ave;
