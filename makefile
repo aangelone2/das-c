@@ -50,6 +50,7 @@ test: $(tobjects)
 	cd $(bdir); ./04.test-parse
 	cd $(bdir); ./05.test-clargs
 	cd $(bdir); ./06.test-avs
+	cd $(bdir); ./07.test-ave
 
 	@echo 'All tests completed successfully'
 

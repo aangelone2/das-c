@@ -42,7 +42,7 @@ double **alloc_2d(const size_t n1, const size_t n2)
   for (size_t is = 0; is < SIZES; ++is)
   {
     buffer[is] = malloc(n2 * sizeof(double));
-    if (buffer[is])
+    if (!buffer[is])
       return NULL;
   }
 
@@ -116,6 +116,7 @@ ave_results *ave(const clargs *args)
     {
       // Only the last write is used
       rebin(tab->columns[ic], skip_s, nbins);
+      res->fields[ic] = (args->fields ? args->fields[ic] : ic);
       res->nbins[is] = nbins;
       res->ave[is][ic] = average(tab->columns[ic], 0);
       res->sem[is][ic] = sem(tab->columns[ic], 0, res->ave[is][ic]);
