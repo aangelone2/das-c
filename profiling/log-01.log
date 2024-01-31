@@ -1,0 +1,274 @@
+../build/das ave -s20 -v 11.large.dat  43.79s user 3.69s system 99% cpu 47.897 total
+
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total
+ time   seconds   seconds    calls   s/call   s/call  name
+ 43.55      1.91     1.91 80000000     0.00     0.00  parse_line
+ 25.54      3.03     1.12 320000000     0.00     0.00  push_back
+ 14.82      3.68     0.65       20     0.03     0.03  rebin
+  7.30      4.00     0.32                             _init
+  4.56      4.20     0.20        1     0.20     3.30  parse
+  1.60      4.27     0.07 80000000     0.00     0.00  is_comment
+  1.37      4.33     0.06        4     0.02     0.02  init_vector
+  1.37      4.39     0.06        1     0.06     0.06  clear_mask
+  0.00      4.39     0.00       20     0.00     0.00  average
+  0.00      4.39     0.00       20     0.00     0.00  resize
+  0.00      4.39     0.00       20     0.00     0.00  sem
+  0.00      4.39     0.00        4     0.00     0.00  clear_vector
+  0.00      4.39     0.00        2     0.00     0.00  alloc_2d
+  0.00      4.39     0.00        2     0.00     0.00  free_2d
+  0.00      4.39     0.00        1     0.00     4.07  ave
+  0.00      4.39     0.00        1     0.00     0.00  clear_ave_results
+  0.00      4.39     0.00        1     0.00     0.00  clear_table
+  0.00      4.39     0.00        1     0.00     0.00  count_fields
+  0.00      4.39     0.00        1     0.00     0.00  count_fields_file
+  0.00      4.39     0.00        1     0.00     0.00  deinit_clargs
+  0.00      4.39     0.00        1     0.00     0.00  init_clargs
+  0.00      4.39     0.00        1     0.00     0.00  init_mask
+  0.00      4.39     0.00        1     0.00     0.06  init_table
+  0.00      4.39     0.00        1     0.00     0.00  is_comment
+  0.00      4.39     0.00        1     0.00     0.00  set_all
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2023 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.23% of 4.39 seconds
+
+index % time    self  children    called     name
+                0.00    4.07       1/1           main [2]
+[1]     92.7    0.00    4.07       1         ave [1]
+                0.20    3.10       1/1           parse [3]
+                0.65    0.00      20/20          rebin [6]
+                0.00    0.06       1/1           init_table [11]
+                0.06    0.00       1/1           clear_mask [10]
+                0.00    0.00      20/20          average [12]
+                0.00    0.00      20/20          sem [14]
+                0.00    0.00       2/2           alloc_2d [16]
+                0.00    0.00       1/1           count_fields_file [21]
+                0.00    0.00       1/1           init_mask [24]
+                0.00    0.00       1/1           set_all [26]
+                0.00    0.00       1/1           clear_table [19]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]     92.7    0.00    4.07                 main [2]
+                0.00    4.07       1/1           ave [1]
+                0.00    0.00       1/1           init_clargs [23]
+                0.00    0.00       1/1           clear_ave_results [18]
+                0.00    0.00       1/1           deinit_clargs [22]
+-----------------------------------------------
+                0.20    3.10       1/1           ave [1]
+[3]     75.2    0.20    3.10       1         parse [3]
+                1.91    1.12 80000000/80000000     parse_line [4]
+                0.07    0.00 80000000/80000000     is_comment [8]
+-----------------------------------------------
+                1.91    1.12 80000000/80000000     parse [3]
+[4]     69.0    1.91    1.12 80000000         parse_line [4]
+                1.12    0.00 320000000/320000000     push_back [5]
+-----------------------------------------------
+                1.12    0.00 320000000/320000000     parse_line [4]
+[5]     25.5    1.12    0.00 320000000         push_back [5]
+-----------------------------------------------
+                0.65    0.00      20/20          ave [1]
+[6]     14.8    0.65    0.00      20         rebin [6]
+                0.00    0.00      20/20          resize [13]
+-----------------------------------------------
+                                                 <spontaneous>
+[7]      7.3    0.32    0.00                 _init [7]
+-----------------------------------------------
+                0.07    0.00 80000000/80000000     parse [3]
+[8]      1.6    0.07    0.00 80000000         is_comment [8]
+-----------------------------------------------
+                0.06    0.00       4/4           init_table [11]
+[9]      1.4    0.06    0.00       4         init_vector [9]
+-----------------------------------------------
+                0.06    0.00       1/1           ave [1]
+[10]     1.4    0.06    0.00       1         clear_mask [10]
+-----------------------------------------------
+                0.00    0.06       1/1           ave [1]
+[11]     1.4    0.00    0.06       1         init_table [11]
+                0.06    0.00       4/4           init_vector [9]
+-----------------------------------------------
+                0.00    0.00      20/20          ave [1]
+[12]     0.0    0.00    0.00      20         average [12]
+-----------------------------------------------
+                0.00    0.00      20/20          rebin [6]
+[13]     0.0    0.00    0.00      20         resize [13]
+-----------------------------------------------
+                0.00    0.00      20/20          ave [1]
+[14]     0.0    0.00    0.00      20         sem [14]
+-----------------------------------------------
+                0.00    0.00       4/4           clear_table [19]
+[15]     0.0    0.00    0.00       4         clear_vector [15]
+-----------------------------------------------
+                0.00    0.00       2/2           ave [1]
+[16]     0.0    0.00    0.00       2         alloc_2d [16]
+-----------------------------------------------
+                0.00    0.00       2/2           clear_ave_results [18]
+[17]     0.0    0.00    0.00       2         free_2d [17]
+-----------------------------------------------
+                0.00    0.00       1/1           main [2]
+[18]     0.0    0.00    0.00       1         clear_ave_results [18]
+                0.00    0.00       2/2           free_2d [17]
+-----------------------------------------------
+                0.00    0.00       1/1           ave [1]
+[19]     0.0    0.00    0.00       1         clear_table [19]
+                0.00    0.00       4/4           clear_vector [15]
+-----------------------------------------------
+                0.00    0.00       1/1           count_fields_file [21]
+[20]     0.0    0.00    0.00       1         count_fields [20]
+-----------------------------------------------
+                0.00    0.00       1/1           ave [1]
+[21]     0.0    0.00    0.00       1         count_fields_file [21]
+                0.00    0.00       1/1           is_comment [25]
+                0.00    0.00       1/1           count_fields [20]
+-----------------------------------------------
+                0.00    0.00       1/1           main [2]
+[22]     0.0    0.00    0.00       1         deinit_clargs [22]
+-----------------------------------------------
+                0.00    0.00       1/1           main [2]
+[23]     0.0    0.00    0.00       1         init_clargs [23]
+-----------------------------------------------
+                0.00    0.00       1/1           ave [1]
+[24]     0.0    0.00    0.00       1         init_mask [24]
+-----------------------------------------------
+                0.00    0.00       1/1           count_fields_file [21]
+[25]     0.0    0.00    0.00       1         is_comment [25]
+-----------------------------------------------
+                0.00    0.00       1/1           ave [1]
+[26]     0.0    0.00    0.00       1         set_all [26]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2023 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+   [7] _init                  [21] count_fields_file       [3] parse
+  [16] alloc_2d               [22] deinit_clargs           [4] parse_line
+   [1] ave                    [17] free_2d                 [5] push_back
+  [12] average                [23] init_clargs             [6] rebin
+  [18] clear_ave_results      [24] init_mask              [13] resize
+  [10] clear_mask             [11] init_table             [14] sem
+  [19] clear_table             [9] init_vector            [26] set_all
+  [15] clear_vector           [25] is_comment
+  [20] count_fields            [8] is_comment
