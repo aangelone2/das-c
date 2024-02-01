@@ -1,10 +1,18 @@
+All the execution times discussed here are average
+estimates over 16 measurements, obtained using the `-pg`
+optimization option, where the standard error of the
+mean is renormalized with Student's t factors to keep
+into account finite-size effects (multiplied by
+`2.120/1.960`).
+
+
+
+
 # General Considerations
 
-Optimization was started at `200e6ad`; the library and
-main executable was compiled with `-O3` replaced by the
-`-pg` option, and the profiling results in
-`profiling/log-01.log` were obtained by running the
-commands
+Optimization was started at `200e6ad`; the profiling
+results in `profiling/log-01.log` were obtained by
+running the commands
 
 ```
 $ time ../build/das ave -s20 -v 11.large.dat
@@ -13,16 +21,18 @@ $ gprof ../build/das gmon.out > out-01.log
 
 in the `resources/` folder, where `11.large.dat` is a
 4x8e7 datafile created by the `11.generator.py` python
-script. The overall execution time is ~47s.
+script. The execution time data is displayed in
+`profiling/data-01.dat`, and the average result is
+48.3(2) s.
 
 In the results, the following functions (and their
 children) took the largest share of the execution time:
 
-- `main()` (92.7 %)
-- `parse()` (75.2 %)
-- `parse_line()` (69.0 %)
-- `push_back()` (25.5 %)
-- `rebin()` (14.8 %)
+- `main()` (93.5 %)
+- `parse()` (77.8 %)
+- `parse_line()` (71.6 %)
+- `push_back()` (26.9 %)
+- `rebin()` (15.1 %)
 
 The main data structure of the program is `table`, which
 essentially holds an array of pointers to `vector`
@@ -121,30 +131,25 @@ change the code may be:
 We applied the modification discussed in point (3)
 above. We immediately noticed that it led to a
 simplification of the codebase (except for slightly more
-complex statistical functions). Profiling results are
-displayed in `profiling/log-02.log`, for an overall
-execution time of ~41s, slightly shorter than the
-original version.
+complex statistical functions).
+
+Profiling results are displayed in
+`profiling/log-02.log`, and execution time data is
+displayed in `profiling/data-02.dat`, yielding the
+average 48.4(2) s (i.e., identical within error to the
+previous result).
 
 In the results, the following functions (and their
 children) took the largest share of the execution time:
 
-- `main()` (94.1 %)
-- `parse()` (78.6 %)
-- `parse_line()` (72.4 %)
-- `rebin()` (15.0 %)
+- `main()` (94.0 %)
+- `parse()` (77.4 %)
+- `parse_line()` (73.1 %)
+- `rebin()` (15.8 %)
 - `add_row()` (14.8 %)
-
-These times have been roughly verified by selectively
-disabling parts of the code: the parsing routine without
-statistical functions, `add_row()` (`parse.c:40`) and
-data writing (`ave.c:58`) took ~36s (~88%) of the time,
-while only removing the data writing did not result in
-appreciable differences.
 
 Due to the new data structure, fewer allocations
 (performed in `add_row()`) need to take place. The
 statistical functions remain as irrelevant as they were
 before, doubling down on the necessity to optimize or
-parallelize parsing. Performance improvements have
-appeared, albeit not extremely large.
+parallelize parsing.
