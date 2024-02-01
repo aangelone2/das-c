@@ -1,11 +1,10 @@
-# 1st Optimization Round
-
-## General Considerations
+# General Considerations
 
 Optimization was started at `200e6ad`; the library and
 main executable was compiled with `-O3` replaced by the
-`-pg` option, and the profiling results in `log-01.log`
-were obtained by running the commands
+`-pg` option, and the profiling results in
+`profiling/log-01.log` were obtained by running the
+commands
 
 ```
 $ time ../build/das ave -s20 -v 11.large.dat
@@ -14,7 +13,7 @@ $ gprof ../build/das gmon.out > out-01.log
 
 in the `resources/` folder, where `11.large.dat` is a
 4x8e7 datafile created by the `11.generator.py` python
-script. The overall execution time is ~40s.
+script. The overall execution time is ~47s.
 
 In the results, the following functions (and their
 children) took the largest share of the execution time:
@@ -49,8 +48,8 @@ Schematically, the program works as follows:
 From the profiling, we can deduce that the parsing
 process (by and large, including reallocations and such)
 is the main bottleneck, and should therefore be the
-primary target of optimization. The possible solutions
-would be:
+primary target of optimization. Possible directions to
+change the code may be:
 
 1. Replacing line tokenization with simple parsing of
    the required amount of numerical fields. This amount
@@ -113,3 +112,39 @@ would be:
    array-sized buffers to accumulate statistics. The
    statistical functions are much easier to parallelize
    (see below), which could counteract this.
+
+
+
+
+# Transposition
+
+We applied the modification discussed in point (3)
+above. We immediately noticed that it led to a
+simplification of the codebase (except for slightly more
+complex statistical functions). Profiling results are
+displayed in `profiling/log-02.log`, for an overall
+execution time of ~41s, slightly shorter than the
+original version.
+
+In the results, the following functions (and their
+children) took the largest share of the execution time:
+
+- `main()` (94.1 %)
+- `parse()` (78.6 %)
+- `parse_line()` (72.4 %)
+- `rebin()` (15.0 %)
+- `add_row()` (14.8 %)
+
+These times have been roughly verified by selectively
+disabling parts of the code: the parsing routine without
+statistical functions, `add_row()` (`parse.c:40`) and
+data writing (`ave.c:58`) took ~36s (~88%) of the time,
+while only removing the data writing did not result in
+appreciable differences.
+
+Due to the new data structure, fewer allocations
+(performed in `add_row()`) need to take place. The
+statistical functions remain as irrelevant as they were
+before, doubling down on the necessity to optimize or
+parallelize parsing. Performance improvements have
+appeared, albeit not extremely large.
