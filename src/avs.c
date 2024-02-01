@@ -53,32 +53,25 @@ avs_results *avs(const clargs *args)
   table *tab = init_table(msk->n_active);
   check(!parse(tab, file, msk), "parsing error in avs()");
 
-  res->cols = tab->size;
+  res->cols = tab->cols;
 
   res->fields = malloc(res->cols * sizeof(size_t));
   check(res->fields, "allocation failure in avs()");
 
-  res->ave = malloc(res->cols * sizeof(double));
-  check(res->ave, "allocation failure in avs()");
-
-  res->sem = malloc(res->cols * sizeof(double));
-  check(res->sem, "allocation failure in avs()");
+  // Selected VS all fields
+  for (size_t ic = 0; ic < res->cols; ++ic)
+    res->fields[ic] = (args->fields ? args->fields[ic] : ic);
 
   // All columns will be the same size
-  res->rows = tab->columns[0]->size;
+  res->rows = tab->rows;
 
   const double perc = (double)(args->skip) / 100.0;
   const size_t skip = (size_t)(perc * (double)(res->rows));
   res->kept = res->rows - skip;
 
-  // Computing average and SEM of every column
-  for (size_t ic = 0; ic < tab->size; ++ic)
-  {
-    // Selected VS all fields
-    res->fields[ic] = (args->fields ? args->fields[ic] : ic);
-    res->ave[ic] = average(tab->columns[ic], skip);
-    res->sem[ic] = sem(tab->columns[ic], skip, res->ave[ic]);
-  }
+  // Assigning statistical results
+  res->ave = average(tab, skip);
+  res->sem = sem(tab, skip, res->ave);
 
   clear_table(tab);
   clear_mask(msk);

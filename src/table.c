@@ -24,29 +24,48 @@
 #include "das-c/common.h"
 #include <stdlib.h>
 
-table *init_table(const size_t size)
+table *init_table(const size_t cols)
 {
   table *tab = malloc(sizeof(table));
   check(tab, "failed allocation in init_table()");
 
-  tab->size = size;
-  tab->columns = malloc(size * sizeof(vector *));
-  check(tab->columns, "failed allocation in init_table()");
-
-  // Default values, to prevent problems in case of partial deallocation
-  for (size_t ic = 0; ic < size; ++ic)
-    tab->columns[ic] = NULL;
-
-  for (size_t ic = 0; ic < size; ++ic)
-    tab->columns[ic] = init_vector();
+  tab->rows = 0;
+  tab->cols = cols;
+  tab->data = NULL;
 
   return tab;
 }
 
+void add_row(table *tab)
+{
+  double **data = realloc(tab->data, (tab->rows + 1) * sizeof(double *));
+  check(data, "failed reallocation in add_row()");
+
+  tab->data = data;
+  tab->data[tab->rows] = malloc(tab->cols * sizeof(double));
+  check(data[tab->rows], "failed allocation in add_row()");
+
+  ++tab->rows;
+}
+
+void shed_rows(table *tab, const size_t size)
+{
+  check(size < tab->rows && size > 0, "new size too large in shed_rows()");
+
+  for (size_t ir = size; ir < tab->rows; ++ir)
+    free(tab->data[ir]);
+
+  double **data = realloc(tab->data, size * sizeof(double *));
+  check(data, "failed reallocation in shed_rows()");
+
+  tab->data = data;
+  tab->rows = size;
+}
+
 void clear_table(table *tab)
 {
-  for (size_t ic = 0; ic < tab->size; ++ic)
-    clear_vector(tab->columns[ic]);
-  free(tab->columns);
+  for (size_t ir = 0; ir < tab->rows; ++ir)
+    free(tab->data[ir]);
+  free(tab->data);
   free(tab);
 }

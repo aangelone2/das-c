@@ -24,38 +24,52 @@
 #include "das-c/common.h"
 #include <math.h>
 
-double average(const vector *vec, const size_t skip)
+double *average(const table *tab, const size_t skip)
 {
-  check(skip < vec->size, "skip too large in average()");
+  check(skip < tab->rows, "skip too large in average()");
 
-  double buffer = 0.0;
-  for (size_t i = skip; i < vec->size; ++i)
-    buffer += vec->data[i];
+  double *res = calloc(tab->cols, sizeof(double));
+  check(res, "failed allocation in average()");
 
-  const double size = (double)(vec->size - skip);
-  return buffer / size;
+  for (size_t ir = skip; ir < tab->rows; ++ir)
+    for (size_t ic = 0; ic < tab->cols; ++ic)
+      res[ic] += tab->data[ir][ic];
+
+  const double size = (double)(tab->rows - skip);
+  for (size_t ic = 0; ic < tab->cols; ++ic)
+    res[ic] /= size;
+
+  return res;
 }
 
-double sem(const vector *vec, const size_t skip, const double average)
+double *sem(const table *tab, const size_t skip, const double *average)
 {
-  check(skip < vec->size, "skip too large in sem()");
+  check(skip < tab->rows, "skip too large in sem()");
 
-  double buffer = 0.0;
-  for (size_t i = skip; i < vec->size; ++i)
+  double *res = calloc(tab->cols, sizeof(double));
+  check(res, "failed allocation in average()");
+
+  for (size_t ir = skip; ir < tab->rows; ++ir)
   {
-    const double deviation = average - vec->data[i];
-    buffer += deviation * deviation;
+    for (size_t ic = 0; ic < tab->cols; ++ic)
+    {
+      const double deviation = average[ic] - tab->data[ir][ic];
+      res[ic] += deviation * deviation;
+    }
   }
 
-  const double size = (double)(vec->size - skip);
-  return sqrt(buffer / (size * (size - 1.0)));
+  const double size = (double)(tab->rows - skip);
+  for (size_t ic = 0; ic < tab->cols; ++ic)
+    res[ic] = sqrt(res[ic] / (size * (size - 1.0)));
+
+  return res;
 }
 
-void rebin(vector *vec, const size_t skip, const size_t nbins)
+void rebin(table *tab, const size_t skip, const size_t nbins)
 {
-  check(skip < vec->size, "skip too large in rebin()");
+  check(skip < tab->rows, "skip too large in rebin()");
 
-  const size_t keep = vec->size - skip;
+  const size_t keep = tab->rows - skip;
   check(nbins <= keep, "nbins too large in rebin()");
 
   if (nbins == keep)
@@ -66,19 +80,23 @@ void rebin(vector *vec, const size_t skip, const size_t nbins)
 
   for (size_t ib = 0; ib < nbins; ++ib)
   {
-    double buffer = 0.0;
+    double *buffer = calloc(tab->cols, sizeof(double));
 
     // Beginning and end of current bin, considering skipped rows
     const size_t begin = skip2 + (ib * bsize);
     const size_t end = skip2 + ((ib + 1) * bsize);
 
-    for (size_t i = begin; i < end; ++i)
-      buffer += vec->data[i];
+    for (size_t ir = begin; ir < end; ++ir)
+      for (size_t ic = 0; ic < tab->cols; ++ic)
+        buffer[ic] += tab->data[ir][ic];
 
     // Bin number `ib` will never contain components with index `i` < `ib`
     // (not possible if binsize is at least 1).
-    vec->data[ib] = buffer / (double)(bsize);
+    for (size_t ic = 0; ic < tab->cols; ++ic)
+      tab->data[ib][ic] = buffer[ic] / (double)(bsize);
+
+    free(buffer);
   }
 
-  resize(vec, nbins);
+  shed_rows(tab, nbins);
 }

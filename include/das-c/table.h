@@ -24,30 +24,48 @@
 #define DASC_TABLE_H
 
 #include "das-c/mask.h"
-#include "das-c/vector.h"
 #include <stdio.h>
 
-//! Struct for a set of data vectors.
+//! Struct for a dataset.
 typedef struct table
 {
-  //! Number of contained `vector`s.
-  size_t size;
+  //! Number of rows (outer index).
+  size_t rows;
+  //! Number of columns (inner index).
+  size_t cols;
 
-  //! `vector *` array.
-  vector **columns;
+  //! 2D data pointer.
+  double **data;
 } table;
 
 //! Initializes an empty `table`.
 /*!
- * Internal `vector`s are left at size 0.
+ * Internal data pointer is set to `NULL` (0 rows).
  *
  * Exits on allocation failure.
  *
- * @param size Desired number of columns.
+ * @param cols Desired number of columns.
  *
  * @return Pointer to the allocated `table`.
  */
-table *init_table(const size_t size);
+table *init_table(const size_t cols);
+
+//! Adds an allocated row to the internal 2D array of a `table`.
+/*!
+ * Exits on allocation failure.
+ *
+ * @param tab The `table` object to extend.
+ */
+void add_row(table *tab);
+
+//! Removes rows from the end of a `table`.
+/*!
+ * Exits on invalid parameters or reallocation failure.
+ *
+ * @param tab The `table` object to contract.
+ * @param size The new number of rows the `table` should have.
+ */
+void shed_rows(table *tab, const size_t size);
 
 //! Fills an initialized empty `table` with the content of a file.
 /*!

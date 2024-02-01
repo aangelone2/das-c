@@ -27,7 +27,7 @@
 #include <string.h>
 
 // Adds the contents of the fields of `line`, filtered by `msk`,
-// to a new line in the columns of `tab`.
+// to a new row in `tab`.
 // Returns:
 // - 0 if successful
 // - 1 if too many fields (compared to `msk`)
@@ -36,6 +36,8 @@
 int parse_line(table *tab, char *line, const mask *msk)
 {
   size_t field = 0, active_field = 0;
+
+  add_row(tab);
 
   char *tok = strtok(line, DASC_SEPARATORS);
   while (tok)
@@ -53,7 +55,7 @@ int parse_line(table *tab, char *line, const mask *msk)
       if (end == tok)
         return 2;
 
-      push_back(tab->columns[active_field], buffer);
+      tab->data[tab->rows - 1][active_field] = buffer;
 
       ++active_field;
     }
@@ -71,7 +73,7 @@ int parse_line(table *tab, char *line, const mask *msk)
 
 int parse(table *tab, FILE *file, const mask *msk)
 {
-  check(tab->size == msk->n_active, "invalid table size in parse()");
+  check(tab->cols == msk->n_active, "invalid table size in parse()");
 
   char line[DASC_MAX_LINE_LENGTH];
   do

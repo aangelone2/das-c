@@ -6,7 +6,7 @@ void test_simple()
 {
   // Parsing all 3 fields, skipping 20%
   clargs args;
-  args.n_fields = 3;
+  args.n_fields = 4;
   args.skip = 20;
   args.verbose = false;
   args.filename = "../resources/10.ave.dat";

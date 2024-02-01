@@ -1,135 +1,166 @@
 #include "das-c/statistics.h"
-#include "das-c/vector.h"
+#include "das-c/table.h"
 #include "test.h"
+#include <stdlib.h>
 
-vector *short_vector()
+table *short_table()
 {
-  vector *vec = init_vector();
+  table *tab = init_table(1);
+  double content[6] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6};
 
-  push_back(vec, 0.1);
-  push_back(vec, 0.2);
-  push_back(vec, 0.3);
-  push_back(vec, 0.4);
-  push_back(vec, 0.5);
-  push_back(vec, 0.6);
+  for (size_t ir = 0; ir < 6; ++ir)
+  {
+    add_row(tab);
+    tab->data[ir][0] = content[ir];
+  }
 
-  return vec;
+  return tab;
 }
 
 void test_average()
 {
-  vector *vec = short_vector();
+  table *tab = short_table();
 
-  assert_double_eq(average(vec, 0), 0.35);
-  assert_double_eq(average(vec, 2), 0.45);
+  double *res;
 
-  clear_vector(vec);
+  // No skipping
+  res = average(tab, 0);
+  assert_double_eq(res[0], 0.35);
+  free(res);
+
+  // Skipping 2 rows
+  res = average(tab, 2);
+  assert_double_eq(res[0], 0.45);
+  free(res);
+
+  clear_table(tab);
 }
 
 void test_sem()
 {
-  vector *vec = short_vector();
+  table *tab = short_table();
 
-  assert_double_eq(sem(vec, 0, average(vec, 0)), 0.0763762615826);
-  assert_double_eq(sem(vec, 2, average(vec, 2)), 0.0645497224368);
+  double *ave;
+  double *res;
 
-  clear_vector(vec);
+  // No skipping
+  ave = average(tab, 0);
+  res = sem(tab, 0, ave);
+  assert_double_eq(res[0], 0.0763762615826);
+  free(res);
+  free(ave);
+
+  // Skipping 2 rows
+  ave = average(tab, 2);
+  res = sem(tab, 2, ave);
+  assert_double_eq(res[0], 0.0645497224368);
+  free(res);
+  free(ave);
+
+  clear_table(tab);
 }
 
-vector *long_vector()
+table *long_table()
 {
-  vector *vec = init_vector();
+  table *tab = init_table(1);
 
-  for (size_t i = 0; i < 64; ++i)
-    push_back(vec, example_data[i]);
+  for (size_t ir = 0; ir < 64; ++ir)
+  {
+    add_row(tab);
+    tab->data[ir][0] = example_data[ir];
+  }
 
-  return vec;
+  return tab;
 }
 
 void test_rebin()
 {
-  vector *vec = long_vector();
+  table *tab = long_table();
 
-  rebin(vec, 0, 8);
-  assert(vec->size == 8);
-  assert_double_eq(vec->data[0], 0.53702232875);
-  assert_double_eq(vec->data[1], 0.43452742125);
-  assert_double_eq(vec->data[2], 0.44530370625);
-  assert_double_eq(vec->data[3], 0.52863834125);
-  assert_double_eq(vec->data[4], 0.62315147625);
-  assert_double_eq(vec->data[5], 0.69273619500);
-  assert_double_eq(vec->data[6], 0.76592960125);
-  assert_double_eq(vec->data[7], 0.52890948125);
+  rebin(tab, 0, 8);
+  assert(tab->rows == 8);
+  assert_double_eq(tab->data[0][0], 0.53702232875);
+  assert_double_eq(tab->data[1][0], 0.43452742125);
+  assert_double_eq(tab->data[2][0], 0.44530370625);
+  assert_double_eq(tab->data[3][0], 0.52863834125);
+  assert_double_eq(tab->data[4][0], 0.62315147625);
+  assert_double_eq(tab->data[5][0], 0.69273619500);
+  assert_double_eq(tab->data[6][0], 0.76592960125);
+  assert_double_eq(tab->data[7][0], 0.52890948125);
 
-  rebin(vec, 0, 4);
-  assert(vec->size == 4);
-  assert_double_eq(vec->data[0], 0.485774875000);
-  assert_double_eq(vec->data[1], 0.486971023750);
-  assert_double_eq(vec->data[2], 0.657943835625);
-  assert_double_eq(vec->data[3], 0.647419541250);
+  rebin(tab, 0, 4);
+  assert(tab->rows == 4);
+  assert_double_eq(tab->data[0][0], 0.485774875000);
+  assert_double_eq(tab->data[1][0], 0.486971023750);
+  assert_double_eq(tab->data[2][0], 0.657943835625);
+  assert_double_eq(tab->data[3][0], 0.647419541250);
 
-  rebin(vec, 0, 2);
-  assert(vec->size == 2);
-  assert_double_eq(vec->data[0], 0.4863729493750);
-  assert_double_eq(vec->data[1], 0.6526816884375);
+  rebin(tab, 0, 2);
+  assert(tab->rows == 2);
+  assert_double_eq(tab->data[0][0], 0.4863729493750);
+  assert_double_eq(tab->data[1][0], 0.6526816884375);
 
-  clear_vector(vec);
+  clear_table(tab);
 }
 
-vector *long_vector_skip_4()
+table *long_vector_skip_4()
 {
-  vector *vec = init_vector();
+  table *tab = init_table(1);
 
-  for (size_t i = 0; i < 60; ++i)
-    push_back(vec, example_data[i + 4]);
+  for (size_t ir = 0; ir < 60; ++ir)
+  {
+    add_row(tab);
+    tab->data[ir][0] = example_data[ir + 4];
+  }
 
-  return vec;
+  return tab;
 }
 
 void test_rebin_skipping()
 {
-  vector *long_skip = long_vector_skip_4();
+  table *long_skip = long_vector_skip_4();
 
   // Explicit and automatic skipping
   rebin(long_skip, 6, 10);
-  assert(long_skip->size == 10);
-  assert_double_eq(long_skip->data[0], 0.3324987080000);
-  assert_double_eq(long_skip->data[1], 0.5226791060000);
-  assert_double_eq(long_skip->data[2], 0.6084080020000);
-  assert_double_eq(long_skip->data[3], 0.5085241380000);
-  assert_double_eq(long_skip->data[4], 0.5516339640000);
-  assert_double_eq(long_skip->data[5], 0.6362853160000);
-  assert_double_eq(long_skip->data[6], 0.8457914740000);
-  assert_double_eq(long_skip->data[7], 0.7377503400000);
-  assert_double_eq(long_skip->data[8], 0.5791360240000);
-  assert_double_eq(long_skip->data[9], 0.5554548940000);
+  assert(long_skip->rows == 10);
+  assert_double_eq(long_skip->data[0][0], 0.3324987080000);
+  assert_double_eq(long_skip->data[1][0], 0.5226791060000);
+  assert_double_eq(long_skip->data[2][0], 0.6084080020000);
+  assert_double_eq(long_skip->data[3][0], 0.5085241380000);
+  assert_double_eq(long_skip->data[4][0], 0.5516339640000);
+  assert_double_eq(long_skip->data[5][0], 0.6362853160000);
+  assert_double_eq(long_skip->data[6][0], 0.8457914740000);
+  assert_double_eq(long_skip->data[7][0], 0.7377503400000);
+  assert_double_eq(long_skip->data[8][0], 0.5791360240000);
+  assert_double_eq(long_skip->data[9][0], 0.5554548940000);
 
   // Only explicit skipping
   rebin(long_skip, 2, 4);
-  assert(long_skip->size == 4);
-  assert_double_eq(long_skip->data[0], 0.5584660700000);
-  assert_double_eq(long_skip->data[1], 0.5939596400000);
-  assert_double_eq(long_skip->data[2], 0.7917709070000);
-  assert_double_eq(long_skip->data[3], 0.5672954590000);
-
-  vector *short_vec = short_vector();
-  push_back(short_vec, 0.7);
-
-  // Only automatic skipping
-  rebin(short_vec, 0, 2);
-  assert(short_vec->size == 2);
-  assert_double_eq(short_vec->data[0], 0.3);
-  assert_double_eq(short_vec->data[1], 0.6);
+  assert(long_skip->rows == 4);
+  assert_double_eq(long_skip->data[0][0], 0.5584660700000);
+  assert_double_eq(long_skip->data[1][0], 0.5939596400000);
+  assert_double_eq(long_skip->data[2][0], 0.7917709070000);
+  assert_double_eq(long_skip->data[3][0], 0.5672954590000);
 
   // Only automatic skipping, trivial bins
   rebin(long_skip, 0, 3);
-  assert(long_skip->size == 3);
-  assert_double_eq(long_skip->data[0], 0.5939596400000);
-  assert_double_eq(long_skip->data[1], 0.7917709070000);
-  assert_double_eq(long_skip->data[2], 0.5672954590000);
+  assert(long_skip->rows == 3);
+  assert_double_eq(long_skip->data[0][0], 0.5939596400000);
+  assert_double_eq(long_skip->data[1][0], 0.7917709070000);
+  assert_double_eq(long_skip->data[2][0], 0.5672954590000);
 
-  clear_vector(short_vec);
-  clear_vector(long_skip);
+  table *short_tab = short_table();
+  add_row(short_tab);
+  short_tab->data[short_tab->rows - 1][0] = 0.7;
+
+  // Only automatic skipping
+  rebin(short_tab, 0, 2);
+  assert(short_tab->rows == 2);
+  assert_double_eq(short_tab->data[0][0], 0.3);
+  assert_double_eq(short_tab->data[1][0], 0.6);
+
+  clear_table(short_tab);
+  clear_table(long_skip);
 }
 
 int main()

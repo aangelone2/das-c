@@ -23,48 +23,47 @@
 #ifndef DASC_STATISTICS_H
 #define DASC_STATISTICS_H
 
-#include "das-c/vector.h"
+#include "das-c/table.h"
 
-//! Computes the average of the passed `vector`.
+//! Computes the average of the columns of the passed `table`.
 /*!
  * Exits if `skip` is too large.
  *
- * @param vec Data `vector`.
+ * @param tab Data `table`.
  * @param skip Number of rows to skip from the beginning.
  *
- * @return The computed average.
+ * @return The computed averages.
  */
-double average(const vector *vec, const size_t skip);
+double *average(const table *tab, const size_t skip);
 
-//! Computes the SEM of the passed `vector`.
+//! Computes the SEM of the columns of the passed `table`.
 /*!
  * Pre-calculation of the average allows to use a two-pass algorithm, which
  * ensures high accuracy.
  *
  * Exits if `skip` is too large.
  *
- * @param vec Data `vector`.
+ * @param tab Data `vector`.
  * @param skip Number of rows to skip from the beginning.
  * @param average The pre-computed average of the array.
  *
- * @return The computed SEM.
+ * @return The computed SEMs.
  */
-double sem(const vector *vec, const size_t skip, const double average);
+double *sem(const table *tab, const size_t skip, const double *average);
 
-//! Rebins the passed array.
+//! Rebins the passed `table`.
 /*!
- * Bin averages are written at the beginning of the `vector` without overlap
- * with previous content. The `vector` is then resized to only contain bin
- * averages.
+ * Bin averages are written in the first rows, without overlap with previous
+ * content. The `table` is then resized to only contain bin averages.
  *
  * Exits if `skip` or `nbins` is too large.
  *
  * No-op if `nbins` is equal to the current size.
  *
- * @param vec Data `vector`.
+ * @param tab Data `table`.
  * @param skip Number of rows to skip from the beginning.
  * @param nbins The number of desired bins.
  */
-void rebin(vector *vec, const size_t skip, const size_t nbins);
+void rebin(table *tab, const size_t skip, const size_t nbins);
 
 #endif

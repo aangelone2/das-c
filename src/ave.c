@@ -31,32 +31,6 @@
 #define MAX_BINS 1024
 #define SIZES 5
 
-// Allocates 2d vector, no cleanup on failure.
-// Returns the allocated 2d array, `NULL` on failure.
-double **alloc_2d(const size_t n1, const size_t n2)
-{
-  double **buffer = malloc(n1 * sizeof(double *));
-  if (!buffer)
-    return NULL;
-
-  for (size_t is = 0; is < SIZES; ++is)
-  {
-    buffer[is] = malloc(n2 * sizeof(double));
-    if (!buffer[is])
-      return NULL;
-  }
-
-  return buffer;
-}
-
-// Frees 2d vector.
-void free_2d(double **arr, const size_t n1)
-{
-  for (size_t i = 0; i < n1; ++i)
-    free(arr[i]);
-  free(arr);
-}
-
 ave_results *ave(const clargs *args)
 {
   ave_results *res = malloc(sizeof(ave_results));
@@ -83,11 +57,15 @@ ave_results *ave(const clargs *args)
   table *tab = init_table(msk->n_active);
   check(!parse(tab, file, msk), "parsing error in ave()");
 
-  res->cols = tab->size;
+  res->cols = tab->cols;
   res->nsizes = SIZES;
 
   res->fields = malloc(res->cols * sizeof(size_t));
   check(res->fields, "allocation failure in ave()");
+
+  // Selected VS all fields
+  for (size_t ic = 0; ic < res->cols; ++ic)
+    res->fields[ic] = (args->fields ? args->fields[ic] : ic);
 
   res->nbins = malloc(res->nsizes * sizeof(size_t));
   check(res->nbins, "allocation failure in ave()");
@@ -95,14 +73,14 @@ ave_results *ave(const clargs *args)
   res->bsizes = malloc(res->nsizes * sizeof(size_t));
   check(res->bsizes, "allocation failure in ave()");
 
-  res->ave = alloc_2d(res->nsizes, res->cols);
+  res->ave = malloc(res->nsizes * sizeof(double *));
   check(res->ave, "allocation failure in ave()");
 
-  res->sem = alloc_2d(res->nsizes, res->cols);
+  res->sem = malloc(res->nsizes * sizeof(double *));
   check(res->sem, "allocation failure in ave()");
 
   // All columns will be the same size
-  res->rows = tab->columns[0]->size;
+  res->rows = tab->rows;
 
   const double perc = (double)(args->skip) / 100.0;
   size_t skip = (size_t)(perc * (double)(res->rows));
@@ -114,19 +92,16 @@ ave_results *ave(const clargs *args)
 
   for (size_t is = 0; is < res->nsizes; ++is)
   {
+    // No skip after the first rebinning
     const size_t skip_s = (is ? 0 : skip);
 
-    // All columns will have the same bin size
-    for (size_t ic = 0; ic < tab->size; ++ic)
-    {
-      // Only the last write is used
-      rebin(tab->columns[ic], skip_s, nbins);
-      res->fields[ic] = (args->fields ? args->fields[ic] : ic);
-      res->nbins[is] = nbins;
-      res->bsizes[is] = bsize;
-      res->ave[is][ic] = average(tab->columns[ic], 0);
-      res->sem[is][ic] = sem(tab->columns[ic], 0, res->ave[is][ic]);
-    }
+    rebin(tab, skip_s, nbins);
+    res->nbins[is] = nbins;
+    res->bsizes[is] = bsize;
+
+    // After the rebinning, nothing needs to ever be skipped
+    res->ave[is] = average(tab, 0);
+    res->sem[is] = sem(tab, 0, res->ave[is]);
 
     nbins /= 2;
     bsize *= 2;
@@ -144,7 +119,14 @@ void clear_ave_results(ave_results *res)
   free(res->fields);
   free(res->nbins);
   free(res->bsizes);
-  free_2d(res->ave, SIZES);
-  free_2d(res->sem, SIZES);
+
+  for (size_t is = 0; is < res->nsizes; ++is)
+  {
+    free(res->ave[is]);
+    free(res->sem[is]);
+  }
+  free(res->ave);
+  free(res->sem);
+
   free(res);
 }
