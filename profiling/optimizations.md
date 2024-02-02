@@ -156,3 +156,59 @@ affect the performance while simplifying the code -
 furthermore, it would be fairly easy to switch back to a
 column-first configuration later, to check if any
 performance improvements arise.
+
+
+
+
+# Line pre-counting (`100a0a2`)
+
+We tested different solutions for line pre-counting on
+the sample file, comparing `fgetc()`-based,
+`fgets()`-based, and `fread()`-based functions for speed
+(with `-O3` optimizations). We obtained the following
+results:
+
+- `fgetc()`: 14.484 s
+- `fgets()`: 1.907 s
+- `fgets()` with comment check: 1.912 s
+- `fread()` with buffer looping: 2.232 s
+- `fread()` using `memchr()`: 1.225 s
+- Using shell `wc -l`: 0.745 s
+
+The optimal solution would have been either 1)
+requesting the line number to the user, together with
+the promise of no commented lines, or 2) using `fread()`
+with `memchr()`, which also requires the absence of
+comments (since commented lines cannot be found, at
+least not easily).
+
+In order to reduce the requirements for the user, we
+decided to adopt the `fgets()`-based solution which also
+allowed comment counting, which could be basically
+dropped in without significant code changes. The rows of
+the main `table` object were then preallocated based on
+the need.
+
+The corresponding profiling results are displayed in
+`profiling/log-03.log`, and execution time data is
+displayed in `profiling/data-03.dat`, yielding the
+average 51.1(4) s and 47.7(2) s with `-pg` and `-O3`.
+
+In the results, the following functions (and their
+children) took the largest share of the execution time:
+
+- `main()` (95.0 %)
+- `parse()` (74.2 %)
+- `parse_line()` (47.6 %)
+- `rebin()` (20.2 %)
+- `init_table()` (10.5 %)
+- `count_rows()` (3.6 %)
+- `is_comment()` (2.6 %)
+- `shed_rows()` (2.5 %)
+
+Line counting takes approximately the same time as in
+the tests, and table allocation still takes a sizable
+amount of time. `parse_line()` is now considerably
+less important, however, with more time being taken by
+`init_table()` (which is performed before the
+`parse_line()`-based loop).
