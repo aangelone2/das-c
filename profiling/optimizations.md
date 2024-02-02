@@ -1,8 +1,9 @@
 All the execution times discussed here are average
-estimates over 16 measurements, obtained using the `-pg`
-optimization option, where the standard error of the
-mean is renormalized with Student's t factors to keep
-into account finite-size effects (multiplied by
+estimates over 16 measurements. In all data files, the
+first column is obtained with the `-pg` option, while
+the second is obtained with `-O3`. The standard error of
+the mean is renormalized with Student's t factors to
+keep into account finite-size effects (multiplied by
 `2.120/1.960`).
 
 
@@ -23,7 +24,7 @@ in the `resources/` folder, where `11.large.dat` is a
 4x8e7 datafile created by the `11.generator.py` python
 script. The execution time data is displayed in
 `profiling/data-01.dat`, and the average result is
-48.3(2) s.
+48.3(2) s with `-pg` and 45.5(5) s with `-O3`.
 
 In the results, the following functions (and their
 children) took the largest share of the execution time:
@@ -133,8 +134,8 @@ complex statistical functions).
 Profiling results are displayed in
 `profiling/log-02.log`, and execution time data is
 displayed in `profiling/data-02.dat`, yielding the
-average 48.4(2) s (i.e., identical within error to the
-previous result).
+average 48.4(2) s with `-pg` and 45.4(2) with `-O3`
+(i.e., identical within error to the previous result).
 
 In the results, the following functions (and their
 children) took the largest share of the execution time:
@@ -193,6 +194,12 @@ The corresponding profiling results are displayed in
 `profiling/log-03.log`, and execution time data is
 displayed in `profiling/data-03.dat`, yielding the
 average 51.1(4) s and 47.7(2) s with `-pg` and `-O3`.
+
+Execution time worsened, but the difference becomes
+smaller with optimizations. Furthermore, row
+pre-counting is necessary for two further improvements:
+namely, 1) avoiding the parsing of lines slated to be
+skipped, and 2) parsing parallelization.
 
 In the results, the following functions (and their
 children) took the largest share of the execution time:
