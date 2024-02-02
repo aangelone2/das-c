@@ -26,18 +26,31 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Adds the contents of the fields of `line`, filtered by `msk`,
-// to a new row in `tab`.
+// Counts the number of non-commented rows in the file.
+// Resets the file on return.
+size_t count_rows(FILE *file)
+{
+  size_t rows = 0;
+  char line[DASC_MAX_LINE_LENGTH];
+
+  while (fgets(line, DASC_MAX_LINE_LENGTH, file))
+    if (!is_comment(line))
+      ++rows;
+
+  rewind(file);
+  return rows;
+}
+
+// Writes the contents of the fields of `line`, filtered by `msk`,
+// to the components of `data`.
 // Returns:
 // - 0 if successful
 // - 1 if too many fields (compared to `msk`)
 // - 2 if invalid fields found
 // - 3 if too few fields (compared to `msk`)
-int parse_line(table *tab, char *line, const mask *msk)
+int parse_line(double *data, char *line, const mask *msk)
 {
   size_t field = 0, active_field = 0;
-
-  add_row(tab);
 
   char *tok = strtok(line, DASC_SEPARATORS);
   while (tok)
@@ -55,8 +68,7 @@ int parse_line(table *tab, char *line, const mask *msk)
       if (end == tok)
         return 2;
 
-      tab->data[tab->rows - 1][active_field] = buffer;
-
+      data[active_field] = buffer;
       ++active_field;
     }
 
@@ -73,9 +85,12 @@ int parse_line(table *tab, char *line, const mask *msk)
 
 int parse(table *tab, FILE *file, const mask *msk)
 {
-  check(tab->cols == msk->n_active, "invalid table size in parse()");
+  const size_t rows = count_rows(file);
+  init_table(tab, rows, msk->n_active);
 
   char line[DASC_MAX_LINE_LENGTH];
+
+  size_t ir = 0;
   do
   {
     // Parse line, interrupt if EOF
@@ -86,9 +101,11 @@ int parse(table *tab, FILE *file, const mask *msk)
       continue;
 
     // Failure in parse_line()
-    const int res = parse_line(tab, line, msk);
+    const int res = parse_line(tab->data[ir], line, msk);
     if (res)
       return res;
+
+    ++ir;
   } while (true);
 
   return 0;

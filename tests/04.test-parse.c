@@ -3,7 +3,7 @@
 
 mask *common_mask()
 {
-  mask *msk = init_mask(3);
+  mask *msk = alloc_mask(3);
   // Parsing all fields
   set_all(msk);
 
@@ -15,12 +15,12 @@ void test_too_many_fields()
   mask *msk = common_mask();
   FILE *file = fopen("../resources/05.too_many_fields.dat", "r");
 
-  table *tab = init_table(msk->n_active);
-  assert(parse(tab, file, msk) == 1);
-  clear_table(tab);
+  table tab;
+  assert(parse(&tab, file, msk) == 1);
+  deinit_table(&tab);
 
   fclose(file);
-  clear_mask(msk);
+  free_mask(msk);
 }
 
 void test_invalid_field()
@@ -28,12 +28,12 @@ void test_invalid_field()
   mask *msk = common_mask();
   FILE *file = fopen("../resources/06.invalid_field.dat", "r");
 
-  table *tab = init_table(msk->n_active);
-  assert(parse(tab, file, msk) == 2);
-  clear_table(tab);
+  table tab;
+  assert(parse(&tab, file, msk) == 2);
+  deinit_table(&tab);
 
   fclose(file);
-  clear_mask(msk);
+  free_mask(msk);
 }
 
 void test_too_few_fields()
@@ -41,69 +41,69 @@ void test_too_few_fields()
   mask *msk = common_mask();
   FILE *file = fopen("../resources/07.too_few_fields.dat", "r");
 
-  table *tab = init_table(msk->n_active);
-  assert(parse(tab, file, msk) == 3);
-  clear_table(tab);
+  table tab;
+  assert(parse(&tab, file, msk) == 3);
+  deinit_table(&tab);
 
   fclose(file);
-  clear_mask(msk);
+  free_mask(msk);
 }
 
 void test_valid_full()
 {
   // Setting 4-4 field mask
-  mask *msk = init_mask(4);
+  mask *msk = alloc_mask(4);
   set_all(msk);
 
   FILE *file = fopen("../resources/08.valid.dat", "r");
 
-  table *tab = init_table(msk->n_active);
-  assert(!parse(tab, file, msk));
+  table tab;
+  assert(!parse(&tab, file, msk));
 
-  assert(tab->cols == 4);
-  for (size_t ic = 0; ic < tab->cols; ++ic)
+  assert(tab.cols == 4);
+  for (size_t ic = 0; ic < tab.cols; ++ic)
   {
-    assert(tab->rows == 64);
+    assert(tab.rows == 64);
 
     // Checking each component
     for (size_t ir = 0; ir < 64; ++ir)
-      assert_double_eq(tab->data[ir][ic], (double)(ic) + example_data[ir]);
+      assert_double_eq(tab.data[ir][ic], (double)(ic) + example_data[ir]);
   }
 
-  clear_table(tab);
+  deinit_table(&tab);
 
   fclose(file);
-  clear_mask(msk);
+  free_mask(msk);
 }
 
 void test_filtering()
 {
   // Setting 2-4 field mask
-  mask *msk = init_mask(4);
+  mask *msk = alloc_mask(4);
   set_field(msk, 1);
   set_field(msk, 2);
 
   FILE *file = fopen("../resources/08.valid.dat", "r");
 
-  table *tab = init_table(msk->n_active);
-  assert(!parse(tab, file, msk));
+  table tab;
+  assert(!parse(&tab, file, msk));
 
-  assert(tab->cols == 2);
-  for (size_t ic = 0; ic < tab->cols; ++ic)
+  assert(tab.cols == 2);
+  for (size_t ic = 0; ic < tab.cols; ++ic)
   {
-    assert(tab->rows == 64);
+    assert(tab.rows == 64);
 
     // Checking each component
     for (size_t ir = 0; ir < 64; ++ir)
       assert_double_eq(
-          tab->data[ir][ic], (double)(ic) + 1.0 + example_data[ir]
+          tab.data[ir][ic], (double)(ic) + 1.0 + example_data[ir]
       );
   }
 
-  clear_table(tab);
+  deinit_table(&tab);
 
   fclose(file);
-  clear_mask(msk);
+  free_mask(msk);
 }
 
 int main()

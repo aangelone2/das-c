@@ -49,7 +49,7 @@ typedef struct mask
  *
  * @return Pointer to the allocated `mask`.
  */
-mask *init_mask(const size_t size);
+mask *alloc_mask(const size_t size);
 
 //! Set a field as "active" in a mask.
 /*!
@@ -72,6 +72,6 @@ void set_all(mask *msk);
 /*!
  * @param msk The `mask` to clear.
  */
-void clear_mask(mask *msk);
+void free_mask(mask *msk);
 
 #endif

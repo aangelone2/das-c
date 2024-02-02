@@ -8,7 +8,7 @@ into account finite-size effects (multiplied by
 
 
 
-# General Considerations
+# Starting point (`200e6ad`)
 
 Optimization was started at `200e6ad`; the profiling
 results in `profiling/log-01.log` were obtained by
@@ -90,10 +90,7 @@ change the code may be:
    two counting approaches is better, and may not be
    worth it if the execution time share of the counting
    process is ~25% of the execution time (the amount
-   spent pushing back and possibly reallocating). `wc`
-   takes ~3s to count the number of lines, compared to a
-   projected ~10s for the `push_back()` routine from the
-   profiling, making this direction worth investigating.
+   spent pushing back and possibly reallocating).
 
 3. Transposing the data structure, rearranging `table`
    as an array of rows, rather than an array of columns.
@@ -126,7 +123,7 @@ change the code may be:
 
 
 
-# Transposition
+# Transposition (`d1efc36`)
 
 We applied the modification discussed in point (3)
 above. We immediately noticed that it led to a
@@ -153,3 +150,9 @@ Due to the new data structure, fewer allocations
 statistical functions remain as irrelevant as they were
 before, doubling down on the necessity to optimize or
 parallelize parsing.
+
+We decided to keep the modification, since it does not
+affect the performance while simplifying the code -
+furthermore, it would be fairly easy to switch back to a
+column-first configuration later, to check if any
+performance improvements arise.

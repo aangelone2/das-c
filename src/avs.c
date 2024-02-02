@@ -38,7 +38,7 @@ avs_results *avs(const clargs *args)
   const size_t cols = count_fields_file(file);
   check(cols, "field count error in avs()");
 
-  mask *msk = init_mask(cols);
+  mask *msk = alloc_mask(cols);
 
   // Selected fields
   if (args->fields)
@@ -50,10 +50,10 @@ avs_results *avs(const clargs *args)
   else
     set_all(msk);
 
-  table *tab = init_table(msk->n_active);
-  check(!parse(tab, file, msk), "parsing error in avs()");
+  table tab;
+  check(!parse(&tab, file, msk), "parsing error in avs()");
 
-  res->cols = tab->cols;
+  res->cols = tab.cols;
 
   res->fields = malloc(res->cols * sizeof(size_t));
   check(res->fields, "allocation failure in avs()");
@@ -63,18 +63,18 @@ avs_results *avs(const clargs *args)
     res->fields[ic] = (args->fields ? args->fields[ic] : ic);
 
   // All columns will be the same size
-  res->rows = tab->rows;
+  res->rows = tab.rows;
 
   const double perc = (double)(args->skip) / 100.0;
   const size_t skip = (size_t)(perc * (double)(res->rows));
   res->kept = res->rows - skip;
 
   // Assigning statistical results
-  res->ave = average(tab, skip);
-  res->sem = sem(tab, skip, res->ave);
+  res->ave = average(&tab, skip);
+  res->sem = sem(&tab, skip, res->ave);
 
-  clear_table(tab);
-  clear_mask(msk);
+  deinit_table(&tab);
+  free_mask(msk);
   fclose(file);
 
   return res;

@@ -24,7 +24,7 @@
 #include "das-c/common.h"
 #include <stdlib.h>
 
-mask *init_mask(const size_t size)
+mask *alloc_mask(const size_t size)
 {
   mask *msk = malloc(sizeof(mask));
   check(msk, "failed allocation in init_mask()");
@@ -60,7 +60,7 @@ void set_all(mask *msk)
   msk->n_active = msk->size;
 }
 
-void clear_mask(mask *msk)
+void free_mask(mask *msk)
 {
   free(msk->bits);
   free(msk);

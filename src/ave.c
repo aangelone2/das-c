@@ -42,7 +42,7 @@ ave_results *ave(const clargs *args)
   const size_t cols = count_fields_file(file);
   check(cols, "field count error in ave()");
 
-  mask *msk = init_mask(cols);
+  mask *msk = alloc_mask(cols);
 
   // Selected fields
   if (args->fields)
@@ -54,10 +54,10 @@ ave_results *ave(const clargs *args)
   else
     set_all(msk);
 
-  table *tab = init_table(msk->n_active);
-  check(!parse(tab, file, msk), "parsing error in ave()");
+  table tab;
+  check(!parse(&tab, file, msk), "parsing error in ave()");
 
-  res->cols = tab->cols;
+  res->cols = tab.cols;
   res->nsizes = SIZES;
 
   res->fields = malloc(res->cols * sizeof(size_t));
@@ -80,7 +80,7 @@ ave_results *ave(const clargs *args)
   check(res->sem, "allocation failure in ave()");
 
   // All columns will be the same size
-  res->rows = tab->rows;
+  res->rows = tab.rows;
 
   const double perc = (double)(args->skip) / 100.0;
   size_t skip = (size_t)(perc * (double)(res->rows));
@@ -95,20 +95,20 @@ ave_results *ave(const clargs *args)
     // No skip after the first rebinning
     const size_t skip_s = (is ? 0 : skip);
 
-    rebin(tab, skip_s, nbins);
+    rebin(&tab, skip_s, nbins);
     res->nbins[is] = nbins;
     res->bsizes[is] = bsize;
 
     // After the rebinning, nothing needs to ever be skipped
-    res->ave[is] = average(tab, 0);
-    res->sem[is] = sem(tab, 0, res->ave[is]);
+    res->ave[is] = average(&tab, 0);
+    res->sem[is] = sem(&tab, 0, res->ave[is]);
 
     nbins /= 2;
     bsize *= 2;
   }
 
-  clear_table(tab);
-  clear_mask(msk);
+  deinit_table(&tab);
+  free_mask(msk);
   fclose(file);
 
   return res;

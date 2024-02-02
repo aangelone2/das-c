@@ -40,23 +40,13 @@ typedef struct table
 
 //! Initializes an empty `table`.
 /*!
- * Internal data pointer is set to `NULL` (0 rows).
- *
  * Exits on allocation failure.
  *
+ * @param tab Pointer to the table to allocate.
+ * @param rows Desired number of rows.
  * @param cols Desired number of columns.
- *
- * @return Pointer to the allocated `table`.
  */
-table *init_table(const size_t cols);
-
-//! Adds an allocated row to the internal 2D array of a `table`.
-/*!
- * Exits on allocation failure.
- *
- * @param tab The `table` object to extend.
- */
-void add_row(table *tab);
+void init_table(table *tab, const size_t rows, const size_t cols);
 
 //! Removes rows from the end of a `table`.
 /*!
@@ -67,7 +57,7 @@ void add_row(table *tab);
  */
 void shed_rows(table *tab, const size_t size);
 
-//! Fills an initialized empty `table` with the content of a file.
+//! Fills an uninitialized `table` with the content of a file.
 /*!
  * Exits if table size is incompatible with passed mask.
  *
@@ -87,6 +77,6 @@ int parse(table *tab, FILE *file, const mask *msk);
 /*!
  * @param tab The `table` to clear.
  */
-void clear_table(table *tab);
+void deinit_table(table *tab);
 
 #endif
