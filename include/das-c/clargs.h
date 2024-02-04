@@ -38,6 +38,9 @@ typedef struct clargs
   //! Percentage (1-100) of rows to skip (default: 0).
   size_t skip;
 
+  //! Number of threads for the parsing process (default: 1).
+  size_t n_threads;
+
   //! Prints additional information (default: false).
   bool verbose;
 

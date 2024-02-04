@@ -1,64 +1,64 @@
 #include "das-c/table.h"
 #include "test.h"
+#include <stdlib.h>
 
-mask *common_mask()
+clargs default_clargs()
 {
-  mask *msk = alloc_mask(3);
-  // Parsing all fields
-  set_all(msk);
+  clargs args;
 
-  return msk;
+  // Default values
+  args.n_fields = 0;
+  args.fields = NULL;
+  args.skip = 0;
+  args.n_threads = 1;
+  args.verbose = false;
+
+  return args;
 }
 
 void test_too_many_fields()
 {
-  mask *msk = common_mask();
-  FILE *file = fopen("../resources/05.too_many_fields.dat", "r");
+  clargs args = default_clargs();
+  args.filename = "../resources/05.too_many_fields.dat";
 
   table tab;
-  assert(parse(&tab, file, msk) == 1);
-  deinit_table(&tab);
+  assert(parse(&tab, &args) == 1);
 
-  fclose(file);
-  free_mask(msk);
+  deinit_table(&tab);
+  deinit_clargs(&args);
 }
 
 void test_invalid_field()
 {
-  mask *msk = common_mask();
-  FILE *file = fopen("../resources/06.invalid_field.dat", "r");
+  clargs args = default_clargs();
+  args.filename = "../resources/06.invalid_field.dat";
 
   table tab;
-  assert(parse(&tab, file, msk) == 2);
-  deinit_table(&tab);
+  assert(parse(&tab, &args) == 2);
 
-  fclose(file);
-  free_mask(msk);
+  deinit_table(&tab);
+  deinit_clargs(&args);
 }
 
 void test_too_few_fields()
 {
-  mask *msk = common_mask();
-  FILE *file = fopen("../resources/07.too_few_fields.dat", "r");
+  clargs args = default_clargs();
+  args.filename = "../resources/07.too_few_fields.dat";
 
   table tab;
-  assert(parse(&tab, file, msk) == 3);
-  deinit_table(&tab);
+  assert(parse(&tab, &args) == 3);
 
-  fclose(file);
-  free_mask(msk);
+  deinit_table(&tab);
+  deinit_clargs(&args);
 }
 
 void test_valid_full()
 {
-  // Setting 4-4 field mask
-  mask *msk = alloc_mask(4);
-  set_all(msk);
-
-  FILE *file = fopen("../resources/08.valid.dat", "r");
+  clargs args = default_clargs();
+  args.filename = "../resources/08.valid.dat";
 
   table tab;
-  assert(!parse(&tab, file, msk));
+  assert(!parse(&tab, &args));
 
   assert(tab.cols == 4);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -71,22 +71,20 @@ void test_valid_full()
   }
 
   deinit_table(&tab);
-
-  fclose(file);
-  free_mask(msk);
+  deinit_clargs(&args);
 }
 
 void test_filtering()
 {
-  // Setting 2-4 field mask
-  mask *msk = alloc_mask(4);
-  set_field(msk, 1);
-  set_field(msk, 2);
-
-  FILE *file = fopen("../resources/08.valid.dat", "r");
+  clargs args = default_clargs();
+  args.filename = "../resources/08.valid.dat";
+  args.n_fields = 2;
+  args.fields = malloc(2 * sizeof(size_t));
+  args.fields[0] = 1;
+  args.fields[1] = 2;
 
   table tab;
-  assert(!parse(&tab, file, msk));
+  assert(!parse(&tab, &args));
 
   assert(tab.cols == 2);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -101,9 +99,7 @@ void test_filtering()
   }
 
   deinit_table(&tab);
-
-  fclose(file);
-  free_mask(msk);
+  deinit_clargs(&args);
 }
 
 int main()

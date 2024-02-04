@@ -47,8 +47,8 @@ test: $(tobjects)
 	cd $(bdir); ./01.test-count_fields
 	cd $(bdir); ./02.test-file_info
 	cd $(bdir); ./03.test-statistics
-	cd $(bdir); ./04.test-parse
-	cd $(bdir); ./05.test-clargs
+	cd $(bdir); ./04.test-clargs
+	cd $(bdir); ./05.test-parse
 	cd $(bdir); ./06.test-avs
 	cd $(bdir); ./07.test-ave
 

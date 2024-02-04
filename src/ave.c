@@ -22,7 +22,6 @@
 
 #include "das-c/ave.h"
 #include "das-c/common.h"
-#include "das-c/mask.h"
 #include "das-c/statistics.h"
 #include "das-c/table.h"
 #include <stdlib.h>
@@ -36,26 +35,8 @@ ave_results *ave(const clargs *args)
   ave_results *res = malloc(sizeof(ave_results));
   check(res, "allocation failure in ave()");
 
-  FILE *file = fopen(args->filename, "r");
-  check(file, "unreachable file in ave()");
-
-  const size_t cols = count_fields_file(file);
-  check(cols, "field count error in ave()");
-
-  mask *msk = alloc_mask(cols);
-
-  // Selected fields
-  if (args->fields)
-  {
-    for (size_t f_idx = 0; f_idx < args->n_fields; ++f_idx)
-      set_field(msk, args->fields[f_idx]);
-  }
-  // All fields
-  else
-    set_all(msk);
-
   table tab;
-  check(!parse(&tab, file, msk), "parsing error in ave()");
+  check(!parse(&tab, args), "parsing error in ave()");
 
   res->cols = tab.cols;
   res->nsizes = SIZES;
@@ -108,9 +89,6 @@ ave_results *ave(const clargs *args)
   }
 
   deinit_table(&tab);
-  free_mask(msk);
-  fclose(file);
-
   return res;
 }
 
