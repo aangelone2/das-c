@@ -79,7 +79,7 @@ long int *get_pos(FILE *file, const size_t *chunk_sizes, const size_t nthreads)
         continue;
 
       ++ir;
-    } while (ir < chunk_sizes[it]);
+    } while (ir < chunk_sizes[it - 1]);
 
     pos[it] = ftell(file);
   }
@@ -186,16 +186,17 @@ int parse(table *tab, const clargs *args)
   size_t *chunk_sizes = get_chunk_sizes(rows, args->n_threads);
   long int *pos = get_pos(file, chunk_sizes, args->n_threads);
 
+  size_t start = 0;
   for (size_t it = 0; it < args->n_threads; ++it)
   {
     FILE *file_it = fopen(args->filename, "r");
     fseek(file_it, pos[it], 0);
 
-    const size_t start = (it ? chunk_sizes[it - 1] + 1 : 0);
-
     const int res = parse_chunk(tab, file_it, msk, start, chunk_sizes[it]);
     if (res)
       return res;
+
+    start += chunk_sizes[it];
 
     fclose(file_it);
   }
