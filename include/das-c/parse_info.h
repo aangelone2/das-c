@@ -20,58 +20,45 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_MASK_H
-#define DASC_MASK_H
+#ifndef DASC_PARSE_INFO_H
+#define DASC_PARSE_INFO_H
 
-#include <stdbool.h>
-#include <stddef.h>
+#include "das-c/clargs.h"
+#include "das-c/mask.h"
 
-//! Struct for mask to select which fields to parse.
-typedef struct mask
+//! Struct holding file and thread load information.
+typedef struct parse_info
 {
-  //! Number of fields in the mask.
-  size_t size;
+  //! Filename.
+  char *filename;
 
-  //! Number of `true` fields in the mask.
-  size_t n_active;
+  //! Number of rows (outer index).
+  size_t rows;
+  //! Mask specifying the fields to access.
+  mask *msk;
 
-  //! Mask array, true (false) to parse (ignore) field of each index.
-  bool *bits;
-} mask;
+  //! Thread number.
+  size_t n_threads;
+  //! Thread load (number of rows to parse) array.
+  size_t *chunks;
+  //! Thread file position array.
+  long int *pos;
+} parse_info;
 
-//! Initializes `mask` of specified size.
+//! Initializes `parse_info` from the passed CL arguments.
 /*!
- * All fields will be set as `false` by default.
- *
  * Exits on allocation failure.
  *
- * @param size The overall size of the mask to build.
+ * @param args CL arguments holding init information.
  *
- * @return Pointer to the allocated `mask`.
+ * @return Pointer to the allocated `parse_info`.
  */
-mask *alloc_mask(const size_t size);
+parse_info *alloc_parse_info(const clargs *args);
 
-//! Set a field as "active" in a mask.
+//! Frees memory associated to a `parse_info` object.
 /*!
- * `n_active` is increased, unless the field is already set.
- *
- * Exits if field outside of size mask.
- *
- * @param msk Pointer to the mask to modify.
- * @param field The index of the field to set as "active".
+ * @param msk The `parse_info` to clear.
  */
-void set_field(mask *msk, const size_t field);
-
-//! Set all fields as "active" in a mask.
-/*!
- * @param msk Mask to modify.
- */
-void set_all(mask *msk);
-
-//! Frees memory associated to a `mask` object.
-/*!
- * @param msk The `mask` to clear.
- */
-void free_mask(mask *msk);
+void free_parse_info(parse_info *info);
 
 #endif

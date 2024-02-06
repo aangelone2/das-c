@@ -20,11 +20,13 @@ void test_too_many_fields()
 {
   clargs args = default_clargs();
   args.filename = "../resources/05.too_many_fields.dat";
+  parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse(&tab, &args) == 1);
+  assert(parse(&tab, info) == 1);
 
   deinit_table(&tab);
+  free_parse_info(info);
   deinit_clargs(&args);
 }
 
@@ -32,11 +34,13 @@ void test_invalid_field()
 {
   clargs args = default_clargs();
   args.filename = "../resources/06.invalid_field.dat";
+  parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse(&tab, &args) == 2);
+  assert(parse(&tab, info) == 2);
 
   deinit_table(&tab);
+  free_parse_info(info);
   deinit_clargs(&args);
 }
 
@@ -44,11 +48,13 @@ void test_too_few_fields()
 {
   clargs args = default_clargs();
   args.filename = "../resources/07.too_few_fields.dat";
+  parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse(&tab, &args) == 3);
+  assert(parse(&tab, info) == 3);
 
   deinit_table(&tab);
+  free_parse_info(info);
   deinit_clargs(&args);
 }
 
@@ -56,9 +62,10 @@ void test_valid_full()
 {
   clargs args = default_clargs();
   args.filename = "../resources/08.valid.dat";
+  parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse(&tab, &args));
+  assert(!parse(&tab, info));
 
   assert(tab.cols == 4);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -71,6 +78,7 @@ void test_valid_full()
   }
 
   deinit_table(&tab);
+  free_parse_info(info);
   deinit_clargs(&args);
 }
 
@@ -82,9 +90,10 @@ void test_filtering()
   args.fields = malloc(2 * sizeof(size_t));
   args.fields[0] = 1;
   args.fields[1] = 2;
+  parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse(&tab, &args));
+  assert(!parse(&tab, info));
 
   assert(tab.cols == 2);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -99,6 +108,7 @@ void test_filtering()
   }
 
   deinit_table(&tab);
+  free_parse_info(info);
   deinit_clargs(&args);
 }
 
@@ -107,9 +117,10 @@ void test_4_threads()
   clargs args = default_clargs();
   args.n_threads = 4;
   args.filename = "../resources/08.valid.dat";
+  parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse(&tab, &args));
+  assert(!parse(&tab, info));
 
   assert(tab.cols == 4);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -122,6 +133,7 @@ void test_4_threads()
   }
 
   deinit_table(&tab);
+  free_parse_info(info);
   deinit_clargs(&args);
 }
 
@@ -130,9 +142,10 @@ void test_imperfect_splitting()
   clargs args = default_clargs();
   args.n_threads = 3;
   args.filename = "../resources/08.valid.dat";
+  parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse(&tab, &args));
+  assert(!parse(&tab, info));
 
   assert(tab.cols == 4);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -145,6 +158,7 @@ void test_imperfect_splitting()
   }
 
   deinit_table(&tab);
+  free_parse_info(info);
   deinit_clargs(&args);
 }
 

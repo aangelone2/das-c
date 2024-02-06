@@ -23,70 +23,10 @@
 #include "das-c/clargs.h"
 #include "das-c/common.h"
 #include "das-c/mask.h"
+#include "das-c/parse_info.h"
 #include "das-c/table.h"
 #include <stdlib.h>
 #include <string.h>
-
-// Counts the number of non-commented rows in the file.
-// Resets the file on return.
-size_t count_rows(FILE *file)
-{
-  size_t rows = 0;
-  char line[DASC_MAX_LINE_LENGTH];
-
-  while (fgets(line, DASC_MAX_LINE_LENGTH, file))
-    if (!is_comment(line))
-      ++rows;
-
-  rewind(file);
-  return rows;
-}
-
-// Returns an array of size_t, each containing the number of rows
-// that each thread should parse. Last chunk will contain excess rows.
-size_t *get_chunk_sizes(const size_t rows, const size_t nthreads)
-{
-  size_t *res = malloc(nthreads * sizeof(size_t));
-
-  for (size_t it = 0; it < nthreads; ++it)
-    res[it] = rows / nthreads;
-  // Excess rows
-  res[nthreads - 1] += rows % nthreads;
-
-  return res;
-}
-
-// Returns an array of `long int` variables, which can be used as second
-// arguments to `fseek(<FILE *>, _, 0)` to move to chunk starting lines.
-// The 0th component is always set to 0.
-// Resets the file on return.
-long int *get_pos(FILE *file, const size_t *chunk_sizes, const size_t nthreads)
-{
-  long int *pos = malloc(nthreads * sizeof(long int));
-  pos[0] = 0;
-
-  char line[DASC_MAX_LINE_LENGTH];
-
-  for (size_t it = 1; it < nthreads; ++it)
-  {
-    size_t ir = 0;
-    do
-    {
-      // This will consume the newline as well,
-      // leaving the file pointer at the beginning of the next line
-      fgets(line, DASC_MAX_LINE_LENGTH, file);
-      if (is_comment(line))
-        continue;
-
-      ++ir;
-    } while (ir < chunk_sizes[it - 1]);
-
-    pos[it] = ftell(file);
-  }
-
-  rewind(file);
-  return pos;
-}
 
 // Writes the contents of the fields of `line`, filtered by `msk`,
 // to the components of `data`.
@@ -130,16 +70,18 @@ int parse_line(double *data, char *line, const mask *msk)
   return 0;
 }
 
-// Parses a chunk of size `size` from `file` according to `msk`,
+// Parses the `idx_thread`-th chunk form the file `info` refers to,
 // placing the results in `tab` starting from the component `start`.
-int parse_chunk(
-    table *tab,
-    FILE *file,
-    const mask *msk,
-    const size_t start,
-    const size_t size
-)
+int parse_chunk(table *tab, const parse_info *info, const size_t idx_thread)
 {
+  FILE *file = fopen(info->filename, "r");
+  fseek(file, info->pos[idx_thread], 0);
+
+  // Calculation of starting index
+  size_t start = 0;
+  for (size_t it = 0; it < idx_thread; ++it)
+    start += info->chunks[it];
+
   char line[DASC_MAX_LINE_LENGTH];
 
   size_t ir = 0;
@@ -149,62 +91,28 @@ int parse_chunk(
     if (is_comment(line))
       continue;
 
-    const int res = parse_line(tab->data[start + ir], line, msk);
+    const int res = parse_line(tab->data[start + ir], line, info->msk);
     // Failure in parse_line()
     if (res)
       return res;
 
     ++ir;
-  } while (ir < size);
+  } while (ir < info->chunks[idx_thread]);
 
+  fclose(file);
   return 0;
 }
 
-int parse(table *tab, const clargs *args)
+int parse(table *tab, const parse_info *info)
 {
-  FILE *file = fopen(args->filename, "r");
-  check(file, "unreachable file in parse()");
+  init_table(tab, info->rows, info->msk->n_active);
 
-  const size_t cols = count_fields_file(file);
-  check(cols, "field count error in parse()");
-
-  mask *msk = alloc_mask(cols);
-
-  // Selected fields
-  if (args->fields)
+  for (size_t it = 0; it < info->n_threads; ++it)
   {
-    for (size_t f_idx = 0; f_idx < args->n_fields; ++f_idx)
-      set_field(msk, args->fields[f_idx]);
-  }
-  // All fields
-  else
-    set_all(msk);
-
-  const size_t rows = count_rows(file);
-  init_table(tab, rows, msk->n_active);
-
-  size_t *chunk_sizes = get_chunk_sizes(rows, args->n_threads);
-  long int *pos = get_pos(file, chunk_sizes, args->n_threads);
-
-  size_t start = 0;
-  for (size_t it = 0; it < args->n_threads; ++it)
-  {
-    FILE *file_it = fopen(args->filename, "r");
-    fseek(file_it, pos[it], 0);
-
-    const int res = parse_chunk(tab, file_it, msk, start, chunk_sizes[it]);
+    const int res = parse_chunk(tab, info, it);
     if (res)
       return res;
-
-    start += chunk_sizes[it];
-
-    fclose(file_it);
   }
-
-  free(pos);
-  free(chunk_sizes);
-  free_mask(msk);
-  fclose(file);
 
   return 0;
 }

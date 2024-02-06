@@ -23,7 +23,7 @@
 #ifndef DASC_TABLE_H
 #define DASC_TABLE_H
 
-#include "das-c/clargs.h"
+#include "das-c/parse_info.h"
 
 //! Struct for a dataset.
 typedef struct table
@@ -61,7 +61,7 @@ void shed_rows(table *tab, const size_t size);
  * Exits if file cannot be opened.
  *
  * @param tab Pointer to the `table` to fill.
- * @param args Pointer to clargs buffer with parsing data.
+ * @param info Parsing info struct.
  *
  * @return Status code:
  * - 0 on success
@@ -69,7 +69,7 @@ void shed_rows(table *tab, const size_t size);
  * - 2 if invalid fields found in line
  * - 3 if too few fields found in line (compared to `msk`)
  */
-int parse(table *tab, const clargs *args);
+int parse(table *tab, const parse_info *info);
 
 //! Frees memory associated to a `table` object.
 /*!

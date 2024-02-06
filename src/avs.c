@@ -31,8 +31,10 @@ avs_results *avs(const clargs *args)
   avs_results *res = malloc(sizeof(avs_results));
   check(res, "allocation failure in avs()");
 
+  parse_info *info = alloc_parse_info(args);
+
   table tab;
-  check(!parse(&tab, args), "parsing error in avs()");
+  check(!parse(&tab, info), "parsing error in avs()");
 
   res->cols = tab.cols;
 
@@ -55,6 +57,7 @@ avs_results *avs(const clargs *args)
   res->sem = sem(&tab, skip, res->ave);
 
   deinit_table(&tab);
+  free_parse_info(info);
   return res;
 }
 

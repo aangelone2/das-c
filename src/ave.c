@@ -22,6 +22,7 @@
 
 #include "das-c/ave.h"
 #include "das-c/common.h"
+#include "das-c/parse_info.h"
 #include "das-c/statistics.h"
 #include "das-c/table.h"
 #include <stdlib.h>
@@ -35,8 +36,10 @@ ave_results *ave(const clargs *args)
   ave_results *res = malloc(sizeof(ave_results));
   check(res, "allocation failure in ave()");
 
+  parse_info *info = alloc_parse_info(args);
+
   table tab;
-  check(!parse(&tab, args), "parsing error in ave()");
+  check(!parse(&tab, info), "parsing error in ave()");
 
   res->cols = tab.cols;
   res->nsizes = SIZES;
@@ -89,6 +92,7 @@ ave_results *ave(const clargs *args)
   }
 
   deinit_table(&tab);
+  free_parse_info(info);
   return res;
 }
 
