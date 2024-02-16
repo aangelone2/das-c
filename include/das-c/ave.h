@@ -27,7 +27,7 @@
 #include <stddef.h>
 
 //! Struct holding the result of `ave`.
-typedef struct ave_results
+typedef struct
 {
   //! Total number of rows.
   size_t rows;

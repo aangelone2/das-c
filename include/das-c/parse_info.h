@@ -27,7 +27,7 @@
 #include "das-c/mask.h"
 
 //! Struct holding file and thread load information.
-typedef struct parse_info
+typedef struct
 {
   //! Filename.
   char *filename;
@@ -37,6 +37,8 @@ typedef struct parse_info
   //! Mask specifying the fields to access.
   mask *msk;
 
+  //! Parallelism mechanism (see constants in `clargs.h`).
+  int mode;
   //! Thread number.
   size_t n_threads;
   //! Thread load (number of rows to parse) array.

@@ -111,6 +111,7 @@ parse_info *alloc_parse_info(const clargs *args)
 
   info->rows = count_rows(file);
 
+  info->mode = args->mode;
   info->n_threads = args->n_threads;
   info->chunks = get_chunks(info->rows, args->n_threads);
   info->pos = get_pos(file, info->chunks, args->n_threads);

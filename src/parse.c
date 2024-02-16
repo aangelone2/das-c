@@ -107,11 +107,17 @@ int parse(table *tab, const parse_info *info)
 {
   init_table(tab, info->rows, info->msk->n_active);
 
-  for (size_t it = 0; it < info->n_threads; ++it)
+  if (info->mode == DASC_PARALLEL_MODE_SER)
   {
-    const int res = parse_chunk(tab, info, it);
-    if (res)
-      return res;
+    for (size_t it = 0; it < info->n_threads; ++it)
+    {
+      const int res = parse_chunk(tab, info, it);
+      if (res)
+        return res;
+    }
+  }
+  else // if (info->mode == DASC_PARALLEL_MODE_CPU)
+  {
   }
 
   return 0;

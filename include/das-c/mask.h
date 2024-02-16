@@ -27,7 +27,7 @@
 #include <stddef.h>
 
 //! Struct for mask to select which fields to parse.
-typedef struct mask
+typedef struct
 {
   //! Number of fields in the mask.
   size_t size;

@@ -26,7 +26,7 @@
 #include "das-c/parse_info.h"
 
 //! Struct for a dataset.
-typedef struct table
+typedef struct
 {
   //! Number of rows (outer index).
   size_t rows;

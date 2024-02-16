@@ -27,7 +27,7 @@
 #include <stddef.h>
 
 //! Struct holding the result of `avs`.
-typedef struct avs_results
+typedef struct
 {
   //! Total number of rows.
   size_t rows;
