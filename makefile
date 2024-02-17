@@ -32,7 +32,7 @@ tsources := $(wildcard $(tdir)/*.c)
 tobjects := $(patsubst $(tdir)/%.c, $(bdir)/%, $(tsources))
 
 CC := gcc
-CFLAGS := -std=c17 -O3 -Wfatal-errors\
+CFLAGS := -std=gnu17 -O3 -Wfatal-errors\
 					-Wall -Werror -Wextra -Wshadow -Wparentheses\
 					-Wconversion -Wpedantic -pedantic -Wunused-result
 INC := -I$(idir)
@@ -51,6 +51,8 @@ test: $(tobjects)
 	cd $(bdir); ./05.test-parse
 	cd $(bdir); ./06.test-avs
 	cd $(bdir); ./07.test-ave
+	cd $(bdir); ./08.test-multifile
+	cd $(bdir); ./09.test-multithreading
 
 	@echo 'All tests completed successfully'
 

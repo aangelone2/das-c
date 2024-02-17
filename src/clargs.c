@@ -64,7 +64,7 @@ int init_clargs(clargs *args, int argc, char *argv[])
     {
       if (!strcmp(optarg, "s"))
         args->mode = DASC_PARALLEL_MODE_SER;
-      else if (!strcmp(optarg, "o"))
+      else if (!strcmp(optarg, "c"))
         args->mode = DASC_PARALLEL_MODE_CPU;
       else
       {

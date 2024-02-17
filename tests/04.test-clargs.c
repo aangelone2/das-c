@@ -76,7 +76,7 @@ void test_no_options()
   assert(!args.n_fields);
   assert(!args.fields);
   assert(!args.skip);
-  assert(args.mode == 's');
+  assert(args.mode == DASC_PARALLEL_MODE_SER);
   assert(args.n_threads == 1);
   assert(!args.verbose);
   assert(!strcmp(args.filename, "file"));
@@ -95,7 +95,7 @@ void test_verbose()
   assert(!args.n_fields);
   assert(!args.fields);
   assert(!args.skip);
-  assert(args.mode == 's');
+  assert(args.mode == DASC_PARALLEL_MODE_SER);
   assert(args.n_threads == 1);
   assert(args.verbose);
   assert(!strcmp(args.filename, "file"));
@@ -114,7 +114,7 @@ void test_skip_verbose()
   assert(!args.n_fields);
   assert(!args.fields);
   assert(args.skip == 20);
-  assert(args.mode == 's');
+  assert(args.mode == DASC_PARALLEL_MODE_SER);
   assert(args.n_threads == 1);
   assert(args.verbose);
   assert(!strcmp(args.filename, "file"));
@@ -135,7 +135,7 @@ void test_fields()
   assert(args.fields[1] == 2);
   assert(args.fields[2] == 3);
   assert(!args.skip);
-  assert(args.mode == 's');
+  assert(args.mode == DASC_PARALLEL_MODE_SER);
   assert(args.n_threads == 1);
   assert(args.verbose);
   assert(!strcmp(args.filename, "file2"));
@@ -191,7 +191,7 @@ void test_invalid_fields()
   assert(args.fields[0] == 1);
   assert(args.fields[1] == 3);
   assert(!args.skip);
-  assert(args.mode == 's');
+  assert(args.mode == DASC_PARALLEL_MODE_SER);
   assert(args.n_threads == 1);
   assert(args.verbose);
   assert(!strcmp(args.filename, "file2"));
@@ -208,12 +208,12 @@ void test_parallel_options()
 
   const int argc = 5;
 
-  char *argv1[] = {"test", "-n", "2", "-m", "o", "file"};
+  char *argv1[] = {"test", "-n", "2", "-m", "c", "file"};
   assert(!init_clargs(&args, argc, argv1));
   assert(!args.n_fields);
   assert(!args.fields);
   assert(!args.skip);
-  assert(args.mode == 'o');
+  assert(args.mode == DASC_PARALLEL_MODE_CPU);
   assert(args.n_threads == 2);
   assert(!args.verbose);
   assert(!strcmp(args.filename, "file"));

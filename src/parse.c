@@ -27,6 +27,15 @@
 #include "das-c/table.h"
 #include <stdlib.h>
 #include <string.h>
+#include <threads.h>
+
+// Throwaway struct to hold `parse_chunk()` arguments.
+typedef struct
+{
+  table *tab;
+  const parse_info *info;
+  size_t idx_thread;
+} parse_chunk_args;
 
 // Writes the contents of the fields of `line`, filtered by `msk`,
 // to the components of `data`.
@@ -38,8 +47,9 @@
 int parse_line(double *data, char *line, const mask *msk)
 {
   size_t field = 0, active_field = 0;
+  char *saveptr;
 
-  char *tok = strtok(line, DASC_SEPARATORS);
+  char *tok = strtok_r(line, DASC_SEPARATORS, &saveptr);
   while (tok)
   {
     // Too many fields
@@ -59,7 +69,7 @@ int parse_line(double *data, char *line, const mask *msk)
       ++active_field;
     }
 
-    tok = strtok(NULL, DASC_SEPARATORS);
+    tok = strtok_r(NULL, DASC_SEPARATORS, &saveptr);
     ++field;
   }
 
@@ -70,17 +80,19 @@ int parse_line(double *data, char *line, const mask *msk)
   return 0;
 }
 
-// Parses the `idx_thread`-th chunk form the file `info` refers to,
-// placing the results in `tab` starting from the component `start`.
-int parse_chunk(table *tab, const parse_info *info, const size_t idx_thread)
+// Casts input pointer as `parse_chunk_args *`, then parses its `idx_thread`-th
+// chunk form the file `info` refers to, placing the results in `tab`.
+int parse_chunk(void *args)
 {
-  FILE *file = fopen(info->filename, "r");
-  fseek(file, info->pos[idx_thread], 0);
+  parse_chunk_args *a = (parse_chunk_args *)(args);
+
+  FILE *file = fopen(a->info->filename, "r");
+  fseek(file, a->info->pos[a->idx_thread], 0);
 
   // Calculation of starting index
   size_t start = 0;
-  for (size_t it = 0; it < idx_thread; ++it)
-    start += info->chunks[it];
+  for (size_t it = 0; it < a->idx_thread; ++it)
+    start += a->info->chunks[it];
 
   char line[DASC_MAX_LINE_LENGTH];
 
@@ -91,13 +103,13 @@ int parse_chunk(table *tab, const parse_info *info, const size_t idx_thread)
     if (is_comment(line))
       continue;
 
-    const int res = parse_line(tab->data[start + ir], line, info->msk);
+    const int res = parse_line(a->tab->data[start + ir], line, a->info->msk);
     // Failure in parse_line()
     if (res)
       return res;
 
     ++ir;
-  } while (ir < info->chunks[idx_thread]);
+  } while (ir < a->info->chunks[a->idx_thread]);
 
   fclose(file);
   return 0;
@@ -111,14 +123,56 @@ int parse(table *tab, const parse_info *info)
   {
     for (size_t it = 0; it < info->n_threads; ++it)
     {
-      const int res = parse_chunk(tab, info, it);
+      parse_chunk_args args = {.tab = tab, .info = info, .idx_thread = it};
+      const int res = parse_chunk((void *)(&args));
       if (res)
         return res;
     }
+
+    return 0;
   }
   else // if (info->mode == DASC_PARALLEL_MODE_CPU)
   {
-  }
+    int retval = 0;
 
-  return 0;
+    thrd_t *threads = malloc(info->n_threads * sizeof(thrd_t));
+    parse_chunk_args *args
+        = malloc(info->n_threads * sizeof(parse_chunk_args));
+    int *res = malloc(info->n_threads * sizeof(int));
+
+    for (size_t it = 0; it < info->n_threads; ++it)
+    {
+      args[it].tab = tab;
+      args[it].info = info;
+      args[it].idx_thread = it;
+
+      const int r = thrd_create(
+          &threads[it], (thrd_start_t)(parse_chunk), (void *)(&args[it])
+      );
+
+      if (r != thrd_success)
+      {
+        retval = 4;
+        goto cleanup;
+      }
+    }
+
+    for (size_t it = 0; it < info->n_threads; ++it)
+      thrd_join(threads[it], &res[it]);
+
+    for (size_t it = 0; it < info->n_threads; ++it)
+    {
+      if (res[it])
+      {
+        retval = res[it];
+        goto cleanup;
+      }
+    }
+
+  cleanup:
+    free(res);
+    free(args);
+    free(threads);
+    return retval;
+  }
 }

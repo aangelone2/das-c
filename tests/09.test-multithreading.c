@@ -10,6 +10,7 @@ clargs default_clargs()
   args.n_fields = 0;
   args.fields = NULL;
   args.skip = 0;
+  args.mode = DASC_PARALLEL_MODE_CPU;
   args.n_threads = 2;
   args.verbose = false;
 
