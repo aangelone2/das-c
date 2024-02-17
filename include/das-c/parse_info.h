@@ -20,59 +20,47 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_AVE_H
-#define DASC_AVE_H
+#ifndef DASC_PARSE_INFO_H
+#define DASC_PARSE_INFO_H
 
 #include "das-c/clargs.h"
-#include <stddef.h>
+#include "das-c/mask.h"
 
-//! Struct holding the result of `ave`.
+//! Struct holding file and thread load information.
 typedef struct
 {
-  //! Total number of rows.
+  //! Filename.
+  char *filename;
+
+  //! Number of rows (outer index).
   size_t rows;
+  //! Mask specifying the fields to access.
+  mask *msk;
 
-  //! Number of rows kept for analysis.
-  size_t kept;
+  //! Parallelism mechanism (see constants in `clargs.h`).
+  int mode;
+  //! Thread number.
+  size_t n_threads;
+  //! Thread load (number of rows to parse) array.
+  size_t *chunks;
+  //! Thread file position array.
+  long int *pos;
+} parse_info;
 
-  //! Number of analyzed columns.
-  size_t cols;
-
-  //! Number of considered bin sizes.
-  size_t nsizes;
-
-  //! Column indices (in the file).
-  size_t *fields;
-
-  //! Bin numbers, nbins[i] <-> ave[i][...]
-  size_t *nbins;
-
-  //! Bin sizes, bsize[i] <-> ave[i][...]
-  size_t *bsizes;
-
-  //! Column averages, 2nd index runs on columns.
-  double **ave;
-
-  //! Column SEMs, 2nd index runs on columns.
-  double **sem;
-} ave_results;
-
-//! Performs bin-based averaging of a file based on the passed CL arguments.
+//! Initializes `parse_info` from the passed CL arguments.
 /*!
- * Fields will be passed and parsed as 0-based.
+ * Exits on allocation failure.
  *
- * Exits on file opening, parsing, and allocation errors.
+ * @param args CL arguments holding init information.
  *
- * @param args The CL arguments specifying the protocol.
- *
- * @return Pointer to `ave_results` object containing the results.
+ * @return Pointer to the allocated `parse_info`.
  */
-ave_results *ave(const clargs *args);
+parse_info *alloc_parse_info(const clargs *args);
 
-//! Frees memory associated to an `ave_results` object.
+//! Frees memory associated to a `parse_info` object.
 /*!
- * @param res The `ave_results` to clear.
+ * @param msk The `parse_info` to clear.
  */
-void clear_ave_results(ave_results *res);
+void free_parse_info(parse_info *info);
 
 #endif

@@ -1,6 +1,7 @@
 #include "das-c/ave.h"
 #include "das-c/avs.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // Should be called as `$ das [command] ...`
@@ -37,9 +38,9 @@ int main(int argc, char *argv[])
   {
     fprintf(stderr, "error :: invalid subcommand name [ave, avs]\n");
     deinit_clargs(&args);
-    return 1;
+    return EXIT_FAILURE;
   }
 
   deinit_clargs(&args);
-  return 0;
+  return EXIT_SUCCESS;
 }

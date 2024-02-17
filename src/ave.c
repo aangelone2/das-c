@@ -22,7 +22,7 @@
 
 #include "das-c/ave.h"
 #include "das-c/common.h"
-#include "das-c/mask.h"
+#include "das-c/parse_info.h"
 #include "das-c/statistics.h"
 #include "das-c/table.h"
 #include <stdlib.h>
@@ -36,28 +36,12 @@ ave_results *ave(const clargs *args)
   ave_results *res = malloc(sizeof(ave_results));
   check(res, "allocation failure in ave()");
 
-  FILE *file = fopen(args->filename, "r");
-  check(file, "unreachable file in ave()");
+  parse_info *info = alloc_parse_info(args);
 
-  const size_t cols = count_fields_file(file);
-  check(cols, "field count error in ave()");
+  table tab;
+  check(!parse(&tab, info), "parsing error in ave()");
 
-  mask *msk = init_mask(cols);
-
-  // Selected fields
-  if (args->fields)
-  {
-    for (size_t f_idx = 0; f_idx < args->n_fields; ++f_idx)
-      set_field(msk, args->fields[f_idx]);
-  }
-  // All fields
-  else
-    set_all(msk);
-
-  table *tab = init_table(msk->n_active);
-  check(!parse(tab, file, msk), "parsing error in ave()");
-
-  res->cols = tab->cols;
+  res->cols = tab.cols;
   res->nsizes = SIZES;
 
   res->fields = malloc(res->cols * sizeof(size_t));
@@ -80,7 +64,7 @@ ave_results *ave(const clargs *args)
   check(res->sem, "allocation failure in ave()");
 
   // All columns will be the same size
-  res->rows = tab->rows;
+  res->rows = tab.rows;
 
   const double perc = (double)(args->skip) / 100.0;
   size_t skip = (size_t)(perc * (double)(res->rows));
@@ -95,22 +79,20 @@ ave_results *ave(const clargs *args)
     // No skip after the first rebinning
     const size_t skip_s = (is ? 0 : skip);
 
-    rebin(tab, skip_s, nbins);
+    rebin(&tab, skip_s, nbins);
     res->nbins[is] = nbins;
     res->bsizes[is] = bsize;
 
     // After the rebinning, nothing needs to ever be skipped
-    res->ave[is] = average(tab, 0);
-    res->sem[is] = sem(tab, 0, res->ave[is]);
+    res->ave[is] = average(&tab, 0);
+    res->sem[is] = sem(&tab, 0, res->ave[is]);
 
     nbins /= 2;
     bsize *= 2;
   }
 
-  clear_table(tab);
-  clear_mask(msk);
-  fclose(file);
-
+  deinit_table(&tab);
+  free_parse_info(info);
   return res;
 }
 

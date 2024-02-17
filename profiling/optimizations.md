@@ -9,7 +9,7 @@ keep into account finite-size effects (multiplied by
 
 
 
-# General Considerations
+# Starting point (`200e6ad`)
 
 Optimization was started at `200e6ad`; the profiling
 results in `profiling/log-01.log` were obtained by
@@ -17,7 +17,7 @@ running the commands
 
 ```
 $ time ../build/das ave -s20 -v 11.large.dat
-$ gprof ../build/das gmon.out > out-01.log
+$ gprof ../build/das gmon.out
 ```
 
 in the `resources/` folder, where `11.large.dat` is a
@@ -91,10 +91,7 @@ change the code may be:
    two counting approaches is better, and may not be
    worth it if the execution time share of the counting
    process is ~25% of the execution time (the amount
-   spent pushing back and possibly reallocating). `wc`
-   takes ~3s to count the number of lines, compared to a
-   projected ~10s for the `push_back()` routine from the
-   profiling, making this direction worth investigating.
+   spent pushing back and possibly reallocating).
 
 3. Transposing the data structure, rearranging `table`
    as an array of rows, rather than an array of columns.
@@ -127,7 +124,7 @@ change the code may be:
 
 
 
-# Transposition
+# Transposition (`d1efc36`)
 
 We applied the modification discussed in point (3)
 above. We immediately noticed that it led to a
@@ -154,3 +151,129 @@ Due to the new data structure, fewer allocations
 statistical functions remain as irrelevant as they were
 before, doubling down on the necessity to optimize or
 parallelize parsing.
+
+We decided to keep the modification, since it does not
+affect the performance while simplifying the code -
+furthermore, it would be fairly easy to switch back to a
+column-first configuration later, to check if any
+performance improvements arise.
+
+
+
+
+# Line pre-counting (`100a0a2`)
+
+We tested different solutions for line pre-counting on
+the sample file, comparing `fgetc()`-based,
+`fgets()`-based, and `fread()`-based functions for speed
+(with `-O3` optimizations). We obtained the following
+results:
+
+- `fgetc()`: 14.484 s
+- `fgets()`: 1.907 s
+- `fgets()` with comment check: 1.912 s
+- `fread()` with buffer looping: 2.232 s
+- `fread()` using `memchr()`: 1.225 s
+- Using shell `wc -l`: 0.745 s
+
+The optimal solution would have been either 1)
+requesting the line number to the user, together with
+the promise of no commented lines, or 2) using `fread()`
+with `memchr()`, which also requires the absence of
+comments (since commented lines cannot be found, at
+least not easily).
+
+In order to reduce the requirements for the user, we
+decided to adopt the `fgets()`-based solution which also
+allowed comment counting, which could be basically
+dropped in without significant code changes. The rows of
+the main `table` object were then preallocated based on
+the need.
+
+The corresponding profiling results are displayed in
+`profiling/log-03.log`, and execution time data is
+displayed in `profiling/data-03.dat`, yielding the
+average 51.1(4) s and 47.7(2) s with `-pg` and `-O3`.
+
+Execution time worsened, but the difference becomes
+smaller with optimizations. Furthermore, row
+pre-counting is necessary for two further improvements:
+namely, 1) avoiding the parsing of lines slated to be
+skipped, and 2) parsing parallelization.
+
+In the results, the following functions (and their
+children) took the largest share of the execution time:
+
+- `main()` (95.0 %)
+- `parse()` (74.2 %)
+- `parse_line()` (47.6 %)
+- `rebin()` (20.2 %)
+- `init_table()` (10.5 %)
+- `count_rows()` (3.6 %)
+- `is_comment()` (2.6 %)
+- `shed_rows()` (2.5 %)
+
+Line counting takes approximately the same time as in
+the tests, and table allocation still takes a sizable
+amount of time. `parse_line()` is now considerably
+less important, however, with more time being taken by
+`init_table()` (which is performed before the
+`parse_line()`-based loop).
+
+
+
+
+# Thread parallelization (`3ff5620`)
+
+In order to apply full parallelization, we:
+
+- Replaced `strtok()` with `strtok_r()` in
+  `parse_line()`, for thread-safe tokenization;
+- Encapsulated parsing in the `parse_chunk()` function.
+
+Our first parallelization scheme is subdividing parsing
+with the utilities in the `<threads.h>` library. We
+executed the code using:
+
+- 1, 2 and 4 threads with the `-O3` compilation option;
+- 1 thread using the `-pg` setting;
+- Serial mode (`-s` command line option) with `-pg`.
+
+The data was collected, with the same order, in
+`profiling/data-04.dat`, resulting in
+
+- 1 thread       : 46.4(2) s
+- 2 threads      : 33.4(2) s
+- 4 threads      : 26.3(1) s
+- 1 thread, `-pg`: 47.4(6) s
+- serial, `-pg`  : 46.0(1) s
+
+Profiling results for the last run have been collected
+in `profiling/log-04.log` (albeit with no call tree
+decomposition). The results are
+
+- `parse_chunk()` (68.3 %)
+- `_init` (14.8 %)
+- `rebin()` (7.4 %)
+- `init_table()` (7.0 %)
+- `count_rows()` (2.1 %)
+
+which, while not necessarily reliable due to the
+multi-threading context, are relatively consistent with
+previous results (parsing taking ~70-75% of the
+execution time).
+
+Since the serial and single-thread execution times with
+`-pg` are roughly the same, we will take the execution
+time shares to be applicable in both cases (the 1-thread
+execution time with `-O3` will be taken as
+representative).
+
+Ahmdal's law predicts a theoretical execution time of
+62.5-66% with respect to the single-thread one for 2
+threads and of 43.75-49% for 4, i.e., 29-30.6 s and
+20.3-22.7 s respectively. The actual execution times are
+about 10-15% higher than the theoretical prediction
+(especially the 4-thread case, likely due to
+overthreading), but they still represent a significant
+reduction (~43% for 4 threads).

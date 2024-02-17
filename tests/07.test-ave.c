@@ -8,6 +8,8 @@ void test_simple()
   clargs args;
   args.n_fields = 4;
   args.skip = 20;
+  args.mode = DASC_PARALLEL_MODE_SER;
+  args.n_threads = 1;
   args.verbose = false;
   args.filename = "../resources/10.ave.dat";
 
@@ -96,6 +98,8 @@ void test_multiple_fields()
   clargs args;
   args.n_fields = 2;
   args.skip = 20;
+  args.mode = DASC_PARALLEL_MODE_SER;
+  args.n_threads = 1;
   args.verbose = false;
   args.filename = "../resources/10.ave.dat";
 
@@ -160,6 +164,8 @@ void test_field_skip()
   clargs args;
   args.n_fields = 2;
   args.skip = 20;
+  args.mode = DASC_PARALLEL_MODE_SER;
+  args.n_threads = 1;
   args.verbose = false;
   args.filename = "../resources/10.ave.dat";
 
@@ -224,6 +230,8 @@ void test_single_field()
   clargs args;
   args.n_fields = 1;
   args.skip = 20;
+  args.mode = DASC_PARALLEL_MODE_SER;
+  args.n_threads = 1;
   args.verbose = false;
   args.filename = "../resources/10.ave.dat";
 

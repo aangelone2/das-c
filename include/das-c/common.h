@@ -54,7 +54,7 @@ static inline bool is_comment(const char *row)
     if (!(condition))                                                         \
     {                                                                         \
       fprintf(stderr, "error :: %s\n", msg);                                  \
-      exit(1);                                                                \
+      exit(EXIT_FAILURE);                                                     \
     }                                                                         \
   }
 

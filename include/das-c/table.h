@@ -23,11 +23,10 @@
 #ifndef DASC_TABLE_H
 #define DASC_TABLE_H
 
-#include "das-c/mask.h"
-#include <stdio.h>
+#include "das-c/parse_info.h"
 
 //! Struct for a dataset.
-typedef struct table
+typedef struct
 {
   //! Number of rows (outer index).
   size_t rows;
@@ -40,23 +39,13 @@ typedef struct table
 
 //! Initializes an empty `table`.
 /*!
- * Internal data pointer is set to `NULL` (0 rows).
- *
  * Exits on allocation failure.
  *
+ * @param tab Pointer to the table to allocate.
+ * @param rows Desired number of rows.
  * @param cols Desired number of columns.
- *
- * @return Pointer to the allocated `table`.
  */
-table *init_table(const size_t cols);
-
-//! Adds an allocated row to the internal 2D array of a `table`.
-/*!
- * Exits on allocation failure.
- *
- * @param tab The `table` object to extend.
- */
-void add_row(table *tab);
+void init_table(table *tab, const size_t rows, const size_t cols);
 
 //! Removes rows from the end of a `table`.
 /*!
@@ -67,26 +56,30 @@ void add_row(table *tab);
  */
 void shed_rows(table *tab, const size_t size);
 
-//! Fills an initialized empty `table` with the content of a file.
+//! Fills an uninitialized `table` with the content of a file.
 /*!
- * Exits if table size is incompatible with passed mask.
+ * Exits if file cannot be opened.
+ *
+ * In case of multiple errors in the file, the error determining the return
+ * value is 1) the first in single-threaded execution, 2) undefined in
+ * multithreaded execution.
  *
  * @param tab Pointer to the `table` to fill.
- * @param file File handle pointing to the file to parse.
- * @param msk `mask` object, filtering fields to access.
+ * @param info Parsing info struct.
  *
  * @return Status code:
  * - 0 on success
  * - 1 if too many fields found in line (compared to `msk`)
  * - 2 if invalid fields found in line
  * - 3 if too few fields found in line (compared to `msk`)
+ * - 4 on thread creation error
  */
-int parse(table *tab, FILE *file, const mask *msk);
+int parse(table *tab, const parse_info *info);
 
 //! Frees memory associated to a `table` object.
 /*!
  * @param tab The `table` to clear.
  */
-void clear_table(table *tab);
+void deinit_table(table *tab);
 
 #endif

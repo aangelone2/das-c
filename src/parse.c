@@ -20,26 +20,36 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+#include "das-c/clargs.h"
 #include "das-c/common.h"
 #include "das-c/mask.h"
+#include "das-c/parse_info.h"
 #include "das-c/table.h"
 #include <stdlib.h>
 #include <string.h>
+#include <threads.h>
 
-// Adds the contents of the fields of `line`, filtered by `msk`,
-// to a new row in `tab`.
+// Throwaway struct to hold `parse_chunk()` arguments.
+typedef struct
+{
+  table *tab;
+  const parse_info *info;
+  size_t idx_thread;
+} parse_chunk_args;
+
+// Writes the contents of the fields of `line`, filtered by `msk`,
+// to the components of `data`.
 // Returns:
 // - 0 if successful
 // - 1 if too many fields (compared to `msk`)
 // - 2 if invalid fields found
 // - 3 if too few fields (compared to `msk`)
-int parse_line(table *tab, char *line, const mask *msk)
+int parse_line(double *data, char *line, const mask *msk)
 {
   size_t field = 0, active_field = 0;
+  char *saveptr;
 
-  add_row(tab);
-
-  char *tok = strtok(line, DASC_SEPARATORS);
+  char *tok = strtok_r(line, DASC_SEPARATORS, &saveptr);
   while (tok)
   {
     // Too many fields
@@ -55,12 +65,11 @@ int parse_line(table *tab, char *line, const mask *msk)
       if (end == tok)
         return 2;
 
-      tab->data[tab->rows - 1][active_field] = buffer;
-
+      data[active_field] = buffer;
       ++active_field;
     }
 
-    tok = strtok(NULL, DASC_SEPARATORS);
+    tok = strtok_r(NULL, DASC_SEPARATORS, &saveptr);
     ++field;
   }
 
@@ -71,25 +80,99 @@ int parse_line(table *tab, char *line, const mask *msk)
   return 0;
 }
 
-int parse(table *tab, FILE *file, const mask *msk)
+// Casts input pointer as `parse_chunk_args *`, then parses its `idx_thread`-th
+// chunk form the file `info` refers to, placing the results in `tab`.
+int parse_chunk(void *args)
 {
-  check(tab->cols == msk->n_active, "invalid table size in parse()");
+  parse_chunk_args *a = (parse_chunk_args *)(args);
+
+  FILE *file = fopen(a->info->filename, "r");
+  fseek(file, a->info->pos[a->idx_thread], 0);
+
+  // Calculation of starting index
+  size_t start = 0;
+  for (size_t it = 0; it < a->idx_thread; ++it)
+    start += a->info->chunks[it];
 
   char line[DASC_MAX_LINE_LENGTH];
+
+  size_t ir = 0;
   do
   {
-    // Parse line, interrupt if EOF
-    if (!fgets(line, DASC_MAX_LINE_LENGTH, file))
-      break;
-
+    fgets(line, DASC_MAX_LINE_LENGTH, file);
     if (is_comment(line))
       continue;
 
+    const int res = parse_line(a->tab->data[start + ir], line, a->info->msk);
     // Failure in parse_line()
-    const int res = parse_line(tab, line, msk);
     if (res)
       return res;
-  } while (true);
 
+    ++ir;
+  } while (ir < a->info->chunks[a->idx_thread]);
+
+  fclose(file);
   return 0;
+}
+
+int parse(table *tab, const parse_info *info)
+{
+  init_table(tab, info->rows, info->msk->n_active);
+
+  if (info->mode == DASC_PARALLEL_MODE_SER)
+  {
+    for (size_t it = 0; it < info->n_threads; ++it)
+    {
+      parse_chunk_args args = {.tab = tab, .info = info, .idx_thread = it};
+      const int res = parse_chunk((void *)(&args));
+      if (res)
+        return res;
+    }
+
+    return 0;
+  }
+  else // if (info->mode == DASC_PARALLEL_MODE_CPU)
+  {
+    int retval = 0;
+
+    thrd_t *threads = malloc(info->n_threads * sizeof(thrd_t));
+    parse_chunk_args *args
+        = malloc(info->n_threads * sizeof(parse_chunk_args));
+    int *res = malloc(info->n_threads * sizeof(int));
+
+    for (size_t it = 0; it < info->n_threads; ++it)
+    {
+      args[it].tab = tab;
+      args[it].info = info;
+      args[it].idx_thread = it;
+
+      const int r = thrd_create(
+          &threads[it], (thrd_start_t)(parse_chunk), (void *)(&args[it])
+      );
+
+      if (r != thrd_success)
+      {
+        retval = 4;
+        goto cleanup;
+      }
+    }
+
+    for (size_t it = 0; it < info->n_threads; ++it)
+      thrd_join(threads[it], &res[it]);
+
+    for (size_t it = 0; it < info->n_threads; ++it)
+    {
+      if (res[it])
+      {
+        retval = res[it];
+        goto cleanup;
+      }
+    }
+
+  cleanup:
+    free(res);
+    free(args);
+    free(threads);
+    return retval;
+  }
 }

@@ -22,7 +22,6 @@
 
 #include "das-c/avs.h"
 #include "das-c/common.h"
-#include "das-c/mask.h"
 #include "das-c/statistics.h"
 #include "das-c/table.h"
 #include <stdlib.h>
@@ -32,28 +31,12 @@ avs_results *avs(const clargs *args)
   avs_results *res = malloc(sizeof(avs_results));
   check(res, "allocation failure in avs()");
 
-  FILE *file = fopen(args->filename, "r");
-  check(file, "unreachable file in avs()");
+  parse_info *info = alloc_parse_info(args);
 
-  const size_t cols = count_fields_file(file);
-  check(cols, "field count error in avs()");
+  table tab;
+  check(!parse(&tab, info), "parsing error in avs()");
 
-  mask *msk = init_mask(cols);
-
-  // Selected fields
-  if (args->fields)
-  {
-    for (size_t f_idx = 0; f_idx < args->n_fields; ++f_idx)
-      set_field(msk, args->fields[f_idx]);
-  }
-  // All fields
-  else
-    set_all(msk);
-
-  table *tab = init_table(msk->n_active);
-  check(!parse(tab, file, msk), "parsing error in avs()");
-
-  res->cols = tab->cols;
+  res->cols = tab.cols;
 
   res->fields = malloc(res->cols * sizeof(size_t));
   check(res->fields, "allocation failure in avs()");
@@ -63,20 +46,18 @@ avs_results *avs(const clargs *args)
     res->fields[ic] = (args->fields ? args->fields[ic] : ic);
 
   // All columns will be the same size
-  res->rows = tab->rows;
+  res->rows = tab.rows;
 
   const double perc = (double)(args->skip) / 100.0;
   const size_t skip = (size_t)(perc * (double)(res->rows));
   res->kept = res->rows - skip;
 
   // Assigning statistical results
-  res->ave = average(tab, skip);
-  res->sem = sem(tab, skip, res->ave);
+  res->ave = average(&tab, skip);
+  res->sem = sem(&tab, skip, res->ave);
 
-  clear_table(tab);
-  clear_mask(msk);
-  fclose(file);
-
+  deinit_table(&tab);
+  free_parse_info(info);
   return res;
 }
 

@@ -33,9 +33,11 @@ int init_clargs(clargs *args, int argc, char *argv[])
   args->n_fields = 0;
   args->fields = NULL;
   args->skip = 0;
+  args->mode = DASC_PARALLEL_MODE_SER;
+  args->n_threads = 1;
   args->verbose = false;
 
-  char *options = "f:s:v";
+  char *options = "f:m:n:s:v";
   int opt;
 
   // Resetting, for multiple calls
@@ -57,6 +59,35 @@ int init_clargs(clargs *args, int argc, char *argv[])
       }
 
       free(fields);
+    }
+    else if (opt == 'm')
+    {
+      if (!strcmp(optarg, "s"))
+        args->mode = DASC_PARALLEL_MODE_SER;
+      else if (!strcmp(optarg, "c"))
+        args->mode = DASC_PARALLEL_MODE_CPU;
+      else
+      {
+        deinit_clargs(args);
+        fprintf(
+            stderr, "error :: invalid value '%s' for option '-m'\n", optarg
+        );
+        return 2;
+      }
+    }
+    else if (opt == 'n')
+    {
+      char *end;
+      args->n_threads = strtoul(optarg, &end, 10);
+
+      if (end == optarg || !args->n_threads)
+      {
+        deinit_clargs(args);
+        fprintf(
+            stderr, "error :: invalid value '%s' for option '-t'\n", optarg
+        );
+        return 2;
+      }
     }
     else if (opt == 's')
     {

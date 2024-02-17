@@ -24,28 +24,14 @@
 #include "das-c/common.h"
 #include <stdlib.h>
 
-table *init_table(const size_t cols)
+void init_table(table *tab, const size_t rows, const size_t cols)
 {
-  table *tab = malloc(sizeof(table));
-  check(tab, "failed allocation in init_table()");
-
-  tab->rows = 0;
+  tab->rows = rows;
   tab->cols = cols;
-  tab->data = NULL;
 
-  return tab;
-}
-
-void add_row(table *tab)
-{
-  double **data = realloc(tab->data, (tab->rows + 1) * sizeof(double *));
-  check(data, "failed reallocation in add_row()");
-
-  tab->data = data;
-  tab->data[tab->rows] = malloc(tab->cols * sizeof(double));
-  check(data[tab->rows], "failed allocation in add_row()");
-
-  ++tab->rows;
+  tab->data = malloc(rows * sizeof(double *));
+  for (size_t ir = 0; ir < rows; ++ir)
+    tab->data[ir] = malloc(cols * sizeof(double));
 }
 
 void shed_rows(table *tab, const size_t size)
@@ -62,10 +48,9 @@ void shed_rows(table *tab, const size_t size)
   tab->rows = size;
 }
 
-void clear_table(table *tab)
+void deinit_table(table *tab)
 {
   for (size_t ir = 0; ir < tab->rows; ++ir)
     free(tab->data[ir]);
   free(tab->data);
-  free(tab);
 }

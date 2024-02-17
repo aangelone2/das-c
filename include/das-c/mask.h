@@ -27,7 +27,7 @@
 #include <stddef.h>
 
 //! Struct for mask to select which fields to parse.
-typedef struct mask
+typedef struct
 {
   //! Number of fields in the mask.
   size_t size;
@@ -39,7 +39,7 @@ typedef struct mask
   bool *bits;
 } mask;
 
-//! Initializes mask of specified size.
+//! Initializes `mask` of specified size.
 /*!
  * All fields will be set as `false` by default.
  *
@@ -49,7 +49,7 @@ typedef struct mask
  *
  * @return Pointer to the allocated `mask`.
  */
-mask *init_mask(const size_t size);
+mask *alloc_mask(const size_t size);
 
 //! Set a field as "active" in a mask.
 /*!
@@ -72,6 +72,6 @@ void set_all(mask *msk);
 /*!
  * @param msk The `mask` to clear.
  */
-void clear_mask(mask *msk);
+void free_mask(mask *msk);
 
 #endif
