@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int init_clargs(clargs *args, int argc, char *argv[])
+int init_clargs(clargs *args, const int argc, char *argv[])
 {
   // Default values
   args->n_fields = 0;
@@ -45,19 +45,31 @@ int init_clargs(clargs *args, int argc, char *argv[])
   {
     if (opt == 'f')
     {
-      char *fields = malloc((strlen(optarg) + 1) * sizeof(char));
-      strcpy(fields, optarg);
+      char *fields_1 = malloc((strlen(optarg) + 1) * sizeof(char));
+      strcpy(fields_1, optarg);
 
-      args->fields = parse_sizet_array(fields, &args->n_fields);
-      if (!args->fields)
+      args->n_fields = count_fields(fields_1, ",");
+      free(fields_1);
+
+      if (!args->n_fields)
       {
-        free(fields);
-        deinit_clargs(args);
-        fprintf(stderr, "error :: invalid field value\n");
+        fprintf(stderr, "error :: invalid field string\n");
+        free(args->fields);
         return 1;
       }
 
-      free(fields);
+      char *fields_2 = malloc((strlen(optarg) + 1) * sizeof(char));
+      strcpy(fields_2, optarg);
+
+      args->fields = parse_sizet_array(fields_2, args->n_fields);
+      free(fields_2);
+
+      if (!args->fields)
+      {
+        fprintf(stderr, "error :: invalid field value\n");
+        free(args->fields);
+        return 1;
+      }
     }
     else if (opt == 'n')
     {
@@ -66,10 +78,10 @@ int init_clargs(clargs *args, int argc, char *argv[])
 
       if (end == optarg || !args->n_threads)
       {
-        deinit_clargs(args);
         fprintf(
             stderr, "error :: invalid value '%s' for option '-t'\n", optarg
         );
+        free(args->fields);
         return 2;
       }
     }
@@ -80,10 +92,10 @@ int init_clargs(clargs *args, int argc, char *argv[])
 
       if (end == optarg)
       {
-        deinit_clargs(args);
         fprintf(
             stderr, "error :: invalid value '%s' for option '-s'\n", optarg
         );
+        free(args->fields);
         return 2;
       }
     }
@@ -93,16 +105,16 @@ int init_clargs(clargs *args, int argc, char *argv[])
     {
       if (optopt == 'f' || optopt == 's')
       {
-        deinit_clargs(args);
         fprintf(
             stderr, "error :: option '-%c' requires an argument\n", optopt
         );
+        free(args->fields);
         return 3;
       }
       else
       {
-        deinit_clargs(args);
         fprintf(stderr, "error :: unknown option '%c'\n", optopt);
+        free(args->fields);
         return 3;
       }
     }
@@ -110,13 +122,12 @@ int init_clargs(clargs *args, int argc, char *argv[])
 
   if (optind != argc - 1)
   {
-    deinit_clargs(args);
     fprintf(stderr, "error :: missing or multiple filenames\n");
+    free(args->fields);
     return 4;
   }
 
   args->filename = argv[optind];
-
   return 0;
 }
 

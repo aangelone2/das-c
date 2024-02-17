@@ -4,31 +4,31 @@
 void test_regular_field_counting()
 {
   char test_1[] = "1.0 2.0 3.0 4.0";
-  assert(count_fields(test_1) == 4);
+  assert(count_fields(test_1, " ") == 4);
 }
 
 void test_field_counting_trailing_spaces()
 {
   char test_2[] = "1.0 2.0 3.0 4.0  ";
-  assert(count_fields(test_2) == 4);
+  assert(count_fields(test_2, " ") == 4);
 }
 
 void test_field_counting_leading_trailing_spaces()
 {
   char test_3[] = "   1.0 3.0 4.0  ";
-  assert(count_fields(test_3) == 3);
+  assert(count_fields(test_3, " ") == 3);
 }
 
 void test_field_counting_spurious_chars()
 {
   char test_4[] = "1.0,3.0 4.0  ";
-  assert(count_fields(test_4) == 2);
+  assert(count_fields(test_4, " ") == 2);
 }
 
 void test_field_counting_only_separators()
 {
   char test_5[] = "          ";
-  assert(count_fields(test_5) == 0);
+  assert(count_fields(test_5, " ") == 0);
 }
 
 int main()

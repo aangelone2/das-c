@@ -13,16 +13,14 @@ char *prepare(char *buffer)
 
 void test_parse_sizet_array()
 {
-  size_t size;
   size_t *arr;
   char *fields;
 
   // Regular parsing
   fields = prepare("1,2,3");
-  arr = parse_sizet_array(fields, &size);
+  arr = parse_sizet_array(fields, 3);
   free(fields);
 
-  assert(size == 3);
   assert(arr[0] == 1);
   assert(arr[1] == 2);
   assert(arr[2] == 3);
@@ -30,35 +28,32 @@ void test_parse_sizet_array()
 
   // Single component
   fields = prepare("4");
-  arr = parse_sizet_array(fields, &size);
+  arr = parse_sizet_array(fields, 1);
   free(fields);
 
-  assert(size == 1);
   assert(arr[0] == 4);
   free(arr);
 
   // Empty component
   fields = prepare("5,,6");
-  arr = parse_sizet_array(fields, &size);
+  arr = parse_sizet_array(fields, 2);
   free(fields);
 
-  assert(size == 2);
   assert(arr[0] == 5);
   assert(arr[1] == 6);
   free(arr);
 
   // Trailing comma
   fields = prepare("7,");
-  arr = parse_sizet_array(fields, &size);
+  arr = parse_sizet_array(fields, 1);
   free(fields);
 
-  assert(size == 1);
   assert(arr[0] == 7);
   free(arr);
 
   // Invalid component
   fields = prepare("8,a,9");
-  arr = parse_sizet_array(fields, &size);
+  arr = parse_sizet_array(fields, 3);
   free(fields);
 
   assert(!arr);

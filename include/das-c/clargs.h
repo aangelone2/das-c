@@ -63,7 +63,7 @@ typedef struct
  *   - 3 on invalid option or value
  *   - 4 on missing or multiple filename
  */
-int init_clargs(clargs *args, int argc, char *argv[]);
+int init_clargs(clargs *args, const int argc, char *argv[]);
 
 //! Frees dynamic memory associated to a `file_info` object.
 /*!

@@ -24,15 +24,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-size_t count_fields(char *row)
+size_t count_fields(char *row, const char *sep)
 {
   size_t fields = 0;
 
-  char *tok = strtok(row, DASC_SEPARATORS);
+  char *tok = strtok(row, sep);
   while (tok)
   {
     ++fields;
-    tok = strtok(NULL, DASC_SEPARATORS);
+    tok = strtok(NULL, sep);
   }
 
   return fields;
@@ -51,14 +51,15 @@ size_t count_fields_file(FILE *file)
   } while (is_comment(line));
 
   rewind(file);
-  return count_fields(line);
+  return count_fields(line, DASC_SEPARATORS);
 }
 
-size_t *parse_sizet_array(char *buffer, size_t *size)
+size_t *parse_sizet_array(char *buffer, const size_t size)
 {
-  size_t *res = NULL;
-  *size = 0;
+  size_t *res = malloc(size * sizeof(size_t));
+  check(res, "allocation failure in parse_sizet_array()");
 
+  size_t f = 0;
   char *tok = strtok(buffer, ",");
   while (tok)
   {
@@ -70,13 +71,8 @@ size_t *parse_sizet_array(char *buffer, size_t *size)
       return NULL;
     }
 
-    size_t *res2 = realloc(res, (*size + 1) * sizeof(size_t));
-    check(res2, "reallocation failure in parse_sizet_array()");
-
-    res = res2;
-    res[*size] = val;
-
-    ++(*size);
+    res[f] = val;
+    ++f;
     tok = strtok(NULL, ",");
   }
 

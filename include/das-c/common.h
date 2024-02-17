@@ -58,17 +58,18 @@ static inline bool is_comment(const char *row)
     }                                                                         \
   }
 
-//! Counts the number of fields separated by DASC_SEPARATOR.
+//! Counts the number of fields.
 /*!
- * @param row The string to count the fields of.
+ * @param row The string to count the fields of. Will be overwritten.
+ * @param sep String of separator characters.
  *
  * @return The number of fields.
  */
-size_t count_fields(char *row);
+size_t count_fields(char *row, const char *sep);
 
 //! Counts the fields in the first non-comment line in the passed file.
 /*!
- * @param file Handle to the file to analyze.
+ * @param file Handle to the file to analyze. Rewound on return.
  *
  * @return The number of fields, 0 on error.
  */
@@ -82,11 +83,11 @@ size_t count_fields_file(FILE *file);
  * Exits on allocation failure.
  * Fails (with cleanup) on invalid value.
  *
- * @param buffer The string to parse.
- * @param size Inout parameter, the size of the parsed array.
+ * @param buffer The string to parse. Will be overwritten.
+ * @param size Number of fields in the string.
  *
  * @return The parsed array on success, `NULL` on failure.
  */
-size_t *parse_sizet_array(char *buffer, size_t *size);
+size_t *parse_sizet_array(char *buffer, const size_t size);
 
 #endif
