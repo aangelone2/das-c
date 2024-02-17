@@ -51,8 +51,7 @@ test: $(tobjects)
 	cd $(bdir); ./05.test-parse
 	cd $(bdir); ./06.test-avs
 	cd $(bdir); ./07.test-ave
-	cd $(bdir); ./08.test-multifile
-	cd $(bdir); ./09.test-multithreading
+	cd $(bdir); ./08.test-multithreading
 
 	@echo 'All tests completed successfully'
 

@@ -119,60 +119,44 @@ int parse(table *tab, const parse_info *info)
 {
   init_table(tab, info->rows, info->msk->n_active);
 
-  if (info->mode == DASC_PARALLEL_MODE_SER)
+  int retval = 0;
+
+  thrd_t *threads = malloc(info->n_threads * sizeof(thrd_t));
+  parse_chunk_args *args = malloc(info->n_threads * sizeof(parse_chunk_args));
+  int *res = malloc(info->n_threads * sizeof(int));
+
+  for (size_t it = 0; it < info->n_threads; ++it)
   {
-    for (size_t it = 0; it < info->n_threads; ++it)
-    {
-      parse_chunk_args args = {.tab = tab, .info = info, .idx_thread = it};
-      const int res = parse_chunk((void *)(&args));
-      if (res)
-        return res;
-    }
+    args[it].tab = tab;
+    args[it].info = info;
+    args[it].idx_thread = it;
 
-    return 0;
+    const int r = thrd_create(
+        &threads[it], (thrd_start_t)(parse_chunk), (void *)(&args[it])
+    );
+
+    if (r != thrd_success)
+    {
+      retval = 4;
+      goto cleanup;
+    }
   }
-  else // if (info->mode == DASC_PARALLEL_MODE_CPU)
+
+  for (size_t it = 0; it < info->n_threads; ++it)
+    thrd_join(threads[it], &res[it]);
+
+  for (size_t it = 0; it < info->n_threads; ++it)
   {
-    int retval = 0;
-
-    thrd_t *threads = malloc(info->n_threads * sizeof(thrd_t));
-    parse_chunk_args *args
-        = malloc(info->n_threads * sizeof(parse_chunk_args));
-    int *res = malloc(info->n_threads * sizeof(int));
-
-    for (size_t it = 0; it < info->n_threads; ++it)
+    if (res[it])
     {
-      args[it].tab = tab;
-      args[it].info = info;
-      args[it].idx_thread = it;
-
-      const int r = thrd_create(
-          &threads[it], (thrd_start_t)(parse_chunk), (void *)(&args[it])
-      );
-
-      if (r != thrd_success)
-      {
-        retval = 4;
-        goto cleanup;
-      }
+      retval = res[it];
+      goto cleanup;
     }
-
-    for (size_t it = 0; it < info->n_threads; ++it)
-      thrd_join(threads[it], &res[it]);
-
-    for (size_t it = 0; it < info->n_threads; ++it)
-    {
-      if (res[it])
-      {
-        retval = res[it];
-        goto cleanup;
-      }
-    }
-
-  cleanup:
-    free(res);
-    free(args);
-    free(threads);
-    return retval;
   }
+
+cleanup:
+  free(res);
+  free(args);
+  free(threads);
+  return retval;
 }

@@ -37,8 +37,6 @@ typedef struct
   //! Mask specifying the fields to access.
   mask *msk;
 
-  //! Parallelism mechanism (see constants in `clargs.h`).
-  int mode;
   //! Thread number.
   size_t n_threads;
   //! Thread load (number of rows to parse) array.
