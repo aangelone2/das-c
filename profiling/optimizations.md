@@ -17,7 +17,7 @@ running the commands
 
 ```
 $ time ../build/das ave -s20 -v 11.large.dat
-$ gprof ../build/das gmon.out > out-01.log
+$ gprof ../build/das gmon.out
 ```
 
 in the `resources/` folder, where `11.large.dat` is a
@@ -219,3 +219,61 @@ amount of time. `parse_line()` is now considerably
 less important, however, with more time being taken by
 `init_table()` (which is performed before the
 `parse_line()`-based loop).
+
+
+
+
+# Thread parallelization (`3ff5620`)
+
+In order to apply full parallelization, we:
+
+- Replaced `strtok()` with `strtok_r()` in
+  `parse_line()`, for thread-safe tokenization;
+- Encapsulated parsing in the `parse_chunk()` function.
+
+Our first parallelization scheme is subdividing parsing
+with the utilities in the `<threads.h>` library. We
+executed the code using:
+
+- 1, 2 and 4 threads with the `-O3` compilation option;
+- 1 thread using the `-pg` setting;
+- Serial mode (`-s` command line option) with `-pg`.
+
+The data was collected, with the same order, in
+`profiling/data-04.dat`, resulting in
+
+- 1 thread       : 46.4(2) s
+- 2 threads      : 33.4(2) s
+- 4 threads      : 26.3(1) s
+- 1 thread, `-pg`: 47.4(6) s
+- serial, `-pg`  : 46.0(1) s
+
+Profiling results for the last run have been collected
+in `profiling/log-04.log` (albeit with no call tree
+decomposition). The results are
+
+- `parse_chunk()` (68.3 %)
+- `_init` (14.8 %)
+- `rebin()` (7.4 %)
+- `init_table()` (7.0 %)
+- `count_rows()` (2.1 %)
+
+which, while not necessarily reliable due to the
+multi-threading context, are relatively consistent with
+previous results (parsing taking ~70-75% of the
+execution time).
+
+Since the serial and single-thread execution times with
+`-pg` are roughly the same, we will take the execution
+time shares to be applicable in both cases (the 1-thread
+execution time with `-O3` will be taken as
+representative).
+
+Ahmdal's law predicts a theoretical execution time of
+62.5-66% with respect to the single-thread one for 2
+threads and of 43.75-49% for 4, i.e., 29-30.6 s and
+20.3-22.7 s respectively. The actual execution times are
+about 10-15% higher than the theoretical prediction
+(especially the 4-thread case, likely due to
+overthreading), but they still represent a significant
+reduction (~43% for 4 threads).
