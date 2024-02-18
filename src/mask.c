@@ -26,10 +26,10 @@
 mask *alloc_mask(const size_t size)
 {
   mask *msk = malloc(sizeof(mask));
-  check(msk, "failed allocation in init_mask()");
+  ensure(msk, "failed allocation in init_mask()");
 
   msk->bits = malloc(size * sizeof(bool));
-  check(msk->bits, "failed allocation in init_mask()");
+  ensure(msk->bits, "failed allocation in init_mask()");
 
   msk->size = size;
 
@@ -43,7 +43,7 @@ mask *alloc_mask(const size_t size)
 
 void set_field(mask *msk, const size_t field)
 {
-  check(field < msk->size, "out-of-bounds field in set_field()");
+  ensure(field < msk->size, "out-of-bounds field in set_field()");
 
   if (!msk->bits[field])
     ++msk->n_active;

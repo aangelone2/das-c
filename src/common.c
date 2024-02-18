@@ -56,7 +56,7 @@ size_t count_fields_file(FILE *file)
 size_t *parse_sizet_array(char *buffer, const size_t size)
 {
   size_t *res = malloc(size * sizeof(size_t));
-  check(res, "allocation failure in parse_sizet_array()");
+  ensure(res, "allocation failure in parse_sizet_array()");
 
   size_t f = 0;
   char *tok = strtok(buffer, ",");

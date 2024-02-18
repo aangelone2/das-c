@@ -33,39 +33,39 @@
 ave_results *ave(const clargs *args)
 {
   ave_results *res = malloc(sizeof(ave_results));
-  check(res, "allocation failure in ave()");
+  ensure(res, "allocation failure in ave()");
 
   parse_info *info = alloc_parse_info(args);
   table tab;
 
-  int pres;
+  size_t pres;
   if (args->mode == DASC_PARALLEL_MODE_THR)
     pres = parse_threads(&tab, info);
   else // if (args->mode == DASC_PARALLEL_MODE_OMP)
     pres = parse_openmp(&tab, info);
-  check(!pres, "parsing error in ave()");
+  ensure(!pres, "parsing error in ave() :: line %zu", pres);
 
   res->cols = tab.cols;
   res->nsizes = SIZES;
 
   res->fields = malloc(res->cols * sizeof(size_t));
-  check(res->fields, "allocation failure in ave()");
+  ensure(res->fields, "allocation failure in ave()");
 
   // Selected VS all fields
   for (size_t ic = 0; ic < res->cols; ++ic)
     res->fields[ic] = (args->fields ? args->fields[ic] : ic);
 
   res->nbins = malloc(res->nsizes * sizeof(size_t));
-  check(res->nbins, "allocation failure in ave()");
+  ensure(res->nbins, "allocation failure in ave()");
 
   res->bsizes = malloc(res->nsizes * sizeof(size_t));
-  check(res->bsizes, "allocation failure in ave()");
+  ensure(res->bsizes, "allocation failure in ave()");
 
   res->ave = malloc(res->nsizes * sizeof(double *));
-  check(res->ave, "allocation failure in ave()");
+  ensure(res->ave, "allocation failure in ave()");
 
   res->sem = malloc(res->nsizes * sizeof(double *));
-  check(res->sem, "allocation failure in ave()");
+  ensure(res->sem, "allocation failure in ave()");
 
   // All columns will be the same size
   res->rows = tab.rows;

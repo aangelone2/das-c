@@ -29,7 +29,8 @@
 //
 // Returns 0 on success, the line number where the error occurred (indexed from
 // 1) on failure.
-size_t parse_chunk(table *tab, const parse_info *info, const size_t idx_thread)
+size_t
+parse_chunk_openmp(table *tab, const parse_info *info, const size_t idx_thread)
 {
   size_t retval = 0;
 
@@ -78,7 +79,7 @@ size_t parse_openmp(table *tab, const parse_info *info)
 
 #pragma omp for
   for (size_t it = 0; it < info->n_threads; ++it)
-    res[it] = parse_chunk(tab, info, it);
+    res[it] = parse_chunk_openmp(tab, info, it);
 
   for (size_t it = 0; it < info->n_threads; ++it)
   {
@@ -99,6 +100,6 @@ size_t parse_openmp(table *tab, const parse_info *info)
   noop(tab);
   noop(info);
 
-  check(false, "OpenMP modules not compiled");
+  ensure(false, "OpenMP modules not compiled");
 }
 #endif

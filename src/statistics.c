@@ -26,10 +26,10 @@
 
 double *average(const table *tab, const size_t skip)
 {
-  check(skip < tab->rows, "skip too large in average()");
+  ensure(skip < tab->rows, "skip too large in average()");
 
   double *res = calloc(tab->cols, sizeof(double));
-  check(res, "failed allocation in average()");
+  ensure(res, "failed allocation in average()");
 
   for (size_t ir = skip; ir < tab->rows; ++ir)
     for (size_t ic = 0; ic < tab->cols; ++ic)
@@ -44,10 +44,10 @@ double *average(const table *tab, const size_t skip)
 
 double *sem(const table *tab, const size_t skip, const double *average)
 {
-  check(skip < tab->rows, "skip too large in sem()");
+  ensure(skip < tab->rows, "skip too large in sem()");
 
   double *res = calloc(tab->cols, sizeof(double));
-  check(res, "failed allocation in average()");
+  ensure(res, "failed allocation in average()");
 
   for (size_t ir = skip; ir < tab->rows; ++ir)
   {
@@ -67,10 +67,10 @@ double *sem(const table *tab, const size_t skip, const double *average)
 
 void rebin(table *tab, const size_t skip, const size_t nbins)
 {
-  check(skip < tab->rows, "skip too large in rebin()");
+  ensure(skip < tab->rows, "skip too large in rebin()");
 
   const size_t keep = tab->rows - skip;
-  check(nbins <= keep, "nbins too large in rebin()");
+  ensure(nbins <= keep, "nbins too large in rebin()");
 
   if (nbins == keep)
     return;

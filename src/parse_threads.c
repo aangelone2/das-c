@@ -24,14 +24,14 @@
 #include "das-c/parse.h"
 #include <threads.h>
 
-// Throwaway struct to hold `parse_chunk()` arguments.
+// Throwaway struct to hold `parse_chunk_threads()` arguments.
 typedef struct
 {
   table *tab;
   const parse_info *info;
   size_t idx_thread;
   size_t invalid_row;
-} parse_chunk_args;
+} parse_chunk_threads_args;
 
 // Casts input pointer as `parse_chunk_args *`, then parses its `idx_thread`-th
 // chunk form the file `info` refers to, placing the parsed arrays in `tab`.
@@ -39,9 +39,9 @@ typedef struct
 //
 // Returns EXIT_SUCCESS on success, EXIT_FAILURE otherwise (cannot directly
 // return row number due to `int` <-> `size_t` casting).
-int parse_chunk(void *args)
+int parse_chunk_threads(void *args)
 {
-  parse_chunk_args *a = (parse_chunk_args *)(args);
+  parse_chunk_threads_args *a = (parse_chunk_threads_args *)(args);
   a->invalid_row = 0;
 
   int retval = EXIT_SUCCESS;
@@ -86,7 +86,8 @@ size_t parse_threads(table *tab, const parse_info *info)
   size_t retval = 0;
 
   thrd_t *threads = malloc(info->n_threads * sizeof(thrd_t));
-  parse_chunk_args *args = malloc(info->n_threads * sizeof(parse_chunk_args));
+  parse_chunk_threads_args *args
+      = malloc(info->n_threads * sizeof(parse_chunk_threads_args));
   int *res = malloc(info->n_threads * sizeof(int));
 
   for (size_t it = 0; it < info->n_threads; ++it)
@@ -96,9 +97,9 @@ size_t parse_threads(table *tab, const parse_info *info)
     args[it].idx_thread = it;
 
     const int r = thrd_create(
-        &threads[it], (thrd_start_t)(parse_chunk), (void *)(&args[it])
+        &threads[it], (thrd_start_t)(parse_chunk_threads), (void *)(&args[it])
     );
-    check(r == thrd_success, "thread creation failure in parse()");
+    ensure(r == thrd_success, "thread creation failure in parse()");
   }
 
   // Return values can be freely ignored, invalid_row will hold the info

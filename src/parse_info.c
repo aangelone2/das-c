@@ -42,7 +42,7 @@ size_t count_rows(FILE *file)
 size_t *get_chunks(const size_t rows, const size_t n_threads)
 {
   size_t *res = malloc(n_threads * sizeof(size_t));
-  check(res, "failed allocation in get_chunks()");
+  ensure(res, "failed allocation in get_chunks()");
 
   for (size_t it = 0; it < n_threads; ++it)
     res[it] = rows / n_threads;
@@ -56,7 +56,7 @@ size_t *get_chunks(const size_t rows, const size_t n_threads)
 long int *get_pos(FILE *file, const size_t *chunks, const size_t n_threads)
 {
   long int *pos = malloc(n_threads * sizeof(long int));
-  check(pos, "failed allocation in get_pos()");
+  ensure(pos, "failed allocation in get_pos()");
 
   pos[0] = 0;
 
@@ -86,15 +86,15 @@ long int *get_pos(FILE *file, const size_t *chunks, const size_t n_threads)
 parse_info *alloc_parse_info(const clargs *args)
 {
   parse_info *info = malloc(sizeof(parse_info));
-  check(info, "failed allocation in alloc_parse_info()");
+  ensure(info, "failed allocation in alloc_parse_info()");
 
   info->filename = args->filename;
 
   FILE *file = fopen(args->filename, "r");
-  check(file, "unreachable file in parse()");
+  ensure(file, "unreachable file in parse()");
 
   const size_t cols = count_fields_file(file);
-  check(cols, "field count error in parse()");
+  ensure(cols, "field count error in parse()");
 
   info->msk = alloc_mask(cols);
 

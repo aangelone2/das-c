@@ -29,22 +29,22 @@
 avs_results *avs(const clargs *args)
 {
   avs_results *res = malloc(sizeof(avs_results));
-  check(res, "allocation failure in avs()");
+  ensure(res, "allocation failure in avs()");
 
   parse_info *info = alloc_parse_info(args);
   table tab;
 
-  int pres;
+  size_t pres;
   if (args->mode == DASC_PARALLEL_MODE_THR)
     pres = parse_threads(&tab, info);
   else // if (args->mode == DASC_PARALLEL_MODE_OMP)
     pres = parse_openmp(&tab, info);
-  check(!pres, "parsing error in avs()");
+  ensure(!pres, "parsing error in avs() :: line %zu", pres);
 
   res->cols = tab.cols;
 
   res->fields = malloc(res->cols * sizeof(size_t));
-  check(res->fields, "allocation failure in avs()");
+  ensure(res->fields, "allocation failure in avs()");
 
   // Selected VS all fields
   for (size_t ic = 0; ic < res->cols; ++ic)

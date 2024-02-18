@@ -29,24 +29,25 @@ void init_table(table *tab, const size_t rows, const size_t cols)
   tab->cols = cols;
 
   tab->data = malloc(rows * sizeof(double *));
-  check(tab->data, "failed allocation in init_table()");
+  ensure(tab->data, "failed allocation in init_table()");
 
   for (size_t ir = 0; ir < rows; ++ir)
   {
     tab->data[ir] = malloc(cols * sizeof(double));
-    check(tab->data[ir], "failed allocation in init_table()");
+    ensure(tab->data[ir], "failed allocation in init_table()");
   }
 }
 
 void shed_rows(table *tab, const size_t size)
 {
-  check(size < tab->rows && size > 0, "new size too large in shed_rows()");
+  ensure(size > 0, "invalid new size in shed_rows()");
+  ensure(size < tab->rows, "new size too large in shed_rows()");
 
   for (size_t ir = size; ir < tab->rows; ++ir)
     free(tab->data[ir]);
 
   double **data = realloc(tab->data, size * sizeof(double *));
-  check(data, "failed reallocation in shed_rows()");
+  ensure(data, "failed reallocation in shed_rows()");
 
   tab->data = data;
   tab->rows = size;

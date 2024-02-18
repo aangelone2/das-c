@@ -47,16 +47,20 @@ static inline bool is_comment(const char *row)
 //! Suppresses unused parameter warnings if called on unused variable.
 #define noop(x) (void)(x)
 
-//! `assert`-like macro, prints a message and aborts if the condition fails.
+//! `assert`-like macro, prints a message and aborts if the condition FAILS.
 /*!
- * @param condition The condition to check.
- * @param msg String to print before terminating.
+ * A leading `error ::` and a trailing newline will be automatically added.
+ *
+ * @param condition The condition to verify.
+ * @param ... Printout arguments (same syntax as `printf`).
  */
-#define check(condition, msg)                                                 \
+#define ensure(condition, ...)                                                \
   {                                                                           \
     if (!(condition))                                                         \
     {                                                                         \
-      fprintf(stderr, "error :: %s\n", msg);                                  \
+      fprintf(stderr, "error :: ");                                           \
+      fprintf(stderr, __VA_ARGS__);                                           \
+      fprintf(stderr, "\n");                                                  \
       exit(EXIT_FAILURE);                                                     \
     }                                                                         \
   }
