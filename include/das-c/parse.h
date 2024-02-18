@@ -20,36 +20,38 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_TABLE_H
-#define DASC_TABLE_H
+#ifndef DASC_PARSE_H
+#define DASC_PARSE_H
 
+#include "das-c/mask.h"
 #include "das-c/parse_info.h"
+#include "das-c/table.h"
 
-//! Struct for a dataset.
-typedef struct
-{
-  //! Number of rows (outer index).
-  size_t rows;
-  //! Number of columns (inner index).
-  size_t cols;
-
-  //! 2D data pointer.
-  double **data;
-} table;
-
-//! Removes rows from the end of a `table`.
+//! Creates an array from the floating-points fields parsed in a string.
 /*!
- * Exits on invalid parameters or reallocation failure.
+ * Exits on allocation failure.
  *
- * @param tab The `table` object to contract.
- * @param size The new number of rows the `table` should have.
+ * @param line The string to parse. Will be overwritten.
+ * @param msk `mask` object holding parsing information.
+ *
+ * @return The parsed array on success, `NULL` on failure.
  */
-void shed_rows(table *tab, const size_t size);
+double *parse_line(char *line, const mask *msk);
 
-//! Frees memory associated to a `table` object.
+//! Fills uninitialized `table` with the content of a file using C11 threads.
 /*!
- * @param tab The `table` to clear.
+ * Exits if file cannot be opened.
+ *
+ * In case of multiple errors in the file, the error determining the return
+ * value is the one at the earliest row in the file.
+ *
+ * Exits on allocation or thread creation error.
+ *
+ * @param tab Pointer to the `table` to fill.
+ * @param info Parsing info struct.
+ *
+ * @return 0 on success, row where error occurred (indexed from 1) on failure.
  */
-void deinit_table(table *tab);
+size_t parse_threads(table *tab, const parse_info *info);
 
 #endif

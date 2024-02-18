@@ -22,8 +22,8 @@
 
 #include "das-c/avs.h"
 #include "das-c/common.h"
+#include "das-c/parse.h"
 #include "das-c/statistics.h"
-#include "das-c/table.h"
 #include <stdlib.h>
 
 avs_results *avs(const clargs *args)
@@ -34,7 +34,7 @@ avs_results *avs(const clargs *args)
   parse_info *info = alloc_parse_info(args);
 
   table tab;
-  check(!parse(&tab, info), "parsing error in avs()");
+  check(!parse_threads(&tab, info), "parsing error in avs()");
 
   res->cols = tab.cols;
 

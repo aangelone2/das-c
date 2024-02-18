@@ -22,9 +22,8 @@
 
 #include "das-c/ave.h"
 #include "das-c/common.h"
-#include "das-c/parse_info.h"
+#include "das-c/parse.h"
 #include "das-c/statistics.h"
-#include "das-c/table.h"
 #include <stdlib.h>
 
 #define MIN_BINS 64
@@ -39,7 +38,7 @@ ave_results *ave(const clargs *args)
   parse_info *info = alloc_parse_info(args);
 
   table tab;
-  check(!parse(&tab, info), "parsing error in ave()");
+  check(!parse_threads(&tab, info), "parsing error in ave()");
 
   res->cols = tab.cols;
   res->nsizes = SIZES;

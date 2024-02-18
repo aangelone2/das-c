@@ -20,36 +20,49 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#ifndef DASC_TABLE_H
-#define DASC_TABLE_H
+#include "das-c/common.h"
+#include "das-c/mask.h"
+#include <string.h>
 
-#include "das-c/parse_info.h"
-
-//! Struct for a dataset.
-typedef struct
+double *parse_line(char *line, const mask *msk)
 {
-  //! Number of rows (outer index).
-  size_t rows;
-  //! Number of columns (inner index).
-  size_t cols;
+  double *data = malloc(msk->n_active * sizeof(double));
+  check(data, "allocation error in parse_line()");
 
-  //! 2D data pointer.
-  double **data;
-} table;
+  size_t field = 0, active_field = 0;
+  char *saveptr;
 
-//! Removes rows from the end of a `table`.
-/*!
- * Exits on invalid parameters or reallocation failure.
- *
- * @param tab The `table` object to contract.
- * @param size The new number of rows the `table` should have.
- */
-void shed_rows(table *tab, const size_t size);
+  char *tok = strtok_r(line, DASC_SEPARATORS, &saveptr);
+  while (tok)
+  {
+    // Too many fields
+    if (field >= msk->size)
+      goto error;
 
-//! Frees memory associated to a `table` object.
-/*!
- * @param tab The `table` to clear.
- */
-void deinit_table(table *tab);
+    if (msk->bits[field])
+    {
+      char *end;
+      const double buffer = strtod(tok, &end);
 
-#endif
+      // Invalid field found
+      if (end == tok)
+        goto error;
+
+      data[active_field] = buffer;
+      ++active_field;
+    }
+
+    tok = strtok_r(NULL, DASC_SEPARATORS, &saveptr);
+    ++field;
+  }
+
+  // Too few fields
+  if (field != msk->size)
+    goto error;
+
+  return data;
+
+error:
+  free(data);
+  return NULL;
+}

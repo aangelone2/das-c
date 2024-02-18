@@ -20,60 +20,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
-#include "das-c/clargs.h"
 #include "das-c/common.h"
-#include "das-c/mask.h"
-#include "das-c/parse_info.h"
-#include "das-c/table.h"
-#include <stdlib.h>
-#include <string.h>
+#include "das-c/parse.h"
 #include <threads.h>
-
-// Writes the contents of the fields of `line`, filtered by `msk`, to an array.
-// Exits on allocation failure.
-// Returns the allocated array on success, NULL on failure.
-double *parse_line(char *line, const mask *msk)
-{
-  double *data = malloc(msk->n_active * sizeof(double));
-  check(data, "allocation error in parse_line()");
-
-  size_t field = 0, active_field = 0;
-  char *saveptr;
-
-  char *tok = strtok_r(line, DASC_SEPARATORS, &saveptr);
-  while (tok)
-  {
-    // Too many fields
-    if (field >= msk->size)
-      goto error;
-
-    if (msk->bits[field])
-    {
-      char *end;
-      const double buffer = strtod(tok, &end);
-
-      // Invalid field found
-      if (end == tok)
-        goto error;
-
-      data[active_field] = buffer;
-      ++active_field;
-    }
-
-    tok = strtok_r(NULL, DASC_SEPARATORS, &saveptr);
-    ++field;
-  }
-
-  // Too few fields
-  if (field != msk->size)
-    goto error;
-
-  return data;
-
-error:
-  free(data);
-  return NULL;
-}
 
 // Throwaway struct to hold `parse_chunk()` arguments.
 typedef struct
@@ -132,7 +81,7 @@ int parse_chunk(void *args)
   return retval;
 }
 
-size_t parse(table *tab, const parse_info *info)
+size_t parse_threads(table *tab, const parse_info *info)
 {
   // Table initialization
   tab->rows = info->rows;

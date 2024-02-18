@@ -1,4 +1,4 @@
-#include "das-c/table.h"
+#include "das-c/parse.h"
 #include "test.h"
 #include <stdlib.h>
 
@@ -23,7 +23,7 @@ void test_too_many_fields()
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse(&tab, info) == 3);
+  assert(parse_threads(&tab, info) == 3);
 
   deinit_table(&tab);
   free_parse_info(info);
@@ -37,7 +37,7 @@ void test_invalid_field()
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse(&tab, info) == 2);
+  assert(parse_threads(&tab, info) == 2);
 
   deinit_table(&tab);
   free_parse_info(info);
@@ -51,7 +51,7 @@ void test_too_few_fields()
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse(&tab, info) == 4);
+  assert(parse_threads(&tab, info) == 4);
 
   deinit_table(&tab);
   free_parse_info(info);
@@ -65,7 +65,7 @@ void test_valid_full()
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse(&tab, info));
+  assert(!parse_threads(&tab, info));
 
   assert(tab.cols == 4);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -93,7 +93,7 @@ void test_filtering()
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse(&tab, info));
+  assert(!parse_threads(&tab, info));
 
   assert(tab.cols == 2);
   for (size_t ic = 0; ic < tab.cols; ++ic)
