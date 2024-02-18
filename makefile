@@ -54,10 +54,10 @@ test: $(tobjects)
 	cd $(bdir); ./02.test-file_info
 	cd $(bdir); ./03.test-statistics
 	cd $(bdir); ./04.test-clargs
-	cd $(bdir); ./05.test-parse
-	cd $(bdir); ./06.test-avs
-	cd $(bdir); ./07.test-ave
-	cd $(bdir); ./08.test-multithreading
+	cd $(bdir); ./05.test-parse_threads-single
+	cd $(bdir); ./06.test-parse_threads-multi
+	cd $(bdir); ./07.test-avs
+	cd $(bdir); ./08.test-ave
 
 	@echo 'All tests completed successfully'
 

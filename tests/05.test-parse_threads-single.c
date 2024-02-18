@@ -10,7 +10,7 @@ clargs default_clargs()
   args.n_fields = 0;
   args.fields = NULL;
   args.skip = 0;
-  args.n_threads = 2;
+  args.n_threads = 1;
   args.verbose = false;
 
   return args;
@@ -112,11 +112,10 @@ void test_filtering()
   deinit_clargs(&args);
 }
 
-void test_4_threads()
+void test_valid_full_with_comments()
 {
   clargs args = default_clargs();
-  args.n_threads = 4;
-  args.filename = "../resources/08.valid.dat";
+  args.filename = "../resources/09.valid_with_comments.dat";
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
@@ -125,36 +124,13 @@ void test_4_threads()
   assert(tab.cols == 4);
   for (size_t ic = 0; ic < tab.cols; ++ic)
   {
-    assert(tab.rows == 64);
+    assert(tab.rows == 59);
 
     // Checking each component
-    for (size_t ir = 0; ir < 64; ++ir)
-      assert_double_eq(tab.data[ir][ic], (double)(ic) + example_data[ir]);
-  }
-
-  deinit_table(&tab);
-  free_parse_info(info);
-  deinit_clargs(&args);
-}
-
-void test_imperfect_splitting()
-{
-  clargs args = default_clargs();
-  args.n_threads = 3;
-  args.filename = "../resources/08.valid.dat";
-  parse_info *info = alloc_parse_info(&args);
-
-  table tab;
-  assert(!parse_threads(&tab, info));
-
-  assert(tab.cols == 4);
-  for (size_t ic = 0; ic < tab.cols; ++ic)
-  {
-    assert(tab.rows == 64);
-
-    // Checking each component
-    for (size_t ir = 0; ir < 64; ++ir)
-      assert_double_eq(tab.data[ir][ic], (double)(ic) + example_data[ir]);
+    for (size_t ir = 0; ir < 59; ++ir)
+      assert_double_eq(
+          tab.data[ir][ic], (double)(ic) + example_data_with_comments[ir]
+      );
   }
 
   deinit_table(&tab);
@@ -181,11 +157,8 @@ int main()
   printf("  Testing valid file, filtering...\n");
   test_filtering();
 
-  printf("  Testing valid file, all fields, 4 threads...\n");
-  test_4_threads();
-
-  printf("  Testing valid file, all fields, imperfect splitting...\n");
-  test_imperfect_splitting();
+  printf("  Testing valid file with commented lines, all fields...\n");
+  test_valid_full_with_comments();
 
   close_test();
 }

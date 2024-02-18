@@ -22,7 +22,6 @@
 
 #include "das-c/table.h"
 #include "das-c/common.h"
-#include <stdlib.h>
 
 void init_table(table *tab, const size_t rows, const size_t cols)
 {

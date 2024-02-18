@@ -75,6 +75,7 @@ size_t parse_openmp(table *tab, const parse_info *info)
 
   omp_set_dynamic(0);
   omp_set_num_threads((int)(info->n_threads));
+
 #pragma omp for
   for (size_t it = 0; it < info->n_threads; ++it)
     res[it] = parse_chunk(tab, info, it);

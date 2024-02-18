@@ -10,7 +10,7 @@ void test_simple()
   args.skip = 20;
   args.n_threads = 1;
   args.verbose = false;
-  args.filename = "../resources/10.ave.dat";
+  args.filename = "../resources/11.ave.dat";
 
   args.fields = NULL;
 
@@ -99,7 +99,7 @@ void test_multiple_fields()
   args.skip = 20;
   args.n_threads = 1;
   args.verbose = false;
-  args.filename = "../resources/10.ave.dat";
+  args.filename = "../resources/11.ave.dat";
 
   args.fields = malloc(2 * sizeof(size_t));
   args.fields[0] = 2;
@@ -164,7 +164,7 @@ void test_field_skip()
   args.skip = 20;
   args.n_threads = 1;
   args.verbose = false;
-  args.filename = "../resources/10.ave.dat";
+  args.filename = "../resources/11.ave.dat";
 
   args.fields = malloc(2 * sizeof(size_t));
   args.fields[0] = 0;
@@ -229,7 +229,7 @@ void test_single_field()
   args.skip = 20;
   args.n_threads = 1;
   args.verbose = false;
-  args.filename = "../resources/10.ave.dat";
+  args.filename = "../resources/11.ave.dat";
 
   args.fields = malloc(1 * sizeof(size_t));
   args.fields[0] = 1;

@@ -24,7 +24,6 @@
 #define DASC_AVS_H
 
 #include "das-c/clargs.h"
-#include <stddef.h>
 
 //! Struct holding the result of `avs`.
 typedef struct

@@ -22,7 +22,6 @@
 
 #include "das-c/parse_info.h"
 #include "das-c/common.h"
-#include <stdlib.h>
 
 // Counts the number of non-commented rows in the file.
 // Resets the file on return.

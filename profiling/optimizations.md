@@ -16,12 +16,12 @@ results in `profiling/log-01.log` were obtained by
 running the commands
 
 ```
-$ time ../build/das ave -s20 -v 11.large.dat
+$ time ../build/das ave -s20 -v 12.large.dat
 $ gprof ../build/das gmon.out
 ```
 
-in the `resources/` folder, where `11.large.dat` is a
-4x8e7 datafile created by the `11.generator.py` python
+in the `resources/` folder, where `12.large.dat` is a
+4x8e7 datafile created by the `12.generator.py` python
 script. The execution time data is displayed in
 `profiling/data-01.dat`, and the average result is
 48.3(2) s with `-pg` and 45.5(5) s with `-O3`.

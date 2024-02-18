@@ -32,7 +32,7 @@ typedef struct
   //! Filename.
   char *filename;
 
-  //! Number of rows (outer index).
+  //! Total number of rows in the file.
   size_t rows;
   //! Mask specifying the fields to access.
   mask *msk;

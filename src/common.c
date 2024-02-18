@@ -21,7 +21,6 @@
  * IN THE SOFTWARE. */
 
 #include "das-c/common.h"
-#include <stdlib.h>
 #include <string.h>
 
 size_t count_fields(char *row, const char *sep)

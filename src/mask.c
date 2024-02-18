@@ -22,7 +22,6 @@
 
 #include "das-c/mask.h"
 #include "das-c/common.h"
-#include <stdlib.h>
 
 mask *alloc_mask(const size_t size)
 {

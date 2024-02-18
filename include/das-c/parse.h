@@ -23,7 +23,6 @@
 #ifndef DASC_PARSE_H
 #define DASC_PARSE_H
 
-#include "das-c/mask.h"
 #include "das-c/parse_info.h"
 #include "das-c/table.h"
 
@@ -37,7 +36,7 @@
  */
 int parse_line(double *data, char *line, const mask *msk);
 
-//! Fills uninitialized `table` with the content of a file using C11 threads.
+//! Fills uninitialized `table` with ALL rows in a file using C11 threads.
 /*!
  * Exits if file cannot be opened.
  *
