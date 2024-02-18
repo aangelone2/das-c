@@ -29,23 +29,14 @@
 #include <string.h>
 #include <threads.h>
 
-// Throwaway struct to hold `parse_chunk()` arguments.
-typedef struct
+// Writes the contents of the fields of `line`, filtered by `msk`, to an array.
+// Exits on allocation failure.
+// Returns the allocated array on success, NULL on failure.
+double *parse_line(char *line, const mask *msk)
 {
-  table *tab;
-  const parse_info *info;
-  size_t idx_thread;
-} parse_chunk_args;
+  double *data = malloc(msk->n_active * sizeof(double));
+  check(data, "allocation error in parse_line()");
 
-// Writes the contents of the fields of `line`, filtered by `msk`,
-// to the components of `data`.
-// Returns:
-// - 0 if successful
-// - 1 if too many fields (compared to `msk`)
-// - 2 if invalid fields found
-// - 3 if too few fields (compared to `msk`)
-int parse_line(double *data, char *line, const mask *msk)
-{
   size_t field = 0, active_field = 0;
   char *saveptr;
 
@@ -54,7 +45,7 @@ int parse_line(double *data, char *line, const mask *msk)
   {
     // Too many fields
     if (field >= msk->size)
-      return 1;
+      goto error;
 
     if (msk->bits[field])
     {
@@ -63,7 +54,7 @@ int parse_line(double *data, char *line, const mask *msk)
 
       // Invalid field found
       if (end == tok)
-        return 2;
+        goto error;
 
       data[active_field] = buffer;
       ++active_field;
@@ -75,16 +66,36 @@ int parse_line(double *data, char *line, const mask *msk)
 
   // Too few fields
   if (field != msk->size)
-    return 3;
+    goto error;
 
-  return 0;
+  return data;
+
+error:
+  free(data);
+  return NULL;
 }
 
+// Throwaway struct to hold `parse_chunk()` arguments.
+typedef struct
+{
+  table *tab;
+  const parse_info *info;
+  size_t idx_thread;
+  size_t invalid_row;
+} parse_chunk_args;
+
 // Casts input pointer as `parse_chunk_args *`, then parses its `idx_thread`-th
-// chunk form the file `info` refers to, placing the results in `tab`.
+// chunk form the file `info` refers to, placing the parsed arrays in `tab`.
+// On error, sets `invalid_row` to the first invalid row (indexed from 1).
+//
+// Returns EXIT_SUCCESS on success, EXIT_FAILURE otherwise (cannot directly
+// return row number due to `int` <-> `size_t` casting).
 int parse_chunk(void *args)
 {
   parse_chunk_args *a = (parse_chunk_args *)(args);
+  a->invalid_row = 0;
+
+  int retval = EXIT_SUCCESS;
 
   FILE *file = fopen(a->info->filename, "r");
   fseek(file, a->info->pos[a->idx_thread], 0);
@@ -99,27 +110,37 @@ int parse_chunk(void *args)
   size_t ir = 0;
   do
   {
+    const size_t row = start + ir;
+
     fgets(line, DASC_MAX_LINE_LENGTH, file);
     if (is_comment(line))
       continue;
 
-    const int res = parse_line(a->tab->data[start + ir], line, a->info->msk);
+    a->tab->data[row] = parse_line(line, a->info->msk);
     // Failure in parse_line()
-    if (res)
-      return res;
+    if (!a->tab->data[row])
+    {
+      a->invalid_row = row + 1;
+      retval = EXIT_FAILURE;
+      break;
+    }
 
     ++ir;
   } while (ir < a->info->chunks[a->idx_thread]);
 
   fclose(file);
-  return 0;
+  return retval;
 }
 
-int parse(table *tab, const parse_info *info)
+size_t parse(table *tab, const parse_info *info)
 {
-  init_table(tab, info->rows, info->msk->n_active);
+  // Table initialization
+  tab->rows = info->rows;
+  tab->cols = info->msk->n_active;
+  tab->data = malloc(tab->rows * sizeof(double *));
+  check(tab->data, "failed allocation in parse()");
 
-  int retval = 0;
+  size_t retval = 0;
 
   thrd_t *threads = malloc(info->n_threads * sizeof(thrd_t));
   parse_chunk_args *args = malloc(info->n_threads * sizeof(parse_chunk_args));
@@ -134,27 +155,22 @@ int parse(table *tab, const parse_info *info)
     const int r = thrd_create(
         &threads[it], (thrd_start_t)(parse_chunk), (void *)(&args[it])
     );
-
-    if (r != thrd_success)
-    {
-      retval = 4;
-      goto cleanup;
-    }
+    check(r == thrd_success, "thread creation failure in parse()");
   }
 
+  // Return values can be freely ignored, invalid_row will hold the info
   for (size_t it = 0; it < info->n_threads; ++it)
-    thrd_join(threads[it], &res[it]);
+    thrd_join(threads[it], NULL);
 
   for (size_t it = 0; it < info->n_threads; ++it)
   {
-    if (res[it])
+    if (args[it].invalid_row)
     {
-      retval = res[it];
-      goto cleanup;
+      retval = args[it].invalid_row;
+      break;
     }
   }
 
-cleanup:
   free(res);
   free(args);
   free(threads);

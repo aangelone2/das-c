@@ -24,16 +24,6 @@
 #include "das-c/common.h"
 #include <stdlib.h>
 
-void init_table(table *tab, const size_t rows, const size_t cols)
-{
-  tab->rows = rows;
-  tab->cols = cols;
-
-  tab->data = malloc(rows * sizeof(double *));
-  for (size_t ir = 0; ir < rows; ++ir)
-    tab->data[ir] = malloc(cols * sizeof(double));
-}
-
 void shed_rows(table *tab, const size_t size)
 {
   check(size < tab->rows && size > 0, "new size too large in shed_rows()");

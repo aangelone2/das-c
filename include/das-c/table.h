@@ -37,15 +37,22 @@ typedef struct
   double **data;
 } table;
 
-//! Initializes an empty `table`.
+//! Fills an uninitialized `table` with the content of a file.
 /*!
- * Exits on allocation failure.
+ * Exits if file cannot be opened.
  *
- * @param tab Pointer to the table to allocate.
- * @param rows Desired number of rows.
- * @param cols Desired number of columns.
+ * In case of multiple errors in the file, the error determining the return
+ * value is 1) the first in single-threaded execution, 2) undefined in
+ * multithreaded execution.
+ *
+ * Exits on allocation or thread creation error.
+ *
+ * @param tab Pointer to the `table` to fill.
+ * @param info Parsing info struct.
+ *
+ * @return 0 on success, row where error occurred (indexed from 1) on failure.
  */
-void init_table(table *tab, const size_t rows, const size_t cols);
+size_t parse(table *tab, const parse_info *info);
 
 //! Removes rows from the end of a `table`.
 /*!
@@ -55,26 +62,6 @@ void init_table(table *tab, const size_t rows, const size_t cols);
  * @param size The new number of rows the `table` should have.
  */
 void shed_rows(table *tab, const size_t size);
-
-//! Fills an uninitialized `table` with the content of a file.
-/*!
- * Exits if file cannot be opened.
- *
- * In case of multiple errors in the file, the error determining the return
- * value is 1) the first in single-threaded execution, 2) undefined in
- * multithreaded execution.
- *
- * @param tab Pointer to the `table` to fill.
- * @param info Parsing info struct.
- *
- * @return Status code:
- * - 0 on success
- * - 1 if too many fields found in line (compared to `msk`)
- * - 2 if invalid fields found in line
- * - 3 if too few fields found in line (compared to `msk`)
- * - 4 on thread creation error
- */
-int parse(table *tab, const parse_info *info);
 
 //! Frees memory associated to a `table` object.
 /*!

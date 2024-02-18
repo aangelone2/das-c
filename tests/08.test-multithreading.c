@@ -23,7 +23,7 @@ void test_too_many_fields()
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse(&tab, info) == 1);
+  assert(parse(&tab, info) == 3);
 
   deinit_table(&tab);
   free_parse_info(info);
@@ -51,7 +51,7 @@ void test_too_few_fields()
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse(&tab, info) == 3);
+  assert(parse(&tab, info) == 4);
 
   deinit_table(&tab);
   free_parse_info(info);

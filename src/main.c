@@ -15,6 +15,15 @@ int main(int argc, char *argv[])
   {
     ave_results *res = ave(&args);
 
+    if (args.verbose)
+      printf(
+          "%s :: %zu/%zu rows :: %zu columns\n\n",
+          args.filename,
+          res->kept,
+          res->rows,
+          res->cols
+      );
+
     for (size_t is = 0; is < res->nsizes; ++is)
     {
       printf("%zu %zu", res->nbins[is], res->bsizes[is]);
@@ -28,6 +37,15 @@ int main(int argc, char *argv[])
   else if (!strcmp(argv[1], "avs"))
   {
     avs_results *res = avs(&args);
+
+    if (args.verbose)
+      printf(
+          "%s :: %zu/%zu rows :: %zu columns\n\n",
+          args.filename,
+          res->kept,
+          res->rows,
+          res->cols
+      );
 
     for (size_t ic = 0; ic < res->cols; ++ic)
       printf("%zu %+.12e %.1e\n", ic, res->ave[ic], res->sem[ic]);
