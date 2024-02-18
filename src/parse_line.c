@@ -24,11 +24,8 @@
 #include "das-c/mask.h"
 #include <string.h>
 
-double *parse_line(char *line, const mask *msk)
+int parse_line(double *data, char *line, const mask *msk)
 {
-  double *data = malloc(msk->n_active * sizeof(double));
-  check(data, "allocation error in parse_line()");
-
   size_t field = 0, active_field = 0;
   char *saveptr;
 
@@ -37,7 +34,7 @@ double *parse_line(char *line, const mask *msk)
   {
     // Too many fields
     if (field >= msk->size)
-      goto error;
+      return EXIT_FAILURE;
 
     if (msk->bits[field])
     {
@@ -46,7 +43,7 @@ double *parse_line(char *line, const mask *msk)
 
       // Invalid field found
       if (end == tok)
-        goto error;
+        return EXIT_FAILURE;
 
       data[active_field] = buffer;
       ++active_field;
@@ -58,11 +55,7 @@ double *parse_line(char *line, const mask *msk)
 
   // Too few fields
   if (field != msk->size)
-    goto error;
+    return EXIT_FAILURE;
 
-  return data;
-
-error:
-  free(data);
-  return NULL;
+  return EXIT_SUCCESS;
 }

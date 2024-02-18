@@ -38,6 +38,12 @@ CFLAGS := -std=gnu17 -O3 -Wfatal-errors\
 INC := -I$(idir)
 LIB := -L$(bdir) -ldas-c -lm
 
+ifdef NO_OPENMP
+	CFLAGS := $(CFLAGS) -DNO_OPENMP
+else
+	LIB := $(LIB) -fopenmp
+endif
+
 
 # Target which executes the rule to build the test executables
 test: $(tobjects)
@@ -76,7 +82,7 @@ lib: $(objects)
 # Rule to build library object files
 $(objects): $(odir)/%.o: $(sdir)/%.c $(headers)
 	@mkdir -p $(odir)
-	$(CC) $(CFLAGS) $(INC) -c $< -o $@
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@ $(LIB)
 
 
 docs:

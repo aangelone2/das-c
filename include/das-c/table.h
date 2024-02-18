@@ -23,7 +23,7 @@
 #ifndef DASC_TABLE_H
 #define DASC_TABLE_H
 
-#include "das-c/parse_info.h"
+#include <stddef.h>
 
 //! Struct for a dataset.
 typedef struct
@@ -36,6 +36,16 @@ typedef struct
   //! 2D data pointer.
   double **data;
 } table;
+
+//! Initializes an empty `table`.
+/*!
+ * Exits on allocation failure.
+ *
+ * @param tab Pointer to the table to allocate.
+ * @param rows Desired number of rows.
+ * @param cols Desired number of columns.
+ */
+void init_table(table *tab, const size_t rows, const size_t cols);
 
 //! Removes rows from the end of a `table`.
 /*!

@@ -44,6 +44,9 @@ static inline bool is_comment(const char *row)
   return row[0] == DASC_COMMENT;
 }
 
+//! Suppresses unused parameter warnings if called on unused variable.
+#define noop(x) (void)(x)
+
 //! `assert`-like macro, prints a message and aborts if the condition fails.
 /*!
  * @param condition The condition to check.

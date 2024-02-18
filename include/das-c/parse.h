@@ -27,16 +27,15 @@
 #include "das-c/parse_info.h"
 #include "das-c/table.h"
 
-//! Creates an array from the floating-points fields parsed in a string.
+//! Fills an array from the floating-points fields parsed in a string.
 /*!
- * Exits on allocation failure.
- *
+ * @param data The array to fill.
  * @param line The string to parse. Will be overwritten.
  * @param msk `mask` object holding parsing information.
  *
- * @return The parsed array on success, `NULL` on failure.
+ * @return EXIT_SUCCESS on success, EXIT_FAILURE otherwise.
  */
-double *parse_line(char *line, const mask *msk);
+int parse_line(double *data, char *line, const mask *msk);
 
 //! Fills uninitialized `table` with the content of a file using C11 threads.
 /*!

@@ -4,21 +4,6 @@
 #include "test.h"
 #include <stdlib.h>
 
-void init_table(table *tab, const size_t rows, const size_t cols)
-{
-  tab->rows = rows;
-  tab->cols = cols;
-
-  tab->data = malloc(rows * sizeof(double *));
-  check(tab->data, "failed allocation in 03.test-statistics");
-
-  for (size_t ir = 0; ir < rows; ++ir)
-  {
-    tab->data[ir] = malloc(cols * sizeof(double));
-    check(tab->data[ir], "failed allocation in 03.test-statistics");
-  }
-}
-
 table short_table_6()
 {
   table tab;

@@ -65,9 +65,7 @@ int parse_chunk(void *args)
     if (is_comment(line))
       continue;
 
-    a->tab->data[row] = parse_line(line, a->info->msk);
-    // Failure in parse_line()
-    if (!a->tab->data[row])
+    if (parse_line(a->tab->data[row], line, a->info->msk) == EXIT_FAILURE)
     {
       a->invalid_row = row + 1;
       retval = EXIT_FAILURE;
@@ -83,11 +81,7 @@ int parse_chunk(void *args)
 
 size_t parse_threads(table *tab, const parse_info *info)
 {
-  // Table initialization
-  tab->rows = info->rows;
-  tab->cols = info->msk->n_active;
-  tab->data = malloc(tab->rows * sizeof(double *));
-  check(tab->data, "failed allocation in parse()");
+  init_table(tab, info->rows, info->msk->n_active);
 
   size_t retval = 0;
 
