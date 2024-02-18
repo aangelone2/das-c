@@ -1,5 +1,4 @@
 #include "test.h"
-#include "das-c/parse.h"
 #include <stdlib.h>
 
 // Tracks `resources/08.valid.dat`.
@@ -31,49 +30,49 @@ const double example_data_with_comments[59] = {
     0.50991921, 0.76931588, 0.90287561, 0.38108331, 0.2658589,
 };
 
-void test_too_many_fields(clargs args)
+void test_too_many_fields(clargs args, parsing_func parse)
 {
   args.filename = "../resources/05.too_many_fields.dat";
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse_threads(&tab, info) == 3);
+  assert(parse(&tab, info) == 3);
 
   deinit_table(&tab);
   free_parse_info(info);
 }
 
-void test_invalid_field(clargs args)
+void test_invalid_field(clargs args, parsing_func parse)
 {
   args.filename = "../resources/06.invalid_field.dat";
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse_threads(&tab, info) == 2);
+  assert(parse(&tab, info) == 2);
 
   deinit_table(&tab);
   free_parse_info(info);
 }
 
-void test_too_few_fields(clargs args)
+void test_too_few_fields(clargs args, parsing_func parse)
 {
   args.filename = "../resources/07.too_few_fields.dat";
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(parse_threads(&tab, info) == 4);
+  assert(parse(&tab, info) == 4);
 
   deinit_table(&tab);
   free_parse_info(info);
 }
 
-void test_valid_full(clargs args)
+void test_valid_full(clargs args, parsing_func parse)
 {
   args.filename = "../resources/08.valid.dat";
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse_threads(&tab, info));
+  assert(!parse(&tab, info));
 
   assert(tab.cols == 4);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -89,7 +88,7 @@ void test_valid_full(clargs args)
   free_parse_info(info);
 }
 
-void test_filtering(clargs args)
+void test_filtering(clargs args, parsing_func parse)
 {
   args.filename = "../resources/08.valid.dat";
   args.n_fields = 2;
@@ -99,7 +98,7 @@ void test_filtering(clargs args)
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse_threads(&tab, info));
+  assert(!parse(&tab, info));
 
   assert(tab.cols == 2);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -117,13 +116,13 @@ void test_filtering(clargs args)
   free_parse_info(info);
 }
 
-void test_valid_full_with_comments(clargs args)
+void test_valid_full_with_comments(clargs args, parsing_func parse)
 {
   args.filename = "../resources/09.valid_with_comments.dat";
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse_threads(&tab, info));
+  assert(!parse(&tab, info));
 
   assert(tab.cols == 4);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -141,14 +140,14 @@ void test_valid_full_with_comments(clargs args)
   free_parse_info(info);
 }
 
-void test_4_threads(clargs args)
+void test_4_threads(clargs args, parsing_func parse)
 {
   args.n_threads = 4;
   args.filename = "../resources/08.valid.dat";
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse_threads(&tab, info));
+  assert(!parse(&tab, info));
 
   assert(tab.cols == 4);
   for (size_t ic = 0; ic < tab.cols; ++ic)
@@ -164,14 +163,14 @@ void test_4_threads(clargs args)
   free_parse_info(info);
 }
 
-void test_imperfect_splitting(clargs args)
+void test_imperfect_splitting(clargs args, parsing_func parse)
 {
   args.n_threads = 3;
   args.filename = "../resources/08.valid.dat";
   parse_info *info = alloc_parse_info(&args);
 
   table tab;
-  assert(!parse_threads(&tab, info));
+  assert(!parse(&tab, info));
 
   assert(tab.cols == 4);
   for (size_t ic = 0; ic < tab.cols; ++ic)

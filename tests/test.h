@@ -1,7 +1,7 @@
 #ifndef DASC_TEST_H
 #define DASC_TEST_H
 
-#include "das-c/clargs.h"
+#include "das-c/parse.h"
 #include <assert.h>
 #include <math.h>
 #include <stdbool.h>
@@ -37,14 +37,17 @@ extern const double example_data[];
 // Tracks `resources/09.valid_with_comments.dat`.
 extern const double example_data_with_comments[];
 
+// Typedef for pointer to parsing function.
+typedef size_t (*parsing_func)(table *, const parse_info *);
+
 // Common tests for parsing routines, will copy passed `clargs`.
-void test_too_many_fields(clargs args);
-void test_invalid_field(clargs args);
-void test_too_few_fields(clargs args);
-void test_valid_full(clargs args);
-void test_filtering(clargs args);
-void test_valid_full_with_comments(clargs args);
-void test_4_threads(clargs args);
-void test_imperfect_splitting(clargs args);
+void test_too_many_fields(clargs args, parsing_func parse);
+void test_invalid_field(clargs args, parsing_func parse);
+void test_too_few_fields(clargs args, parsing_func parse);
+void test_valid_full(clargs args, parsing_func parse);
+void test_filtering(clargs args, parsing_func parse);
+void test_valid_full_with_comments(clargs args, parsing_func parse);
+void test_4_threads(clargs args, parsing_func parse);
+void test_imperfect_splitting(clargs args, parsing_func parse);
 
 #endif

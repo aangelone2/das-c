@@ -52,4 +52,20 @@ int parse_line(double *data, char *line, const mask *msk);
  */
 size_t parse_threads(table *tab, const parse_info *info);
 
+//! Fills uninitialized `table` with ALL rows in a file using OpenMP.
+/*!
+ * Exits if file cannot be opened.
+ *
+ * In case of multiple errors in the file, the error determining the return
+ * value is the one at the earliest row in the file.
+ *
+ * Exits on allocation or thread creation error.
+ *
+ * @param tab Pointer to the `table` to fill.
+ * @param info Parsing info struct.
+ *
+ * @return 0 on success, row where error occurred (indexed from 1) on failure.
+ */
+size_t parse_openmp(table *tab, const parse_info *info);
+
 #endif

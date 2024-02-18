@@ -45,6 +45,8 @@ else
 endif
 
 
+
+
 # Target which executes the rule to build the test executables
 test: $(tobjects)
 	@echo ''
@@ -56,8 +58,10 @@ test: $(tobjects)
 	cd $(bdir); ./04.test-clargs
 	cd $(bdir); ./05.test-parse_threads-single
 	cd $(bdir); ./06.test-parse_threads-multi
-	cd $(bdir); ./07.test-avs
-	cd $(bdir); ./08.test-ave
+	cd $(bdir); ./07.test-parse_openmp-single
+	cd $(bdir); ./08.test-parse_openmp-multi
+	cd $(bdir); ./09.test-avs
+	cd $(bdir); ./10.test-ave
 
 	@echo 'All tests completed successfully'
 
