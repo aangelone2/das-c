@@ -8,6 +8,7 @@ int main()
   args.n_fields = 0;
   args.fields = NULL;
   args.skip = 0;
+  args.mode = DASC_PARALLEL_MODE_THR;
   args.n_threads = 1;
   args.verbose = false;
 

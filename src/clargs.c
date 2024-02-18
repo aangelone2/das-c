@@ -33,10 +33,11 @@ int init_clargs(clargs *args, const int argc, char *argv[])
   args->n_fields = 0;
   args->fields = NULL;
   args->skip = 0;
+  args->mode = DASC_PARALLEL_MODE_THR;
   args->n_threads = 1;
   args->verbose = false;
 
-  char *options = "f:n:s:v";
+  char *options = "f:n:os:v";
   int opt;
 
   // Resetting, for multiple calls
@@ -85,6 +86,8 @@ int init_clargs(clargs *args, const int argc, char *argv[])
         return 2;
       }
     }
+    else if (opt == 'o')
+      args->mode = DASC_PARALLEL_MODE_OMP;
     else if (opt == 's')
     {
       char *end;

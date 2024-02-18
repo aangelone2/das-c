@@ -71,6 +71,7 @@ void test_no_options()
   assert(!args.n_fields);
   assert(!args.fields);
   assert(!args.skip);
+  assert(args.mode == DASC_PARALLEL_MODE_THR);
   assert(args.n_threads == 1);
   assert(!args.verbose);
   assert(!strcmp(args.filename, "file"));
@@ -89,6 +90,7 @@ void test_verbose()
   assert(!args.n_fields);
   assert(!args.fields);
   assert(!args.skip);
+  assert(args.mode == DASC_PARALLEL_MODE_THR);
   assert(args.n_threads == 1);
   assert(args.verbose);
   assert(!strcmp(args.filename, "file"));
@@ -107,6 +109,7 @@ void test_skip_verbose()
   assert(!args.n_fields);
   assert(!args.fields);
   assert(args.skip == 20);
+  assert(args.mode == DASC_PARALLEL_MODE_THR);
   assert(args.n_threads == 1);
   assert(args.verbose);
   assert(!strcmp(args.filename, "file"));
@@ -127,6 +130,7 @@ void test_fields()
   assert(args.fields[1] == 2);
   assert(args.fields[2] == 3);
   assert(!args.skip);
+  assert(args.mode == DASC_PARALLEL_MODE_THR);
   assert(args.n_threads == 1);
   assert(args.verbose);
   assert(!strcmp(args.filename, "file2"));
@@ -174,20 +178,22 @@ void test_invalid_fields()
 {
   clargs args;
 
-  const int argc = 5;
-
+  const int argc1 = 5;
   char *argv1[] = {"test", "-f", "1,,3", "-v", "file2"};
-  assert(!init_clargs(&args, argc, argv1));
+
+  assert(!init_clargs(&args, argc1, argv1));
   assert(args.n_fields == 2);
   assert(args.fields[0] == 1);
   assert(args.fields[1] == 3);
   assert(!args.skip);
+  assert(args.mode == DASC_PARALLEL_MODE_THR);
   assert(args.n_threads == 1);
   assert(args.verbose);
   assert(!strcmp(args.filename, "file2"));
 
+  const int argc2 = 5;
   char *argv2[] = {"test", "-f", "1,a,3", "-v", "file2"};
-  assert(init_clargs(&args, argc, argv2) == 1);
+  assert(init_clargs(&args, argc2, argv2) == 1);
 
   deinit_clargs(&args);
 }
@@ -196,19 +202,34 @@ void test_parallel_options()
 {
   clargs args;
 
-  const int argc = 5;
-
+  const int argc1 = 4;
   char *argv1[] = {"test", "-n", "2", "file"};
-  assert(!init_clargs(&args, argc, argv1));
+
+  assert(!init_clargs(&args, argc1, argv1));
   assert(!args.n_fields);
   assert(!args.fields);
   assert(!args.skip);
+  assert(args.mode == DASC_PARALLEL_MODE_THR);
   assert(args.n_threads == 2);
   assert(!args.verbose);
   assert(!strcmp(args.filename, "file"));
 
+  const int argc2 = 2;
   char *argv2[] = {"test", "file2"};
-  assert(init_clargs(&args, argc, argv2) == 2);
+
+  assert(init_clargs(&args, argc2, argv2) == 2);
+
+  const int argc3 = 5;
+  char *argv3[] = {"test", "-n", "1", "-o", "file"};
+
+  assert(!init_clargs(&args, argc3, argv3));
+  assert(!args.n_fields);
+  assert(!args.fields);
+  assert(!args.skip);
+  assert(args.mode == DASC_PARALLEL_MODE_OMP);
+  assert(args.n_threads == 1);
+  assert(!args.verbose);
+  assert(!strcmp(args.filename, "file"));
 
   deinit_clargs(&args);
 }

@@ -32,9 +32,14 @@ avs_results *avs(const clargs *args)
   check(res, "allocation failure in avs()");
 
   parse_info *info = alloc_parse_info(args);
-
   table tab;
-  check(!parse_threads(&tab, info), "parsing error in avs()");
+
+  int pres;
+  if (args->mode == DASC_PARALLEL_MODE_THR)
+    pres = parse_threads(&tab, info);
+  else // if (args->mode == DASC_PARALLEL_MODE_OMP)
+    pres = parse_openmp(&tab, info);
+  check(!pres, "parsing error in avs()");
 
   res->cols = tab.cols;
 

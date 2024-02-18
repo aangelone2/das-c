@@ -26,6 +26,9 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#define DASC_PARALLEL_MODE_THR 1
+#define DASC_PARALLEL_MODE_OMP 2
+
 //! Struct storing command line arguments.
 typedef struct
 {
@@ -37,6 +40,9 @@ typedef struct
 
   //! Percentage (1-100) of rows to skip (default: 0).
   size_t skip;
+
+  // Parallel mode (see `DASC_PARALLEL_MODE` constants, default: 1 (`THR`)).
+  int mode;
 
   //! Number of threads for the parsing process (default: 1).
   size_t n_threads;
