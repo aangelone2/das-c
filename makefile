@@ -28,7 +28,7 @@ sources := $(filter-out $(sdir)/main.c, $(wildcard $(sdir)/*.c))
 objects := $(patsubst $(sdir)/%.c, $(odir)/%.o, $(sources))
 
 theaders := $(wildcard $(tdir)/*.h)
-tsources := $(wildcard $(tdir)/*.c)
+tsources := $(wildcard $(tdir)/*.test-*.c)
 tobjects := $(patsubst $(tdir)/%.c, $(bdir)/%, $(tsources))
 
 CC := gcc
@@ -64,7 +64,7 @@ test: $(tobjects)
 
 # Rule to build test executables
 $(tobjects): $(bdir)/%: $(tdir)/%.c $(theaders) lib
-	$(CC) $(CFLAGS) $(INC) $< -o $@ $(LIB)
+	$(CC) $(CFLAGS) $(INC) $< $(tdir)/test.c -o $@ $(LIB)
 
 
 # Target which builds library and executable
