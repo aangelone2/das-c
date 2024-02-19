@@ -20,6 +20,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+/**
+ * @file parse_info.h
+ *
+ * `parse_info` struct and related utilities, which hold the necessary
+ * information to parse a file.
+ */
 #ifndef DASC_PARSE_INFO_H
 #define DASC_PARSE_INFO_H
 

@@ -20,6 +20,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+/**
+ * @file common.h
+ *
+ * Common utilities used across the codebase.
+ */
 #ifndef DASC_COMMON_H
 #define DASC_COMMON_H
 

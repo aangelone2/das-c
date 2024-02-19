@@ -20,6 +20,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+/**
+ * @file avs.h
+ *
+ * `avs()` function, to perform simple averages, and `avs_results` struct to
+ * hold its results.
+ */
 #ifndef DASC_AVS_H
 #define DASC_AVS_H
 

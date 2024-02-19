@@ -1,7 +1,9 @@
 #ifndef DASC_TEST_H
 #define DASC_TEST_H
 
-#include "das-c/parse.h"
+#include "das-c/clargs.h"
+#include "das-c/parse_info.h"
+#include "das-c/table.h"
 #include <assert.h>
 #include <math.h>
 #include <stdbool.h>

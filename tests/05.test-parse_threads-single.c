@@ -1,3 +1,4 @@
+#include "das-c/parse.h"
 #include "test.h"
 
 int main()

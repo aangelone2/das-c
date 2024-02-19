@@ -20,6 +20,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+/**
+ * @file parse.h
+ *
+ * Parsing functions using different parallelization approaches.
+ */
 #ifndef DASC_PARSE_H
 #define DASC_PARSE_H
 

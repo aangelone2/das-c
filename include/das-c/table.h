@@ -20,6 +20,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+/**
+ * @file table.h
+ *
+ * `table` class and related utilities, to collect tabular data from files.
+ */
 #ifndef DASC_TABLE_H
 #define DASC_TABLE_H
 

@@ -20,6 +20,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+/**
+ * @file mask.h
+ *
+ * `mask` struct and related utilities, used to select fields when parsing.
+ */
 #ifndef DASC_MASK_H
 #define DASC_MASK_H
 

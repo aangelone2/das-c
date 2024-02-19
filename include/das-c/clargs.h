@@ -20,6 +20,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+/**
+ * @file clargs.h
+ *
+ * `clargs` struct and related utilities, to hold command line option data.
+ */
 #ifndef DASC_CLARGS_H
 #define DASC_CLARGS_H
 

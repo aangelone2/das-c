@@ -20,6 +20,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+/**
+ * @file statistics.h
+ *
+ * Statistical and data-related functions to be called on `table` objects.
+ */
 #ifndef DASC_STATISTICS_H
 #define DASC_STATISTICS_H
 

@@ -20,6 +20,12 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE. */
 
+/**
+ * @file ave.h
+ *
+ * `ave()` function, to perform binned averages, and `ave_results` struct to
+ * hold its results.
+ */
 #ifndef DASC_AVE_H
 #define DASC_AVE_H
 
