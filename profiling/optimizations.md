@@ -277,3 +277,14 @@ about 10-15% higher than the theoretical prediction
 (especially the 4-thread case, likely due to
 overthreading), but they still represent a significant
 reduction (~43% for 4 threads).
+
+
+
+
+# OpenMP (`af3741c`)
+
+We added a parser which splits the workload using
+OpenMP. This version clocked in at 29.2(3) s with 2
+threads and 21.5(2) s with 4, against fresh measurements
+of 31.6(4) s and 21.4(1) s with the C11 thread version,
+respectively (`profiling/data-05.dat`).
