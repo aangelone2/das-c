@@ -284,7 +284,34 @@ reduction (~43% for 4 threads).
 # OpenMP (`af3741c`)
 
 We added a parser which splits the workload using
-OpenMP. This version clocked in at 29.2(3) s with 2
-threads and 21.5(2) s with 4, against fresh measurements
-of 31.6(4) s and 21.4(1) s with the C11 thread version,
-respectively (`profiling/data-05.dat`).
+OpenMP. Testing with `-O3`, this version clocked in at
+29.2(3) s with 2 threads and 21.5(2) s with 4, against
+fresh measurements of 31.6(4) s and 21.4(1) s with the
+C11 thread version, respectively
+(`profiling/data-05.dat`).
+
+We also performed crude execution time tests, to fully
+understand the execution time share of the various
+functions. With `-O3` and 1 thread in "threads" mode, we
+placed `exit()` instructions at various position in the
+program, measuring the execution time of the code up to
+that point. The results are collected in
+`profiling/data-06.dat`, and are:
+
+- Stopping after `init_table()`, `parse_threads.c:84`:
+  3.77(2) s.
+- Stopping after `parse()`, `ave.c:46`: 41.9(4) s.
+- Stopping after the first call to `rebin()`, `ave.c:
+  88`: 42.8(3) s.
+- Full execution: 42.5(3) s.
+
+This implies that calls to `rebin()` after the first and
+execution of the statistical functions does not take a
+meaningful share of the execution time in `ave` (indeed,
+these functions will operate on an array of size
+`1024`). The first rebinning itself is also rather fast.
+
+The only meaningful opportunity for further
+parallelization would be `init_table()`, which would add
+about 9% of the total execution time to the parallel
+share of the program.
