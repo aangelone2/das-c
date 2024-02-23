@@ -24,14 +24,41 @@ development is `13.2.1`.
 
 The command
 
-```bash
+```
+$ make test
+```
+
+will build the static library against which the program
+will compile, as well as a battery of tests which will
+be immediately executed. When successfully completed,
+the output of this command should have the form
+
+```
+<compilation logs>
+
+Beginning testing
+
+cd build/ ; ./01.test-count_fields
+  <testing logs>
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Test completed successfully
+
+...
+
+All tests completed successfully
+```
+
+Independently from the testing command, the command
+
+```
 $ make build
 ```
 
-will build the executables `ave` and `avs` in the
-`build/` directory. The command
+will build the `build/das` executable and the static
+library the latter will link to.
 
-```bash
+The command
+
+```
 $ make clean
 ```
 
@@ -67,7 +94,7 @@ help message and exit.
 
 The command
 
-```bash
+```
 $ make docs
 ```
 
