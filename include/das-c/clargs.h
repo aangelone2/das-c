@@ -43,7 +43,7 @@ typedef struct
   //! Number of fields to be parsed (default: 0 -> all).
   size_t n_fields;
 
-  //! Array of fields to parse (default: NULL -> all).
+  //! Array of fields to parse, 1-indexed (default: NULL -> all).
   size_t *fields;
 
   //! Percentage (1-100) of rows to skip (default: 0).

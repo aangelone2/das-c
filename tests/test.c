@@ -97,8 +97,8 @@ void test_filtering(clargs args, parsing_func parse)
   args.filename = "../resources/08.valid.dat";
   args.n_fields = 2;
   args.fields = malloc(2 * sizeof(size_t));
-  args.fields[0] = 1;
-  args.fields[1] = 2;
+  args.fields[0] = 2;
+  args.fields[1] = 3;
   parse_info *info = alloc_parse_info(&args);
 
   table tab;

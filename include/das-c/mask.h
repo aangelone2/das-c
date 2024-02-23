@@ -40,7 +40,7 @@ typedef struct
   //! Number of `true` fields in the mask.
   size_t n_active;
 
-  //! Mask array, true (false) to parse (ignore) field of each index.
+  //! Mask array, true (false) to parse (ignore) field, 0-indexed.
   bool *bits;
 } mask;
 

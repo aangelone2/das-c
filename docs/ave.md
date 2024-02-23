@@ -25,7 +25,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -f FIELDS, --fields FIELDS
-                        comma-separated, 0-indexed fields to analyze (default = all)
+                        comma-separated, 1-indexed fields to analyze (default = all)
   -n THREADS            number of threads for parsing process (default = 1)
   -o                    uses OpenMP threading (default = false)
   -s SKIP, --skip SKIP  percentage (1-100) of rows to skip (default = 0)
@@ -37,7 +37,7 @@ options:
 
 - `-f` accepts a comma-separated list of integers,
   representing the fields to parse within the file. *The
-  fields are indexed starting from 0 in the option.* If
+  fields are indexed starting from 1 in the option.* If
   not specified, *all* the fields will be parsed.
 
 - `-n` accepts an integer, which will be the number of
@@ -73,7 +73,7 @@ file with the following features:
 A typical call to `ave` may look like
 
 ```
-$ das ave -s20 -v -f 0,1,2 resources/11.ave.dat
+$ das ave -s20 -v -f 1,2,3 resources/11.ave.dat
 ```
 
 resulting in the output

@@ -55,6 +55,9 @@ typedef struct
 /*!
  * Exits on allocation failure.
  *
+ * 1-indexed fields in the passed `clargs` will be converted to 0-indexed
+ * fields in the internal `msk`.
+ *
  * @param args CL arguments holding init information.
  *
  * @return Pointer to the allocated `parse_info`.

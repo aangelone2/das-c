@@ -48,13 +48,6 @@ ave_results *ave(const clargs *args)
   res->cols = tab.cols;
   res->nsizes = SIZES;
 
-  res->fields = malloc(res->cols * sizeof(size_t));
-  ensure(res->fields, "allocation failure in ave()");
-
-  // Selected VS all fields
-  for (size_t ic = 0; ic < res->cols; ++ic)
-    res->fields[ic] = (args->fields ? args->fields[ic] : ic);
-
   res->nbins = malloc(res->nsizes * sizeof(size_t));
   ensure(res->nbins, "allocation failure in ave()");
 
@@ -102,7 +95,6 @@ ave_results *ave(const clargs *args)
 
 void clear_ave_results(ave_results *res)
 {
-  free(res->fields);
   free(res->nbins);
   free(res->bsizes);
 

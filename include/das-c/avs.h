@@ -43,9 +43,6 @@ typedef struct
   //! Number of analyzed columns.
   size_t cols;
 
-  //! Column indices (in the file).
-  size_t *fields;
-
   //! Column averages.
   double *ave;
 

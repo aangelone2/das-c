@@ -98,11 +98,11 @@ parse_info *alloc_parse_info(const clargs *args)
 
   info->msk = alloc_mask(cols);
 
-  // Selected fields
+  // Selected fields, 1-indexing to 0-indexing
   if (args->fields)
   {
     for (size_t f_idx = 0; f_idx < args->n_fields; ++f_idx)
-      set_field(info->msk, args->fields[f_idx]);
+      set_field(info->msk, args->fields[f_idx] - 1);
   }
   // All fields
   else

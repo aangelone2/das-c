@@ -12,7 +12,7 @@ void general_help()
   printf("options:\n");
   printf("  -h, --help            show this help message and exit\n");
   printf("  -f FIELDS, --fields FIELDS\n");
-  printf("                        comma-separated, 0-indexed fields to "
+  printf("                        comma-separated, 1-indexed fields to "
          "analyze (default = all)\n");
   printf("  -n THREADS            number of threads for parsing process "
          "(default = 1)\n");

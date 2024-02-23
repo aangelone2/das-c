@@ -43,13 +43,6 @@ avs_results *avs(const clargs *args)
 
   res->cols = tab.cols;
 
-  res->fields = malloc(res->cols * sizeof(size_t));
-  ensure(res->fields, "allocation failure in avs()");
-
-  // Selected VS all fields
-  for (size_t ic = 0; ic < res->cols; ++ic)
-    res->fields[ic] = (args->fields ? args->fields[ic] : ic);
-
   // All columns will be the same size
   res->rows = tab.rows;
 
@@ -68,7 +61,6 @@ avs_results *avs(const clargs *args)
 
 void clear_avs_results(avs_results *res)
 {
-  free(res->fields);
   free(res->ave);
   free(res->sem);
   free(res);

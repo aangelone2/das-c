@@ -46,9 +46,6 @@ typedef struct
   //! Number of considered bin sizes.
   size_t nsizes;
 
-  //! Column indices (in the file).
-  size_t *fields;
-
   //! Bin numbers, nbins[i] <-> ave[i][...]
   size_t *nbins;
 

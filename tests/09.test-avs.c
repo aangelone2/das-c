@@ -23,10 +23,6 @@ void test_simple()
 
   assert(res->cols == 3);
 
-  assert(res->fields[0] == 0);
-  assert(res->fields[1] == 1);
-  assert(res->fields[2] == 2);
-
   assert_double_eq(res->ave[0], 0.5151493365490240);
   assert_double_eq(res->ave[1], 0.4957831770435258);
   assert_double_eq(res->ave[2], 0.4985958686429482);
@@ -52,8 +48,8 @@ void test_multiple_fields()
   args.filename = "../resources/10.avs.dat";
 
   args.fields = malloc(2 * sizeof(size_t));
-  args.fields[0] = 1;
-  args.fields[1] = 2;
+  args.fields[0] = 2;
+  args.fields[1] = 3;
 
   avs_results *res = avs(&args);
 
@@ -61,9 +57,6 @@ void test_multiple_fields()
   assert(res->kept == 2606);
 
   assert(res->cols == 2);
-
-  assert(res->fields[0] == 1);
-  assert(res->fields[1] == 2);
 
   assert_double_eq(res->ave[0], 0.4957831770435258);
   assert_double_eq(res->ave[1], 0.4985958686429482);
@@ -88,8 +81,8 @@ void test_field_skip()
   args.filename = "../resources/10.avs.dat";
 
   args.fields = malloc(2 * sizeof(size_t));
-  args.fields[0] = 0;
-  args.fields[1] = 2;
+  args.fields[0] = 1;
+  args.fields[1] = 3;
 
   avs_results *res = avs(&args);
 
@@ -97,9 +90,6 @@ void test_field_skip()
   assert(res->kept == 2606);
 
   assert(res->cols == 2);
-
-  assert(res->fields[0] == 0);
-  assert(res->fields[1] == 2);
 
   assert_double_eq(res->ave[0], 0.5151493365490240);
   assert_double_eq(res->ave[1], 0.4985958686429482);
@@ -124,7 +114,7 @@ void test_single_field()
   args.filename = "../resources/10.avs.dat";
 
   args.fields = malloc(1 * sizeof(size_t));
-  args.fields[0] = 1;
+  args.fields[0] = 2;
 
   avs_results *res = avs(&args);
 
@@ -132,8 +122,6 @@ void test_single_field()
   assert(res->kept == 2606);
 
   assert(res->cols == 1);
-
-  assert(res->fields[0] == 1);
 
   assert_double_eq(res->ave[0], 0.4957831770435258);
 

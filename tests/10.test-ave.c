@@ -24,11 +24,6 @@ void test_simple()
   assert(res->cols == 4);
   assert(res->nsizes == 5);
 
-  assert(res->fields[0] == 0);
-  assert(res->fields[1] == 1);
-  assert(res->fields[2] == 2);
-  assert(res->fields[3] == 3);
-
   assert(res->nbins[0] == 1024);
   assert(res->nbins[1] == 512);
   assert(res->nbins[2] == 256);
@@ -106,8 +101,8 @@ void test_multiple_fields()
   args.filename = "../resources/11.ave.dat";
 
   args.fields = malloc(2 * sizeof(size_t));
-  args.fields[0] = 2;
-  args.fields[1] = 3;
+  args.fields[0] = 3;
+  args.fields[1] = 4;
 
   ave_results *res = ave(&args);
 
@@ -116,9 +111,6 @@ void test_multiple_fields()
 
   assert(res->cols == 2);
   assert(res->nsizes == 5);
-
-  assert(res->fields[0] == 2);
-  assert(res->fields[1] == 3);
 
   assert(res->nbins[0] == 1024);
   assert(res->nbins[1] == 512);
@@ -173,8 +165,8 @@ void test_field_skip()
   args.filename = "../resources/11.ave.dat";
 
   args.fields = malloc(2 * sizeof(size_t));
-  args.fields[0] = 0;
-  args.fields[1] = 3;
+  args.fields[0] = 1;
+  args.fields[1] = 4;
 
   ave_results *res = ave(&args);
 
@@ -183,9 +175,6 @@ void test_field_skip()
 
   assert(res->cols == 2);
   assert(res->nsizes == 5);
-
-  assert(res->fields[0] == 0);
-  assert(res->fields[1] == 3);
 
   assert(res->nbins[0] == 1024);
   assert(res->nbins[1] == 512);
@@ -240,7 +229,7 @@ void test_single_field()
   args.filename = "../resources/11.ave.dat";
 
   args.fields = malloc(1 * sizeof(size_t));
-  args.fields[0] = 1;
+  args.fields[0] = 2;
 
   ave_results *res = ave(&args);
 
@@ -249,8 +238,6 @@ void test_single_field()
 
   assert(res->cols == 1);
   assert(res->nsizes == 5);
-
-  assert(res->fields[0] == 1);
 
   assert(res->nbins[0] == 1024);
   assert(res->nbins[1] == 512);
