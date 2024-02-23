@@ -36,13 +36,7 @@ CFLAGS := -std=gnu17 -O3 -Wfatal-errors\
 					-Wall -Werror -Wextra -Wshadow -Wparentheses\
 					-Wconversion -Wpedantic -pedantic -Wunused-result
 INC := -I$(idir)
-LIB := -L$(bdir) -ldas-c -lm
-
-ifdef NO_OPENMP
-	CFLAGS := $(CFLAGS) -DNO_OPENMP
-else
-	LIB := $(LIB) -fopenmp
-endif
+LIB := -L$(bdir) -ldas-c -lm -fopenmp
 
 
 

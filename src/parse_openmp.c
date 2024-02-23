@@ -66,7 +66,6 @@ parse_chunk_openmp(table *tab, const parse_info *info, const size_t idx_thread)
   return retval;
 }
 
-#ifndef NO_OPENMP
 size_t parse_openmp(table *tab, const parse_info *info)
 {
   init_table(tab, info->rows, info->msk->n_active);
@@ -93,13 +92,3 @@ size_t parse_openmp(table *tab, const parse_info *info)
   free(res);
   return retval;
 }
-#else
-size_t parse_openmp(table *tab, const parse_info *info)
-{
-  // To suppress warnings
-  noop(tab);
-  noop(info);
-
-  ensure(false, "OpenMP modules not compiled");
-}
-#endif
