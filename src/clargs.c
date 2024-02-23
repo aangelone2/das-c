@@ -30,6 +30,7 @@
 int init_clargs(clargs *args, const int argc, char *argv[])
 {
   // Default values
+  args->help = false;
   args->n_fields = 0;
   args->fields = NULL;
   args->skip = 0;
@@ -37,7 +38,7 @@ int init_clargs(clargs *args, const int argc, char *argv[])
   args->n_threads = 1;
   args->verbose = false;
 
-  char *options = "f:n:os:v";
+  char *options = "f:hn:os:v";
   int opt;
 
   // Resetting, for multiple calls
@@ -71,6 +72,11 @@ int init_clargs(clargs *args, const int argc, char *argv[])
         free(args->fields);
         return 1;
       }
+    }
+    else if (opt == 'h')
+    {
+      args->help = true;
+      return 0;
     }
     else if (opt == 'n')
     {
@@ -106,7 +112,7 @@ int init_clargs(clargs *args, const int argc, char *argv[])
       args->verbose = true;
     else
     {
-      if (optopt == 'f' || optopt == 's')
+      if (optopt == 'f' || optopt == 'n' || optopt == 's')
       {
         fprintf(
             stderr, "error :: option '-%c' requires an argument\n", optopt

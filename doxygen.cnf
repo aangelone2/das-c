@@ -864,6 +864,9 @@ WARN_LOGFILE =
 # empty the current directory is searched.
 
 INPUT = docs/main.md,\
+  docs/ave.md,\
+  docs/avs.md,\
+  docs/statistics.md,\
   include/das-c/ave.h,\
   include/das-c/avs.h,\
   include/das-c/clargs.h,\
@@ -1612,7 +1615,7 @@ FORMULA_MACROFILE =
 # path to it using the MATHJAX_RELPATH option. The default value is: NO. This
 # tag requires that the tag GENERATE_HTML is set to YES.
 
-USE_MATHJAX = NO
+USE_MATHJAX = YES
 
 # With MATHJAX_VERSION it is possible to specify the MathJax version to be
 # used. Note that the different versions of MathJax have different requirements

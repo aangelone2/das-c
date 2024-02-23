@@ -37,6 +37,9 @@
 //! Struct storing command line arguments.
 typedef struct
 {
+  //! If `true`, drivers should display help messages and exit.
+  bool help;
+
   //! Number of fields to be parsed (default: 0 -> all).
   size_t n_fields;
 
@@ -68,7 +71,7 @@ typedef struct
  * @param argv Command-line argument string list (from main).
  *
  * @return Status code:
- *   - 0 on success
+ *   - 0 on success or immediately if `-h` option is passed
  *   - 1 on invalid field value
  *   - 2 on invalid skip value
  *   - 3 on invalid option or value

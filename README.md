@@ -42,12 +42,23 @@ resets the build environment.
 
 ## Current capabilities
 
-The functionalities of `das-c` are available by calling
-the executables `avs` and `ave`. These include:
+The capabilities of `das-c` are programmed in *drivers*,
+subcommands specialized for a specific task, and
+include:
 
 - Simple averaging and analysis of uncorrelated data
+  (`avs`);
 - Binsize scaling to compute accurate errors for
-  correlated data
+  correlated data (`ave`).
+
+Each driver is invoked as
+
+```
+$ das <driver> <options/arguments>
+```
+
+Executing any driver with the `-h` option will display a
+help message and exit.
 
 
 
