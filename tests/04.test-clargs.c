@@ -191,6 +191,8 @@ void test_invalid_fields()
   assert(args.verbose);
   assert(!strcmp(args.filename, "file2"));
 
+  deinit_clargs(&args);
+
   const int argc2 = 5;
   char *argv2[] = {"test", "-f", "1,a,3", "-v", "file2"};
   assert(init_clargs(&args, argc2, argv2) == 1);
@@ -214,10 +216,14 @@ void test_parallel_options()
   assert(!args.verbose);
   assert(!strcmp(args.filename, "file"));
 
+  deinit_clargs(&args);
+
   const int argc2 = 2;
   char *argv2[] = {"test", "file2"};
 
   assert(init_clargs(&args, argc2, argv2) == 2);
+
+  deinit_clargs(&args);
 
   const int argc3 = 5;
   char *argv3[] = {"test", "-n", "1", "-o", "file"};

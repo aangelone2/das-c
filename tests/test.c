@@ -40,6 +40,7 @@ void test_too_many_fields(clargs args, parsing_func parse)
 
   deinit_table(&tab);
   free_parse_info(info);
+  deinit_clargs(&args);
 }
 
 void test_invalid_field(clargs args, parsing_func parse)
@@ -52,6 +53,7 @@ void test_invalid_field(clargs args, parsing_func parse)
 
   deinit_table(&tab);
   free_parse_info(info);
+  deinit_clargs(&args);
 }
 
 void test_too_few_fields(clargs args, parsing_func parse)
@@ -64,6 +66,7 @@ void test_too_few_fields(clargs args, parsing_func parse)
 
   deinit_table(&tab);
   free_parse_info(info);
+  deinit_clargs(&args);
 }
 
 void test_valid_full(clargs args, parsing_func parse)
@@ -86,6 +89,7 @@ void test_valid_full(clargs args, parsing_func parse)
 
   deinit_table(&tab);
   free_parse_info(info);
+  deinit_clargs(&args);
 }
 
 void test_filtering(clargs args, parsing_func parse)
@@ -114,6 +118,7 @@ void test_filtering(clargs args, parsing_func parse)
 
   deinit_table(&tab);
   free_parse_info(info);
+  deinit_clargs(&args);
 }
 
 void test_valid_full_with_comments(clargs args, parsing_func parse)
@@ -138,6 +143,7 @@ void test_valid_full_with_comments(clargs args, parsing_func parse)
 
   deinit_table(&tab);
   free_parse_info(info);
+  deinit_clargs(&args);
 }
 
 void test_4_threads(clargs args, parsing_func parse)
@@ -161,6 +167,7 @@ void test_4_threads(clargs args, parsing_func parse)
 
   deinit_table(&tab);
   free_parse_info(info);
+  deinit_clargs(&args);
 }
 
 void test_imperfect_splitting(clargs args, parsing_func parse)
@@ -184,4 +191,5 @@ void test_imperfect_splitting(clargs args, parsing_func parse)
 
   deinit_table(&tab);
   free_parse_info(info);
+  deinit_clargs(&args);
 }
