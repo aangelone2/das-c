@@ -32,9 +32,9 @@
 
 //! Computes the average of the columns of the passed `table`.
 /*!
- * Exits if `skip` is too large.
+ * Exits if `skip` is too large, or on allocation failure.
  *
- * @param tab Data `table`.
+ * @param tab Data `table` object.
  * @param skip Number of rows to skip from the beginning.
  *
  * @return The computed averages.
@@ -46,15 +46,24 @@ double *average(const table *tab, const size_t skip);
  * Pre-calculation of the average allows to use a two-pass algorithm, which
  * ensures high accuracy.
  *
- * Exits if `skip` is too large.
+ * Exits if `skip` is too large, or on allocation failure.
  *
- * @param tab Data `vector`.
+ * @param tab Data `table` object.
  * @param skip Number of rows to skip from the beginning.
  * @param average The pre-computed average of the array.
  *
  * @return The computed SEMs.
  */
 double *sem(const table *tab, const size_t skip, const double *average);
+
+//! Computes the SE(SEM) from a passed SEM.
+/*!
+ * @param sem SEM.
+ * @param n Number of points in the array SEM was computed from.
+ *
+ * @return The computed SE(SEM).
+ */
+double sesem(const double sem, const size_t n);
 
 //! Rebins the passed `table`.
 /*!
@@ -65,7 +74,7 @@ double *sem(const table *tab, const size_t skip, const double *average);
  *
  * No-op if `nbins` is equal to the current size.
  *
- * @param tab Data `table`.
+ * @param tab Data `table` object.
  * @param skip Number of rows to skip from the beginning.
  * @param nbins The number of desired bins.
  */

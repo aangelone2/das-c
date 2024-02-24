@@ -81,17 +81,17 @@ resulting in the output
 ```
 resources/11.ave.dat :: 8192/11430 rows :: 3 columns
 
-1024 8 -4.993957752441e-01 3.1e-04 -7.249965174927e+00 2.7e-04 -7.749360951538e+00 1.2e-04
-512 16 -4.993957752441e-01 3.4e-04 -7.249965174927e+00 2.9e-04 -7.749360951538e+00 1.3e-04
-256 32 -4.993957752441e-01 3.5e-04 -7.249965174927e+00 3.0e-04 -7.749360951538e+00 1.3e-04
-128 64 -4.993957752441e-01 3.4e-04 -7.249965174927e+00 3.0e-04 -7.749360951538e+00 1.2e-04
-64 128 -4.993957752441e-01 3.5e-04 -7.249965174927e+00 3.1e-04 -7.749360951538e+00 1.2e-04
+1024 8 -4.993957752441e-01 3.1e-04 6.9e-06 -7.249965174927e+00 2.7e-04 5.9e-06 -7.749360951538e+00 1.2e-04 2.7e-06
+512 16 -4.993957752441e-01 3.4e-04 1.1e-05 -7.249965174927e+00 2.9e-04 9.1e-06 -7.749360951538e+00 1.3e-04 4.0e-06
+256 32 -4.993957752441e-01 3.5e-04 1.6e-05 -7.249965174927e+00 3.0e-04 1.3e-05 -7.749360951538e+00 1.3e-04 5.7e-06
+128 64 -4.993957752441e-01 3.4e-04 2.1e-05 -7.249965174927e+00 3.0e-04 1.9e-05 -7.749360951538e+00 1.2e-04 7.6e-06
+64 128 -4.993957752441e-01 3.5e-04 3.1e-05 -7.249965174927e+00 3.1e-04 2.7e-05 -7.749360951538e+00 1.2e-04 1.1e-05
 ```
 
 where the first two columns are the number and size of
 bins for each step of the scaling, respectively, while
-the following columns represent respectively the mean
-and the SEM of each of the analyzed columns.
+the following columns represent respectively the mean,
+SEM, and SE(SEM) of each of the analyzed columns.
 
 All quantities here are computed as discussed in the
 [correlated data](statistics.html#correlated-data)

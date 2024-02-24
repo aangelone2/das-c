@@ -60,6 +60,14 @@ void test_sem()
   deinit_table(&tab);
 }
 
+void test_sesem()
+{
+  const double sem = 3.45;
+  const size_t n = 12;
+
+  assert_double_eq(sesem(sem, n), 0.73554247142685599833);
+}
+
 table long_table()
 {
   table tab;
@@ -179,6 +187,9 @@ int main()
 
   printf("  Testing SEM...\n");
   test_sem();
+
+  printf("  Testing SE(SEM)...\n");
+  test_sesem();
 
   printf("  Testing rebinning...\n");
   test_rebin();

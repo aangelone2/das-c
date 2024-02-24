@@ -6,7 +6,6 @@ int main()
 {
   open_test();
 
-#ifndef NO_OPENMP
   clargs args;
   args.n_fields = 0;
   args.fields = NULL;
@@ -40,9 +39,6 @@ int main()
   test_imperfect_splitting(args, parse_openmp);
 
   deinit_clargs(&args);
-#else
-  printf("  OpenMP not included in compilation, skipping...\n");
-#endif
 
   close_test();
 }

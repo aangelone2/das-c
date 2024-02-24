@@ -218,17 +218,10 @@ void test_parallel_options()
 
   deinit_clargs(&args);
 
-  const int argc2 = 2;
-  char *argv2[] = {"test", "file2"};
+  const int argc2 = 5;
+  char *argv2[] = {"test", "-n", "1", "-o", "file"};
 
-  assert(init_clargs(&args, argc2, argv2) == 2);
-
-  deinit_clargs(&args);
-
-  const int argc3 = 5;
-  char *argv3[] = {"test", "-n", "1", "-o", "file"};
-
-  assert(!init_clargs(&args, argc3, argv3));
+  assert(!init_clargs(&args, argc2, argv2));
   assert(!args.n_fields);
   assert(!args.fields);
   assert(!args.skip);
@@ -270,6 +263,9 @@ int main()
 
   printf("  Testing invalid field values...\n");
   test_invalid_fields();
+
+  printf("  Testing parallel options...\n");
+  test_parallel_options();
 
   close_test();
 }

@@ -57,7 +57,12 @@ int main(int argc, char *argv[])
     {
       printf("%zu %zu", res->nbins[is], res->bsizes[is]);
       for (size_t ic = 0; ic < res->cols; ++ic)
-        printf(" %+.12e %.1e", res->ave[is][ic], res->sem[is][ic]);
+        printf(
+            " %+.12e %.1e %.1e",
+            res->ave[is][ic],
+            res->sem[is][ic],
+            res->sesem[is][ic]
+        );
       printf("\n");
     }
 

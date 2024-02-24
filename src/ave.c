@@ -60,6 +60,9 @@ ave_results *ave(const clargs *args)
   res->sem = malloc(res->nsizes * sizeof(double *));
   ensure(res->sem, "allocation failure in ave()");
 
+  res->sesem = malloc(res->nsizes * sizeof(double *));
+  ensure(res->sesem, "allocation failure in ave()");
+
   // All columns will be the same size
   res->rows = tab.rows;
 
@@ -84,6 +87,10 @@ ave_results *ave(const clargs *args)
     res->ave[is] = average(&tab, 0);
     res->sem[is] = sem(&tab, 0, res->ave[is]);
 
+    res->sesem[is] = malloc(res->cols * sizeof(double));
+    for (size_t ic = 0; ic < res->cols; ++ic)
+      res->sesem[is][ic] = sesem(res->sem[is][ic], nbins);
+
     nbins /= 2;
     bsize *= 2;
   }
@@ -102,9 +109,11 @@ void clear_ave_results(ave_results *res)
   {
     free(res->ave[is]);
     free(res->sem[is]);
+    free(res->sesem[is]);
   }
   free(res->ave);
   free(res->sem);
+  free(res->sesem);
 
   free(res);
 }

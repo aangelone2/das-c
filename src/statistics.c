@@ -47,7 +47,7 @@ double *sem(const table *tab, const size_t skip, const double *average)
   ensure(skip < tab->rows, "skip too large in sem()");
 
   double *res = calloc(tab->cols, sizeof(double));
-  ensure(res, "failed allocation in average()");
+  ensure(res, "failed allocation in sem()");
 
   for (size_t ir = skip; ir < tab->rows; ++ir)
   {
@@ -63,6 +63,11 @@ double *sem(const table *tab, const size_t skip, const double *average)
     res[ic] = sqrt(res[ic] / (size * (size - 1.0)));
 
   return res;
+}
+
+double sesem(const double sem, const size_t n)
+{
+  return sem * (1.0 / sqrt(2.0 * (double)(n - 1)));
 }
 
 void rebin(table *tab, const size_t skip, const size_t nbins)

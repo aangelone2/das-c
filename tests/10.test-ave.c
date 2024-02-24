@@ -48,6 +48,12 @@ void test_simple()
   assert_double_eq(res->sem[3][0], 3.4232343321790963e-04);
   assert_double_eq(res->sem[4][0], 3.5305213819014896e-04);
 
+  assert_double_eq(res->sesem[0][0], res->sem[0][0] / sqrt(2.0 * (1024 - 1)));
+  assert_double_eq(res->sesem[1][0], res->sem[1][0] / sqrt(2.0 * (512 - 1)));
+  assert_double_eq(res->sesem[2][0], res->sem[2][0] / sqrt(2.0 * (256 - 1)));
+  assert_double_eq(res->sesem[3][0], res->sem[3][0] / sqrt(2.0 * (128 - 1)));
+  assert_double_eq(res->sesem[4][0], res->sem[4][0] / sqrt(2.0 * (64 - 1)));
+
   assert_double_eq(res->ave[0][1], -7.2499651749267571e+00);
   assert_double_eq(res->ave[1][1], -7.2499651749267571e+00);
   assert_double_eq(res->ave[2][1], -7.2499651749267588e+00);
@@ -59,6 +65,12 @@ void test_simple()
   assert_double_eq(res->sem[2][1], 2.9752864857246638e-04);
   assert_double_eq(res->sem[3][1], 2.9772060642180461e-04);
   assert_double_eq(res->sem[4][1], 3.0613447645833156e-04);
+
+  assert_double_eq(res->sesem[0][1], res->sem[0][1] / sqrt(2.0 * (1024 - 1)));
+  assert_double_eq(res->sesem[1][1], res->sem[1][1] / sqrt(2.0 * (512 - 1)));
+  assert_double_eq(res->sesem[2][1], res->sem[2][1] / sqrt(2.0 * (256 - 1)));
+  assert_double_eq(res->sesem[3][1], res->sem[3][1] / sqrt(2.0 * (128 - 1)));
+  assert_double_eq(res->sesem[4][1], res->sem[4][1] / sqrt(2.0 * (64 - 1)));
 
   assert_double_eq(res->ave[0][2], -7.7493609515380859e+00);
   assert_double_eq(res->ave[1][2], -7.7493609515380859e+00);
@@ -72,6 +84,12 @@ void test_simple()
   assert_double_eq(res->sem[3][2], 1.2165830747142403e-04);
   assert_double_eq(res->sem[4][2], 1.2166715931519173e-04);
 
+  assert_double_eq(res->sesem[0][2], res->sem[0][2] / sqrt(2.0 * (1024 - 1)));
+  assert_double_eq(res->sesem[1][2], res->sem[1][2] / sqrt(2.0 * (512 - 1)));
+  assert_double_eq(res->sesem[2][2], res->sem[2][2] / sqrt(2.0 * (256 - 1)));
+  assert_double_eq(res->sesem[3][2], res->sem[3][2] / sqrt(2.0 * (128 - 1)));
+  assert_double_eq(res->sesem[4][2], res->sem[4][2] / sqrt(2.0 * (64 - 1)));
+
   assert_double_eq(res->ave[0][3], -7.2499651749267571e+00);
   assert_double_eq(res->ave[1][3], -7.2499651749267571e+00);
   assert_double_eq(res->ave[2][3], -7.2499651749267588e+00);
@@ -83,6 +101,12 @@ void test_simple()
   assert_double_eq(res->sem[2][3], 2.9752864857246638e-04);
   assert_double_eq(res->sem[3][3], 2.9772060642180461e-04);
   assert_double_eq(res->sem[4][3], 3.0613447645833156e-04);
+
+  assert_double_eq(res->sesem[0][3], res->sem[0][3] / sqrt(2.0 * (1024 - 1)));
+  assert_double_eq(res->sesem[1][3], res->sem[1][3] / sqrt(2.0 * (512 - 1)));
+  assert_double_eq(res->sesem[2][3], res->sem[2][3] / sqrt(2.0 * (256 - 1)));
+  assert_double_eq(res->sesem[3][3], res->sem[3][3] / sqrt(2.0 * (128 - 1)));
+  assert_double_eq(res->sesem[4][3], res->sem[4][3] / sqrt(2.0 * (64 - 1)));
 
   clear_ave_results(res);
   deinit_clargs(&args);
@@ -136,6 +160,12 @@ void test_multiple_fields()
   assert_double_eq(res->sem[3][0], 1.2165830747142403e-04);
   assert_double_eq(res->sem[4][0], 1.2166715931519173e-04);
 
+  assert_double_eq(res->sesem[0][0], res->sem[0][0] / sqrt(2.0 * (1024 - 1)));
+  assert_double_eq(res->sesem[1][0], res->sem[1][0] / sqrt(2.0 * (512 - 1)));
+  assert_double_eq(res->sesem[2][0], res->sem[2][0] / sqrt(2.0 * (256 - 1)));
+  assert_double_eq(res->sesem[3][0], res->sem[3][0] / sqrt(2.0 * (128 - 1)));
+  assert_double_eq(res->sesem[4][0], res->sem[4][0] / sqrt(2.0 * (64 - 1)));
+
   assert_double_eq(res->ave[0][1], -7.2499651749267571e+00);
   assert_double_eq(res->ave[1][1], -7.2499651749267571e+00);
   assert_double_eq(res->ave[2][1], -7.2499651749267588e+00);
@@ -147,6 +177,12 @@ void test_multiple_fields()
   assert_double_eq(res->sem[2][1], 2.9752864857246638e-04);
   assert_double_eq(res->sem[3][1], 2.9772060642180461e-04);
   assert_double_eq(res->sem[4][1], 3.0613447645833156e-04);
+
+  assert_double_eq(res->sesem[0][1], res->sem[0][1] / sqrt(2.0 * (1024 - 1)));
+  assert_double_eq(res->sesem[1][1], res->sem[1][1] / sqrt(2.0 * (512 - 1)));
+  assert_double_eq(res->sesem[2][1], res->sem[2][1] / sqrt(2.0 * (256 - 1)));
+  assert_double_eq(res->sesem[3][1], res->sem[3][1] / sqrt(2.0 * (128 - 1)));
+  assert_double_eq(res->sesem[4][1], res->sem[4][1] / sqrt(2.0 * (64 - 1)));
 
   clear_ave_results(res);
   deinit_clargs(&args);
@@ -200,6 +236,12 @@ void test_field_skip()
   assert_double_eq(res->sem[3][0], 3.4232343321790963e-04);
   assert_double_eq(res->sem[4][0], 3.5305213819014896e-04);
 
+  assert_double_eq(res->sesem[0][0], res->sem[0][0] / sqrt(2.0 * (1024 - 1)));
+  assert_double_eq(res->sesem[1][0], res->sem[1][0] / sqrt(2.0 * (512 - 1)));
+  assert_double_eq(res->sesem[2][0], res->sem[2][0] / sqrt(2.0 * (256 - 1)));
+  assert_double_eq(res->sesem[3][0], res->sem[3][0] / sqrt(2.0 * (128 - 1)));
+  assert_double_eq(res->sesem[4][0], res->sem[4][0] / sqrt(2.0 * (64 - 1)));
+
   assert_double_eq(res->ave[0][1], -7.2499651749267571e+00);
   assert_double_eq(res->ave[1][1], -7.2499651749267571e+00);
   assert_double_eq(res->ave[2][1], -7.2499651749267588e+00);
@@ -211,6 +253,12 @@ void test_field_skip()
   assert_double_eq(res->sem[2][1], 2.9752864857246638e-04);
   assert_double_eq(res->sem[3][1], 2.9772060642180461e-04);
   assert_double_eq(res->sem[4][1], 3.0613447645833156e-04);
+
+  assert_double_eq(res->sesem[0][1], res->sem[0][1] / sqrt(2.0 * (1024 - 1)));
+  assert_double_eq(res->sesem[1][1], res->sem[1][1] / sqrt(2.0 * (512 - 1)));
+  assert_double_eq(res->sesem[2][1], res->sem[2][1] / sqrt(2.0 * (256 - 1)));
+  assert_double_eq(res->sesem[3][1], res->sem[3][1] / sqrt(2.0 * (128 - 1)));
+  assert_double_eq(res->sesem[4][1], res->sem[4][1] / sqrt(2.0 * (64 - 1)));
 
   clear_ave_results(res);
   deinit_clargs(&args);
@@ -262,6 +310,12 @@ void test_single_field()
   assert_double_eq(res->sem[2][0], 2.9752864857246638e-04);
   assert_double_eq(res->sem[3][0], 2.9772060642180461e-04);
   assert_double_eq(res->sem[4][0], 3.0613447645833156e-04);
+
+  assert_double_eq(res->sesem[0][0], res->sem[0][0] / sqrt(2.0 * (1024 - 1)));
+  assert_double_eq(res->sesem[1][0], res->sem[1][0] / sqrt(2.0 * (512 - 1)));
+  assert_double_eq(res->sesem[2][0], res->sem[2][0] / sqrt(2.0 * (256 - 1)));
+  assert_double_eq(res->sesem[3][0], res->sem[3][0] / sqrt(2.0 * (128 - 1)));
+  assert_double_eq(res->sesem[4][0], res->sem[4][0] / sqrt(2.0 * (64 - 1)));
 
   clear_ave_results(res);
   deinit_clargs(&args);

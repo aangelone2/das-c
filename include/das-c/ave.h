@@ -57,6 +57,9 @@ typedef struct
 
   //! Column SEMs, 2nd index runs on columns.
   double **sem;
+
+  //! Column SE(SEM)s, 2nd index runs on columns.
+  double **sesem;
 } ave_results;
 
 //! Performs bin-based averaging of a file based on the passed CL arguments.
