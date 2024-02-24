@@ -92,11 +92,13 @@ help message and exit.
 
 ## Documentation
 
-The command
+Building the documentation requires
+[doxygen](https://www.doxygen.nl/). The command
 
 ```
 $ make docs
 ```
 
-generates the documentation, which can be viewed opening
-in a web browser the generated `html/index.html` file.
+re-generates the documentation in html format in the
+`html/` directory, which can be accessed by opening in a
+web browser the `html/index.html` page.
