@@ -102,3 +102,8 @@ $ make docs
 re-generates the documentation in html format in the
 `html/` directory, which can be accessed by opening in a
 web browser the `html/index.html` page.
+
+Most of the documentation (including all the information
+related to the UI and the statistical background) can be
+consulted on the [github
+wiki](https://github.com/aangelone2/das-c/wiki).
